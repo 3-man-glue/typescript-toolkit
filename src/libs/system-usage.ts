@@ -1,4 +1,4 @@
-export function viewSystemUsage(): Object {
+export function viewSystemUsage() {
   return {
     timestamp: Date.now(),
     cpu: process.cpuUsage(),

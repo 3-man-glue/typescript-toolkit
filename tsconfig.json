@@ -33,7 +33,8 @@
       "src"
     ],
     "types": [
-      "node"
+      "node",
+      "jest"
     ],
     "esModuleInterop": true,
     "experimentalDecorators": true,
