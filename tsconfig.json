@@ -1,0 +1,55 @@
+{
+  "compilerOptions": {
+    "incremental": true,
+    "target": "es6",
+    "module": "commonjs",
+    "allowJs": false,
+    "sourceMap": true,
+    "outDir": "build/dev/",
+    "removeComments": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "src/",
+    "paths": {
+      "*": [
+        "*",
+        "./src/*"
+      ]
+    },
+    "rootDirs": [
+      "src"
+    ],
+    "types": [
+      "node"
+    ],
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "pretty": true
+  },
+  "exclude": [
+    "node_modules",
+    "tests",
+    "build",
+    "dist",
+    "coverage"
+  ],
+  "files": [
+    "src/app.ts"
+  ]
+}

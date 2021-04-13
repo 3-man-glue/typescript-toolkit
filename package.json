@@ -5,10 +5,27 @@
   "repository": "git@gitlab.com:sertiscorp/dev/7-11-chat/backend/ts-http-toolkit.git",
   "author": "Software Engineering Team <Sertis Co.Ltd.>",
   "license": "MIT",
+  "dependencies": {
+    "module-alias": "^2.2.2"
+  },
   "devDependencies": {
     "typescript": "^4.2.4",
     "@types/node": "^14.14.37",
     "eslint": "^7.23.0",
-    "prettier": "^2.2.1"
-  }
+    "eslint-config-prettier": "^8.1.0",
+    "prettier": "^2.2.1",
+    "babel-eslint": "^10.1.0"
+  },
+  "scripts": {
+    "prestart:dev": "rm -rf ./build/dev/ && tsc",
+    "start:dev": "node build/dev/app.js",
+    "lint": "eslint src/**/*"
+  },
+  "_moduleAliases": {
+    "@root": ".",
+    "@app": "src/"
+  },
+  "eslintIgnore": [
+    "app.ts"
+  ]
 }
