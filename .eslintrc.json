@@ -1,12 +1,16 @@
 {
-  "root": true,
   "env": {
     "node": true,
     "jest": true
   },
-  "parser": "babel-eslint",
+  "parser": "@typescript-eslint/parser",
   "extends": [
-    "eslint:recommended"
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "plugins": [
+    "@typescript-eslint"
   ],
   "rules": {
     "indent": [
@@ -36,6 +40,7 @@
     ],
     "no-console": "error",
     "no-unreachable-loop": "error",
+    "no-param-reassign": "error",
     "curly": [
       "error",
       "all"
@@ -57,10 +62,10 @@
     "comma-dangle": [
       "error",
       {
-        "arrays": "always",
-        "objects": "always",
-        "exports": "always",
-        "functions": "never"
+        "arrays": "only-multiline",
+        "objects": "always-multiline",
+        "exports": "only-multiline",
+        "functions": "only-multiline"
       }
     ],
     "eol-last": "error",
@@ -82,9 +87,5 @@
     ],
     "no-confusing-arrow": "error",
     "no-useless-constructor": "error"
-  },
-  "ignorePatterns": [
-    "build/**/*",
-    "dist/**/*"
-  ]
+  }
 }

@@ -12,9 +12,9 @@ describe('System usage', () => {
   test('run properly', () => {
     const result = viewSystemUsage()
 
-    expect(result.timestamp).toBe(Date.now())
-    expect(result.cpu).toBeDefined()
-    expect(result.memory).toBeDefined()
-    expect(result.resource).toBeDefined()
+    expect(result['timestamp']).toBe(Date.now())
+    expect(result['cpu']).toBeDefined()
+    expect(result['memory']).toBeDefined()
+    expect(result['resource']).toBeDefined()
   })
 })
