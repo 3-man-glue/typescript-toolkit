@@ -1,4 +1,4 @@
-export function viewSystemUsage() {
+export function viewSystemUsage(): Record<string, unknown> {
   return {
     timestamp: Date.now(),
     cpu: process.cpuUsage(),
