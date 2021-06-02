@@ -1,31 +1,59 @@
 import { createServer, RequestListener, Server } from 'http'
-import { Logger } from 'winston'
+import { HttpServerConfig, LoaderFunction } from './interfaces'
+import { Logger } from 'libs/logger'
 
 export class HttpServer {
   private static httpServer: HttpServer
 
   private server: Server
 
-  private constructor(private logger: Logger, application: RequestListener) {
+  private port = 80
+
+  private logger: Logger
+
+  private loader: LoaderFunction = () => Promise.resolve()
+
+  private constructor(application: RequestListener, logger: Logger) {
     this.server = createServer(application)
+    this.logger = logger
   }
 
   static create(application: RequestListener, logger: Logger): HttpServer {
     if (this.httpServer) {
       return this.httpServer
     }
-    this.httpServer = new HttpServer(logger, application)
+    this.httpServer = new HttpServer(application, logger)
 
     return this.httpServer
   }
 
-  start(port: number): void {
-    this.server.listen(port)
-    this.server.on('listening', () => {
-      this.logger.info(`Listening via ${port}: ${process.cwd()}`, { a: 1 })
-    })
-    this.server.on('error', (exception) => {
-      this.logger.error('Server exception: ', { exception })
-    })
+  public setup(config: Partial<HttpServerConfig>): HttpServer {
+    this.port = config.port ?? this.port
+
+    return this
+  }
+
+  public setLoaderFunction(loader: LoaderFunction): HttpServer {
+    this.loader = loader
+
+    return this
+  }
+
+  public start(): Promise<void> {
+    return this.loader()
+      .then(() => this.bootstrap())
+      .catch((e) => this.raiseException(e))
+  }
+
+  private bootstrap(): void {
+    this.server.listen(this.port)
+    this.server.on('listening', () => this.logger.info(`Listening via ${this.port}: ${process.cwd()}`))
+    this.server.on('error', this.raiseException)
+  }
+
+  private raiseException(e: Error): void {
+    this.logger.error('Server exception: ', { exception: e })
+
+    process.exit(1)
   }
 }
