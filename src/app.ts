@@ -1,9 +1,17 @@
-import { HttpServer } from './libs/server/http'
-import logger from './libs/logger'
 import express from 'express'
+import logger from './libs/logger'
+import { HttpServer } from './libs/server/http'
+import { viewSystemUsage } from './libs/system-usage'
 
-const PORT = parseInt(process.env['HTTP_PORT'] || '', 10) || 80
+const app = express()
+app.get('/health', (req, res) => {
+  req.body = {}
 
-const server = HttpServer.create(express(), logger)
+  res.status(200).send(viewSystemUsage())
+})
 
-server.start(PORT)
+HttpServer.create(app, logger)
+  .setup({
+    port: parseInt(process.env[ 'HTTP_PORT' ] || '', 10) || 80,
+  })
+  .start()

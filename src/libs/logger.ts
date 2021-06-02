@@ -1,4 +1,4 @@
-import { createLogger, transports, format } from 'winston'
+import { createLogger, transports, format, Logger as WinstonLogger } from 'winston'
 import { join } from 'path'
 
 const logFileName = (name: string): string => {
@@ -18,6 +18,8 @@ export default createLogger({
   format: format.combine(
     format.timestamp(),
     format.errors({ stack: true }),
-    format.printf((info) => `[${info['timestamp']}] - ${info.level}: ${info.message}`),
+    format.printf((info) => `[${info[ 'timestamp' ]}] - ${info.level}: ${info.message}`),
   ),
 })
+
+export type Logger = WinstonLogger
