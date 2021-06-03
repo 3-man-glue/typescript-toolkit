@@ -28,8 +28,10 @@
     "jest": "^26.6.3"
   },
   "scripts": {
-    "prestart:dev": "rm -rf ./build/dev/ && tsc",
-    "start:dev": "HTTP_PORT=8081 node build/dev/app.js",
+    "prestart:local": "rm -rf ./build/local/ && tsc --outDir build/local/",
+    "start:local": "HTTP_PORT=3000 node build/local/app.js",
+    "prestart": "rm -rf ./build/dist/ && tsc --outDir build/dist/",
+    "start": "node build/dist/app.js",
     "lint": "eslint --config .eslintrc.json --ext ts src tests",
     "test": "jest --collectCoverage"
   },

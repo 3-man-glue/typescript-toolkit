@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
-    "incremental": true,
     "target": "es6",
     "module": "commonjs",
     "allowJs": false,
     "sourceMap": true,
-    "outDir": "build/dev/",
+    "sourceRoot": "src",
+    "outDir": "build/dist/",
     "removeComments": true,
     "strict": true,
     "strictNullChecks": true,
