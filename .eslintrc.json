@@ -9,6 +9,10 @@
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended"
   ],
+  "ignorePatterns": [
+    "build/**",
+    "dist/**"
+  ],
   "plugins": [
     "@typescript-eslint"
   ],
