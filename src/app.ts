@@ -12,6 +12,6 @@ app.get('/health', (req, res) => {
 
 HttpServer.create(app, logger)
   .setup({
-    port: parseInt(process.env[ 'HTTP_PORT' ] || '', 10) || 80,
+    port: parseInt(process.env[ 'HTTP_PORT' ] || '', 10),
   })
   .start()

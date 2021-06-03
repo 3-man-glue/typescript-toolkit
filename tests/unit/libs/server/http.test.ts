@@ -48,7 +48,7 @@ describe('HttpServer', () => {
       await HttpServer.create(fakeApp, logger).start()
 
       expect(mockedServer.listen).toHaveBeenCalledTimes(1)
-      expect(mockedServer.listen).toHaveBeenCalledWith(80)
+      expect(mockedServer.listen).toHaveBeenCalledWith(8080)
       expect(process.exit).not.toHaveBeenCalled()
     })
 
@@ -60,7 +60,19 @@ describe('HttpServer', () => {
 
       expect(fakeLoader).toBeCalledTimes(1)
       expect(mockedServer.listen).toHaveBeenCalledTimes(1)
-      expect(mockedServer.listen).toHaveBeenCalledWith(80)
+      expect(mockedServer.listen).toHaveBeenCalledWith(8080)
+      expect(process.exit).not.toHaveBeenCalled()
+    })
+
+    it('Should start the application properly with default port when setup with falsy port', async () => {
+      const fakeApp = jest.fn()
+      const fakeLoader = jest.fn().mockImplementation(() => Promise.resolve())
+
+      await HttpServer.create(fakeApp, logger).setup({ port: 0 }).setLoaderFunction(fakeLoader).start()
+
+      expect(fakeLoader).toBeCalledTimes(1)
+      expect(mockedServer.listen).toHaveBeenCalledTimes(1)
+      expect(mockedServer.listen).toHaveBeenCalledWith(8080)
       expect(process.exit).not.toHaveBeenCalled()
     })
 
@@ -72,7 +84,7 @@ describe('HttpServer', () => {
 
       expect(fakeLoader).toBeCalledTimes(1)
       expect(mockedServer.listen).toHaveBeenCalledTimes(1)
-      expect(mockedServer.listen).toHaveBeenCalledWith(80)
+      expect(mockedServer.listen).toHaveBeenCalledWith(8080)
       expect(process.exit).not.toHaveBeenCalled()
     })
 
@@ -80,11 +92,11 @@ describe('HttpServer', () => {
       const fakeApp = jest.fn()
       const fakeLoader = jest.fn().mockImplementation(() => Promise.resolve())
 
-      await HttpServer.create(fakeApp, logger).setup({ port: 8080 }).setLoaderFunction(fakeLoader).start()
+      await HttpServer.create(fakeApp, logger).setup({ port: 3000 }).setLoaderFunction(fakeLoader).start()
 
       expect(fakeLoader).toBeCalledTimes(1)
       expect(mockedServer.listen).toHaveBeenCalledTimes(1)
-      expect(mockedServer.listen).toHaveBeenCalledWith(8080)
+      expect(mockedServer.listen).toHaveBeenCalledWith(3000)
       expect(process.exit).not.toHaveBeenCalled()
     })
 
@@ -92,7 +104,7 @@ describe('HttpServer', () => {
       const fakeApp = jest.fn()
       const fakeLoader = jest.fn().mockRejectedValueOnce(new Error('Loader-error'))
 
-      await HttpServer.create(fakeApp, logger).setup({ port: 8080 }).setLoaderFunction(fakeLoader).start()
+      await HttpServer.create(fakeApp, logger).setup({ port: 3000 }).setLoaderFunction(fakeLoader).start()
 
       expect(logger.error).toBeCalledTimes(1)
       expect(process.exit).toBeCalledWith(1)
