@@ -30,8 +30,8 @@
   "scripts": {
     "prestart:local": "rm -rf ./build/local/ && tsc --outDir build/local/",
     "start:local": "HTTP_PORT=3000 node build/local/app.js",
-    "prestart": "rm -rf ./build/dist/ && tsc --outDir build/dist/",
-    "start": "node build/dist/app.js",
+    "build": "rm -rf ./build/dist/ && tsc --outDir build/dist/",
+    "start": "node app.js",
     "lint": "eslint --config .eslintrc.json --ext ts src tests",
     "test": "jest --collectCoverage"
   },
