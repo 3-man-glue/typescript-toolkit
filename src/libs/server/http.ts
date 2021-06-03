@@ -7,7 +7,7 @@ export class HttpServer {
 
   private server: Server
 
-  private port = 80
+  private port = 8080
 
   private logger: Logger
 
@@ -28,7 +28,7 @@ export class HttpServer {
   }
 
   public setup(config: Partial<HttpServerConfig>): HttpServer {
-    this.port = config.port ?? this.port
+    this.port = config.port ? config.port:this.port
 
     return this
   }
@@ -48,11 +48,11 @@ export class HttpServer {
   private bootstrap(): void {
     this.server.listen(this.port)
     this.server.on('listening', () => this.logger.info(`Listening via ${this.port}: ${process.cwd()}`))
-    this.server.on('error', this.raiseException)
+    this.server.on('error', (e) => this.raiseException(e))
   }
 
   private raiseException(e: Error): void {
-    this.logger.error('Server exception: ', { exception: e })
+    this.logger.error(`Unable to bootstrap HTTP server: ${e}`, { exception: e })
 
     process.exit(1)
   }
