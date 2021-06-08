@@ -2,9 +2,9 @@ import { PlainObject } from 'libs/common-types'
 export interface HttpExceptionObject {
   status: number
   message: string
-  code: string
-  input: PlainObject
-  cause: Error
+  code?: string
+  input?: PlainObject
+  cause?: Error
 }
 
 export interface HttpException {

@@ -4,11 +4,11 @@ import { PlainObject } from 'libs/common-types'
 export abstract class HttpException extends Error implements HttpExceptionInterface {
   public status: number
   public message: string
-  public code: string | undefined
-  public input: PlainObject | undefined = undefined
-  public cause: Error | undefined = undefined
+  public code?: string
+  public input?: PlainObject
+  public cause?: Error
 
-  constructor(status: number, message: string, code?: string | undefined) {
+  constructor(status: number, message: string, code?: string) {
     super(message)
 
     this.status = status
