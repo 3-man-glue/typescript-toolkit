@@ -11,6 +11,6 @@ export interface HttpContext<T extends ContextDto, K extends ContextDto> {
   response: K
   status: number
   identity: Identity
-  exception: HttpException
+  exception?: HttpException
   metadata: PlainObject
 }

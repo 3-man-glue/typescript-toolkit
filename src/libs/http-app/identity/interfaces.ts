@@ -1,5 +1,3 @@
-import { PlainObject } from 'libs/common-types'
-
 export interface IdentityObject {
   id: string,
   alias: string,
