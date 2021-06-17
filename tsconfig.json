@@ -45,10 +45,13 @@
   },
   "exclude": [
     "node_modules",
-    "tests",
     "build",
     "dist",
     "coverage"
+  ],
+  "include": [
+    "src",
+    "tests"
   ],
   "files": [
     "src/app.ts"
