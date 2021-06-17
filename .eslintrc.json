@@ -9,18 +9,18 @@
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended"
   ],
-  "ignorePatterns": [
-    "build/**",
-    "dist/**"
-  ],
-  "plugins": [
-    "@typescript-eslint"
-  ],
+  "ignorePatterns": ["build/**", "dist/**"],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "moduleDirectory": ["node_modules", "src/"]
+      },
+      "typescript": {}
+    }
+  },
+  "plugins": ["@typescript-eslint"],
   "rules": {
-    "indent": [
-      "error",
-      2
-    ],
+    "indent": ["error", 2],
     "eqeqeq": "error",
     "no-empty": "error",
     "no-return-await": "warn",
@@ -38,24 +38,15 @@
         "max": 4
       }
     ],
-    "max-depth": [
-      "warn",
-      4
-    ],
+    "max-depth": ["warn", 4],
     "no-console": "error",
     "no-unreachable-loop": "error",
     "no-param-reassign": "error",
-    "curly": [
-      "error",
-      "all"
-    ],
+    "curly": ["error", "all"],
     "no-warning-comments": "error",
     "radix": "error",
     "require-await": "error",
-    "array-bracket-spacing": [
-      "error",
-      "always"
-    ],
+    "array-bracket-spacing": ["error", "always"],
     "camelcase": [
       "error",
       {
