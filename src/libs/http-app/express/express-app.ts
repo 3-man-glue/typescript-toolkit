@@ -1,10 +1,12 @@
+import express, { Express, Request, Response } from 'express'
+import { Container } from 'typedi'
 import { ControllerConstructor } from 'libs/http-app/handler/controller'
 import { HttpApp } from './interfaces'
-import express, { Express, Request, Response } from 'express'
 
 export class ExpressApp implements HttpApp {
   private static appInstance: ExpressApp
   public engine: Readonly<Express>
+
   private constructor(express: Express) {
     this.engine = express
   }
@@ -19,13 +21,16 @@ export class ExpressApp implements HttpApp {
   }
 
   public attachController(Controller: ControllerConstructor): ExpressApp {
-    const controller = new Controller()
-    this.engine[Controller.method](Controller.path, async (req: Request, res: Response) => {
+    this.engine[ Controller.method ](Controller.path, async (req: Request, res: Response) => {
+      const controller = Container.has(Controller) ? Container.get(Controller):new Controller()
       controller.context.request = req
+
       await controller.invoke()
+
       const { context } = controller
       res.status(context.status).json(context.response)
     })
+
     return this
   }
 }
