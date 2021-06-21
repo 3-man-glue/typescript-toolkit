@@ -1,4 +1,4 @@
-import { HttpExceptionObject, HttpException as HttpExceptionInterface } from './interfaces'
+import { HttpException as HttpExceptionInterface, HttpExceptionObject } from './interfaces'
 import { PlainObject } from 'libs/common-types'
 
 export abstract class HttpException extends Error implements HttpExceptionInterface {
@@ -14,6 +14,7 @@ export abstract class HttpException extends Error implements HttpExceptionInterf
     this.status = status
     this.message = message
     this.code = code
+    this.name = code ?? this.name
   }
 
   public toJSON(): HttpExceptionObject {
@@ -22,7 +23,9 @@ export abstract class HttpException extends Error implements HttpExceptionInterf
       message: this.message,
       code: this.code,
       input: this.input,
-      cause: this.cause,
+      cause: this.cause
+        ? { message: this.cause.message, name: this.cause.name }
+        : undefined,
     }
   }
 

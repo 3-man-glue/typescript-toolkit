@@ -4,7 +4,7 @@ export interface HttpExceptionObject {
   message: string
   code?: string
   input?: PlainObject
-  cause?: Error
+  cause?: PlainObject
 }
 
 export interface HttpException {
