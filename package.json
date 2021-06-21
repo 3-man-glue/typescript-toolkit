@@ -33,6 +33,7 @@
   "scripts": {
     "prestart:local": "rm -rf ./build/local/ && tsc --outDir build/local/",
     "start:local": "HTTP_PORT=3000 node build/local/app.js",
+    "db:local": "docker-compose --env-file .env up -d",
     "build": "rm -rf ./build/dist/ && tsc --outDir build/dist/",
     "start": "node app.js",
     "lint": "eslint --config .eslintrc.json --ext ts src tests",
