@@ -1,7 +1,9 @@
 import express, { Express, Request, Response } from 'express'
 import { Container } from 'typedi'
-import { ControllerConstructor } from 'libs/http-app/handler/controller'
 import { HttpApp } from './interfaces'
+import { getEmptyContext } from '../context/context'
+import { ContextDto } from '../context/interfaces'
+import { ControllerConstructor } from '../handler/interfaces'
 
 export class ExpressApp implements HttpApp {
   private static appInstance: ExpressApp
@@ -20,15 +22,14 @@ export class ExpressApp implements HttpApp {
     return this.appInstance
   }
 
-  public attachController(Controller: ControllerConstructor): ExpressApp {
+  public attachController<P extends ControllerConstructor<Q, R>, Q extends ContextDto, R extends ContextDto>
+  (Controller: P): ExpressApp {
     this.engine[ Controller.method ](Controller.path, async (req: Request, res: Response) => {
-      const controller = Container.has(Controller) ? Container.get(Controller):new Controller()
-      controller.context.request = req
-
+      const controller = Container.has(Controller) ? Container.get(Controller) : new Controller()
+      const context = { ...getEmptyContext(), request: req as ContextDto as Q }
+      controller.setContext(context)
       await controller.invoke()
-
-      const { context } = controller
-      res.status(context.status).json(context.response)
+      res.status(controller.context.status).json(controller.context.response)
     })
 
     return this
