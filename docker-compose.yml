@@ -21,5 +21,5 @@ services:
       depends_on:
         - cassandra
       volumes:
-        - ./cassandra/schema.cql:/schema.cql 
+        - ./cassandra/broadcast.keyspace.${APP_ENV}.cql:/schema.cql 
       command: /bin/bash -c "sleep 60 && echo loading cassandra keyspace && cqlsh -u cassandra -p cassandra cassandra -f /schema.cql"
