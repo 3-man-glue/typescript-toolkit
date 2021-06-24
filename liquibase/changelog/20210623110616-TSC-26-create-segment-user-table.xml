@@ -1,0 +1,22 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+  <changeSet id="TSC-26-05-create-segment-user-table" author="Songpon Imyen &lt;simye@sertiscorp.com&gt;">
+    <sql>
+      create table if not exists broadcast.segment_user
+      (
+          segment_id uuid,
+          user_id uuid,
+          added_order timeuuid,
+          primary key ( (segment_id), added_order)
+      ) with clustering order by (added_order desc);
+    </sql>
+    <rollback>
+      <dropTable tableName="segment_user"/>
+    </rollback>
+  </changeSet>
+</databaseChangeLog>
