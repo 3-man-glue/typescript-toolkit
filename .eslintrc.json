@@ -43,6 +43,7 @@
     "no-unreachable-loop": "error",
     "no-param-reassign": "error",
     "curly": ["error", "all"],
+    "object-curly-spacing": ["error", "always"],
     "no-warning-comments": "error",
     "radix": "error",
     "require-await": "error",
@@ -81,6 +82,7 @@
       }
     ],
     "no-confusing-arrow": "error",
-    "no-useless-constructor": "error"
+    "no-useless-constructor": "error",
+    "semi": ["error", "never"]
   }
 }
