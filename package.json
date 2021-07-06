@@ -6,6 +6,8 @@
   "author": "Software Engineering Team <Sertis Co.Ltd.>",
   "license": "MIT",
   "dependencies": {
+    "cassandra-driver": "^4.6.3",
+    "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "module-alias": "^2.2.2",
     "reflect-metadata": "^0.1.13",
