@@ -1,4 +1,4 @@
-import { HttpContext } from 'libs/http-app/context/interfaces'
+import { HttpContext } from '@http/context/interfaces'
 
 export type ApiMethod = 'get' | 'post' | 'put' | 'patch' | 'delete'
 

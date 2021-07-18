@@ -1,10 +1,10 @@
 import 'reflect-metadata'
-import { Handler } from 'libs/http-app/handler/handler'
-import { ContextDto, HttpContext } from 'libs/http-app/context/interfaces'
-import { Anonymous } from 'libs/http-app/identity/anonymous'
-import { getEmptyContext } from 'libs/http-app/context/context'
-import { Actor } from 'libs/http-app/identity/actor'
 import { Container, Service } from 'typedi'
+import { Handler } from '@http/app/handler/handler'
+import { ContextDto, HttpContext } from '@http/context/interfaces'
+import { Anonymous } from '@http/identity/anonymous'
+import { getEmptyContext } from '@http/context/context'
+import { Actor } from '@http/identity/actor'
 
 describe('Handler Abstraction', () => {
   class IndependentHandlerA extends Handler<ContextDto, ContextDto> {

@@ -1,11 +1,15 @@
 import { HttpException as HttpExceptionInterface, HttpExceptionObject } from './interfaces'
-import { PlainObject } from 'libs/common-types'
+import { PlainObject } from 'common-types'
 
 export abstract class HttpException extends Error implements HttpExceptionInterface {
   public status: number
+
   public message: string
+
   public code?: string
+
   public input?: PlainObject
+
   public cause?: Error
 
   constructor(status: number, message: string, code?: string) {
@@ -35,11 +39,13 @@ export abstract class HttpException extends Error implements HttpExceptionInterf
 
   public withInput(value: PlainObject): this {
     this.input = value
+
     return this
   }
 
   public withCause(e: Error): this {
     this.cause = e
+
     return this
   }
 }

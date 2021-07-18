@@ -1,9 +1,11 @@
 import { Identity, IdentityObject } from './interfaces'
-import { IdentityException } from 'libs/http-app/exception/identity'
+import { IdentityException } from '@http/exception/identity'
 
 export class Actor implements Identity {
   public id: string
+
   public alias: string
+
   public externalId?: string
 
   constructor(id: string, alias: string, externalId?: string) {

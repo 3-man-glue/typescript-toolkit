@@ -1,5 +1,6 @@
-import { ConfigService } from 'libs/http-app/config/config'
+import { ConfigService } from '@config/config'
 import dotenv from 'dotenv'
+
 jest.mock('dotenv', () => {
   return {
     config: jest.fn().mockReturnValue({

@@ -1,5 +1,6 @@
-import { getInsertQueries, getSelectQuery } from 'libs/db/engine/generate-query'
-import { Operation } from 'libs/db/interfaces'
+import { getInsertQueries, getSelectQuery } from '@db/engine/generate-query'
+import { Operation } from '@db/interfaces'
+
 describe('GetInsertQuery', () => {
   const tableName = 'broadcast'
   it('should throw error given empty array', () => {

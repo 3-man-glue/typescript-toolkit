@@ -22,12 +22,14 @@
     "noPropertyAccessFromIndexSignature": true,
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
-    "baseUrl": "src/",
+    "baseUrl": "./src/",
     "paths": {
-      "*": [
-        "*",
-        "./src/*"
-      ]
+      "*": ["*", "./*"],
+      "@http/*": ["./http/*"],
+      "@db/*": ["./db/*"],
+      "@logger/*": ["./logger/*"],
+      "@config/*": ["./config/*"],
+
     },
     "rootDirs": [
       "src"

@@ -1,14 +1,8 @@
 import express from 'express'
-import logger from './libs/logger'
-import { HttpServer } from './libs/server/http'
-import { viewSystemUsage } from './libs/system-usage'
+import logger from './logger/logger'
+import { HttpServer } from '@http/server/http'
 
 const app = express()
-app.get('/health', (req, res) => {
-  req.body = {}
-
-  res.status(200).send(viewSystemUsage())
-})
 
 HttpServer.create(app, logger)
   .setup({

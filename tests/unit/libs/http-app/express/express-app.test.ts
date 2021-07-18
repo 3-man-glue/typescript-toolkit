@@ -1,10 +1,10 @@
 import 'reflect-metadata'
 import express, { Request, Response } from 'express'
 import { Service } from 'typedi'
-import { ApiMethod } from 'libs/http-app/handler/interfaces'
-import { Controller } from 'libs/http-app/handler/controller'
-import { ExpressApp } from 'libs/http-app/express/express-app'
-import { ContextDto } from 'libs/http-app/context/interfaces'
+import { ApiMethod } from '@http/app/handler/interfaces'
+import { Controller } from '@http/app/handler/controller'
+import { ExpressApp } from '@http/app/express/express-app'
+import { ContextDto } from '@http/context/interfaces'
 
 jest.mock('express', () => {
   return jest.fn().mockReturnValue({
@@ -20,6 +20,7 @@ afterEach(() => {
 
 class IndependentController extends Controller<ContextDto, ContextDto> {
   static method: ApiMethod = 'get'
+
   static api = { path: 'test' }
 
   protected handle(): void {
@@ -31,6 +32,7 @@ class IndependentController extends Controller<ContextDto, ContextDto> {
 @Service()
 class DependentController extends Controller<ContextDto, ContextDto> {
   static method: ApiMethod = 'post'
+
   static api = { path: 'test' }
 
   protected handle(): void {

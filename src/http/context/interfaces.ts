@@ -1,6 +1,6 @@
-import { PlainObject } from 'libs/common-types'
-import { Identity } from 'libs/http-app/identity/interfaces'
-import { HttpException } from 'libs/http-app/exception/http-exception'
+import { PlainObject } from 'common-types'
+import { Identity } from '@http/identity/interfaces'
+import { HttpException } from '@http/exception/http-exception'
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ContextDto {

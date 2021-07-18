@@ -1,12 +1,13 @@
 import express, { Express, Request, Response } from 'express'
 import { Container } from 'typedi'
 import { HttpApp } from './interfaces'
-import { getEmptyContext } from '../context/context'
-import { ContextDto } from '../context/interfaces'
+import { getEmptyContext } from '../../context/context'
+import { ContextDto } from '../../context/interfaces'
 import { ControllerConstructor } from '../handler/interfaces'
 
 export class ExpressApp implements HttpApp {
   private static appInstance: ExpressApp
+
   public engine: Readonly<Express>
 
   private constructor(express: Express) {
@@ -19,6 +20,7 @@ export class ExpressApp implements HttpApp {
     }
 
     this.appInstance = new ExpressApp(express())
+
     return this.appInstance
   }
 

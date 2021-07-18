@@ -1,9 +1,10 @@
-import { Handler as HandlerInterface, HandlerConstructor } from './interfaces'
-import { ContextDto, HttpContext } from '../context/interfaces'
 import { Container } from 'typedi'
+import { Handler as HandlerInterface, HandlerConstructor } from './interfaces'
+import { ContextDto, HttpContext } from '@http/context/interfaces'
 
 export abstract class Handler<T, K> implements HandlerInterface<T, K> {
   context!: HttpContext<T, K>
+
   protected NextHandlers: HandlerConstructor<ContextDto, ContextDto>[] = []
 
   public chain<P, Q>(Handler: HandlerConstructor<P, Q>): this {

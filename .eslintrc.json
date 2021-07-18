@@ -23,7 +23,7 @@
     "indent": ["error", 2],
     "eqeqeq": "error",
     "no-empty": "error",
-    "no-return-await": "warn",
+    "no-return-await": "error",
     "no-useless-return": "error",
     "max-len": [
       "error",
@@ -51,7 +51,7 @@
     "camelcase": [
       "error",
       {
-        "properties": "always",
+        "properties": "never",
         "ignoreDestructuring": true
       }
     ],
@@ -74,15 +74,14 @@
       }
     ],
     "no-trailing-spaces": "error",
-    "quotes": [
-      "error",
-      "single",
-      {
-        "avoidEscape": true
-      }
-    ],
+    "quotes": ["error", "single", { "avoidEscape": true } ],
     "no-confusing-arrow": "error",
     "no-useless-constructor": "error",
-    "semi": ["error", "never"]
+    "semi": ["error", "never"],
+    "newline-before-return": "error",
+    "lines-between-class-members": ["error", "always"],
+    "operator-linebreak": ["error", "before"],
+    "no-underscore-dangle": "error",
+    "no-duplicate-imports": "error"
   }
 }
