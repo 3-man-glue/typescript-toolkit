@@ -1,8 +1,8 @@
 import { Container } from 'typedi'
 import 'reflect-metadata'
 import cassandra from 'cassandra-driver'
-import { CassandraEngine } from 'libs/db/engine/cassandra-engine'
-import { Operation } from 'libs/db/interfaces'
+import { CassandraEngine } from '@db/engine/cassandra-engine'
+import { Operation } from '@db/interfaces'
 jest.mock('cassandra-driver')
 
 afterAll(() => {

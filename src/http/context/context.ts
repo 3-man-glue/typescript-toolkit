@@ -1,5 +1,5 @@
 import { HttpContext } from './interfaces'
-import { Anonymous } from 'libs/http-app/identity/anonymous'
+import { Anonymous } from '@http/identity/anonymous'
 
 export function getEmptyContext<T, K>(): HttpContext<T, K> {
   return {

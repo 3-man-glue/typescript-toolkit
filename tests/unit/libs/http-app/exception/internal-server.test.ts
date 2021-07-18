@@ -1,5 +1,5 @@
-import { InternalServerException } from 'libs/http-app/exception/internal-server'
-import { HttpException } from 'libs/http-app/exception/http-exception'
+import { InternalServerException } from '@http/exception/internal-server'
+import { HttpException } from '@http/exception/http-exception'
 
 describe('InternalServerException', () => {
   it('Should be implemented properly with default construction', () => {

@@ -1,8 +1,8 @@
 import { createServer, Server } from 'http'
-import { HttpServer } from 'libs/server/http'
-import logger from 'libs/logger'
+import { HttpServer } from '@http/server/http'
+import logger from '@logger/logger'
 
-jest.mock('libs/logger')
+jest.mock('@logger/logger')
 jest.mock('http')
 
 const mockedServer = {

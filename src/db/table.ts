@@ -1,10 +1,12 @@
-import { PlainObject } from 'libs/common-types'
-import { Engine } from 'libs/db/engine/interfaces'
-import { Condition, DataFactory, Query, Schema, State } from 'libs/db/interfaces'
+import { PlainObject } from 'common-types'
+import { Engine } from 'db/engine/interfaces'
+import { Condition, DataFactory, Query, Schema, State } from 'db/interfaces'
 
 export abstract class Table<T extends State> implements DataFactory<T>, Query<T> {
   private name: string
+
   protected engine: Engine
+
   protected schema: Schema
 
   constructor(engine: Engine, schema: Schema, name: string) {
@@ -15,6 +17,7 @@ export abstract class Table<T extends State> implements DataFactory<T>, Query<T>
 
   public async select(condition: Condition<T>): Promise<T[]> {
     const recordDto = await this.engine.select(condition, this.name)
+
     return recordDto.map((record) => this.stateObjectFactory(record))
   }
 

@@ -1,8 +1,8 @@
-import { HttpClient, ResponseHttp } from 'libs/http/client/interfaces'
-import { PlainObject } from 'libs/common-types'
-import { InternalServerException } from 'libs/http-app/exception/internal-server'
-import axios, { AxiosInstance } from 'axios'
 import { Service } from 'typedi'
+import axios, { AxiosInstance } from 'axios'
+import { PlainObject } from 'common-types'
+import { HttpClient, ResponseHttp } from '@http/client/interfaces'
+import { InternalServerException } from '@http/exception/internal-server'
 
 const ECONNREFUSED_CODE = 'ECONNREFUSED'
 const ECONNABORTED_CODE = 'ECONNABORTED'
@@ -11,7 +11,9 @@ const INTERNAL_EXCEPTION_CODES = [ ECONNREFUSED_CODE, ECONNABORTED_CODE ]
 @Service({ transient: true })
 export class AxiosHttpClient implements HttpClient {
   private readonly client: Readonly<AxiosInstance>
+
   private headers: PlainObject
+
   constructor(baseURL: string, timeout: number, headers: PlainObject) {
     this.headers = headers
     this.client = axios.create({
@@ -23,6 +25,7 @@ export class AxiosHttpClient implements HttpClient {
 
   setHeaders(headers: PlainObject): this {
     this.headers = { ...this.headers, ...headers }
+
     return this
   }
 
@@ -37,55 +40,60 @@ export class AxiosHttpClient implements HttpClient {
     try {
       const params = query || {}
       const { data, headers, status } = await this.client.get(url, this.getConfig(params))
+
       return { data, headers, status }
     } catch (error) {
       throw INTERNAL_EXCEPTION_CODES.includes(error.code)
         ? new InternalServerException(error.message).withCause(error)
-        : error
+        :error
     }
   }
 
   async post(url: string, data: PlainObject): Promise<ResponseHttp> {
     try {
       const { data: dataResponse, headers, status } = await this.client.post(url, data, this.getConfig())
+
       return { data: dataResponse, headers, status }
     } catch (error) {
       throw INTERNAL_EXCEPTION_CODES.includes(error.code)
         ? new InternalServerException(error.message).withCause(error)
-        : error
+        :error
     }
   }
 
   async put(url: string, data: PlainObject): Promise<ResponseHttp> {
     try {
-      const { data: dataResponse, headers, status } =  await this.client.put(url, data, this.getConfig())
+      const { data: dataResponse, headers, status } = await this.client.put(url, data, this.getConfig())
+
       return { data: dataResponse, headers, status }
     } catch (error) {
       throw INTERNAL_EXCEPTION_CODES.includes(error.code)
         ? new InternalServerException(error.message).withCause(error)
-        : error
+        :error
     }
   }
 
   async delete(url: string): Promise<ResponseHttp> {
     try {
-      const { data, headers, status } =  await this.client.delete(url, this.getConfig())
+      const { data, headers, status } = await this.client.delete(url, this.getConfig())
+
       return { data, headers, status }
     } catch (error) {
       throw INTERNAL_EXCEPTION_CODES.includes(error.code)
         ? new InternalServerException(error.message).withCause(error)
-        : error
+        :error
     }
   }
 
   async patch(url: string, data: PlainObject): Promise<ResponseHttp> {
     try {
       const { data: dataResponse, headers, status } = await this.client.patch(url, data, this.getConfig())
+
       return { data: dataResponse, headers, status }
     } catch (error) {
       throw INTERNAL_EXCEPTION_CODES.includes(error.code)
         ? new InternalServerException(error.message).withCause(error)
-        : error
+        :error
     }
   }
 }

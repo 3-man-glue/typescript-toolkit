@@ -1,4 +1,4 @@
-import { AxiosHttpClient } from 'libs/http/client/axios'
+import { AxiosHttpClient } from '@http/client/axios'
 import axios from 'axios'
 jest.mock('axios')
 

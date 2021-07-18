@@ -1,4 +1,4 @@
-import { Anonymous } from 'libs/http-app/identity/anonymous'
+import { Anonymous } from '@http/identity/anonymous'
 
 describe('Anonymous', () => {
 

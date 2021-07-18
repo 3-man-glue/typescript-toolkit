@@ -1,8 +1,8 @@
-import { PlainObject } from 'libs/common-types'
-import { Engine } from 'libs/db/engine/interfaces'
-import { Operation, Schema, State } from 'libs/db/interfaces'
-import { Table } from 'libs/db/table'
-import { DBException } from 'libs/http-app/exception/db-exception'
+import { PlainObject } from 'common-types'
+import { Engine } from '@db/engine/interfaces'
+import { Operation, Schema, State } from '@db/interfaces'
+import { Table } from '@db/table'
+import { DBException } from '@http/exception/db-exception'
 
 interface TestState extends State {
   attrA: string,
@@ -88,10 +88,10 @@ describe('Table Abstract', () => {
       } as unknown as Engine
       const tableUnderTest = new ConcreteTable(mockEngine)
 
-      const result = await tableUnderTest.select({ attrA: { order: 'asc' }})
+      const result = await tableUnderTest.select({ attrA: { order: 'asc' } })
 
       expect(result).toStrictEqual(recordState)
-      expect(mockEngine.select).toBeCalledWith({ attrA: { order: 'asc' }}, 'ConcreteTable')
+      expect(mockEngine.select).toBeCalledWith({ attrA: { order: 'asc' } }, 'ConcreteTable')
     })
 
     it('should throw an error when engine cannot select the given condition', async () => {
@@ -152,9 +152,9 @@ describe('Table Abstract', () => {
       } as unknown as Engine
       const tableUnderTest = new ConcreteTable(mockEngine)
 
-      await tableUnderTest.update(recordState, { attrA: { order: 'asc' }})
+      await tableUnderTest.update(recordState, { attrA: { order: 'asc' } })
 
-      expect(mockEngine.update).toBeCalledWith(recordDto, { attrA: { order: 'asc' }}, 'ConcreteTable')
+      expect(mockEngine.update).toBeCalledWith(recordDto, { attrA: { order: 'asc' } }, 'ConcreteTable')
     })
 
     it('should throw an error when engine cannot update the given records', async () => {
@@ -165,7 +165,7 @@ describe('Table Abstract', () => {
       let isThrown = false
 
       try {
-        await tableUnderTest.update(recordState, { attrA: { order: 'asc' }})
+        await tableUnderTest.update(recordState, { attrA: { order: 'asc' } })
       } catch (e) {
         isThrown = true
 
@@ -183,9 +183,9 @@ describe('Table Abstract', () => {
       } as unknown as Engine
       const tableUnderTest = new ConcreteTable(mockEngine)
 
-      await tableUnderTest.delete({ attrA: {[Operation.EQ]: 'a1' }})
+      await tableUnderTest.delete({ attrA: { [Operation.EQ]: 'a1' } })
 
-      expect(mockEngine.delete).toBeCalledWith({ attrA: {[Operation.EQ]: 'a1' }}, 'ConcreteTable')
+      expect(mockEngine.delete).toBeCalledWith({ attrA: { [Operation.EQ]: 'a1' } }, 'ConcreteTable')
       expect(mockEngine.delete).toBeCalledTimes(1)
     })
 
@@ -197,7 +197,7 @@ describe('Table Abstract', () => {
       let isThrown = false
 
       try {
-        await tableUnderTest.delete({ attrA: {[Operation.EQ]: 'a1' }})
+        await tableUnderTest.delete({ attrA: { [Operation.EQ]: 'a1' } })
       } catch (e) {
         isThrown = true
 

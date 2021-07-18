@@ -3,11 +3,15 @@ module.exports = {
   testEnvironment: 'node',
   coverageProvider: 'v8',
   collectCoverageFrom: [ 'src/**/*.ts' ],
-  coveragePathIgnorePatterns: [ 'src/app.ts', 'interfaces.ts' ],
+  coveragePathIgnorePatterns: [ 'interfaces.ts' ],
   timers: 'modern',
   injectGlobals: true,
   verbose: true,
   moduleNameMapper: {
-    '^libs/(.*)$': '<rootDir>/src/libs/$1',
+    '^@logger/(.*)$': '<rootDir>/src/logger/$1',
+    '^@http/(.*)$': '<rootDir>/src/http/$1',
+    '^@db/(.*)$': '<rootDir>/src/db/$1',
+    '^@config/(.*)$': '<rootDir>/src/config/$1',
   },
+  roots: [ '<rootDir>/tests/' ],
 }

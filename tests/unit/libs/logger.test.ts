@@ -40,7 +40,7 @@ describe('createLogger', () => {
         ],
       }
 
-      jest.isolateModules(() => jest.requireActual('libs/logger'))
+      jest.isolateModules(() => jest.requireActual('@logger/logger'))
 
       expect(createLogger).toHaveBeenCalledTimes(1)
       expect(createLogger).toHaveBeenNthCalledWith(1, expectedParams)
@@ -58,7 +58,7 @@ describe('createLogger', () => {
         ],
       }
 
-      jest.isolateModules(() => jest.requireActual('libs/logger'))
+      jest.isolateModules(() => jest.requireActual('@logger/logger'))
 
       expect(createLogger).toHaveBeenCalledTimes(1)
       expect(createLogger).toHaveBeenNthCalledWith(1, expectedParams)

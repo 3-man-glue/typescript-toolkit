@@ -1,7 +1,7 @@
-import { DBException } from 'libs/http-app/exception/db-exception'
-import { ReturnedQuery } from 'libs/db/engine/interfaces'
-import { PlainObject } from 'libs/common-types'
-import { Operation, Condition } from 'libs/db/interfaces'
+import { PlainObject } from 'common-types'
+import { DBException } from '@http/exception/db-exception'
+import { Operation, Condition } from '@db/interfaces'
+import { ReturnedQuery } from '@db/engine/interfaces'
 
 const CONSTANTS_KEY = {
   ORDER: 'order',
@@ -22,7 +22,7 @@ export const getInsertQueries = (data: PlainObject[], tableName: string): Return
   return data.map((payload: PlainObject) => {
     const fields = Object.keys(payload)
     const payloadLength = Object.keys(payload).length
-    const substitutionStrings = Array.from({length: payloadLength}).fill('?')
+    const substitutionStrings = Array.from({ length: payloadLength }).fill('?')
 
     return {
       query: `${baseQuery} (${fields}) VALUES (${substitutionStrings})`,
@@ -65,6 +65,7 @@ const getSelectQueryString = <T>(condition: T, tableName: string): string => {
     if (!operationKey) {
       return ''
     }
+
     return `${key} ${operationKey as OperationStrings} ?`
   }).filter(Boolean)
 
