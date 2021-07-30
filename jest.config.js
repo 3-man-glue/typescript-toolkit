@@ -12,6 +12,10 @@ module.exports = {
     '^@http/(.*)$': '<rootDir>/src/http/$1',
     '^@db/(.*)$': '<rootDir>/src/db/$1',
     '^@config/(.*)$': '<rootDir>/src/config/$1',
+    '^@utils/(.*)$': '<rootDir>/src/utils/$1',
+    '^@ddd/(.*)$': '<rootDir>/src/ddd/$1',
+    '^@cache/(.*)$': '<rootDir>/src/cache/$1',
+    '^@mq/(.*)$': '<rootDir>/src/mq/$1',
   },
   roots: [ '<rootDir>/tests/' ],
 }
