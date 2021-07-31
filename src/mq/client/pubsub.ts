@@ -1,6 +1,6 @@
 import { PubSub, Message } from '@google-cloud/pubsub'
 import { PlainObject } from '@utils/common-types'
-import { Logger } from '@logger/logger'
+import { Logger } from '@utils/logger'
 import { Service } from 'typedi'
 import { GoogleCloudConfig, NackFunction, PubSubClient } from './interfaces'
 

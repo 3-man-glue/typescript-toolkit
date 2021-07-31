@@ -1,4 +1,4 @@
-import { Logger } from '@logger/logger'
+import { Logger } from '@utils/logger'
 import Container from 'typedi'
 import { LoaderFunction, SubscriberConstructor } from './interfaces'
 
