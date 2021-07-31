@@ -4,7 +4,7 @@ import { Condition } from '@db/interfaces'
 import cassandra from 'cassandra-driver'
 import { Engine as EngineInterface } from '@db/engine/interfaces'
 import { ConfigService } from '@config/config'
-import { PlainObject } from 'common-types'
+import { PlainObject } from '@utils/common-types'
 import { Service } from 'typedi'
 
 @Service()

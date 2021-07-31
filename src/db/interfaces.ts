@@ -1,4 +1,4 @@
-import { PlainObject } from 'common-types'
+import { PlainObject } from '@utils/common-types'
 
 export enum Operation {
   EQ = '=',

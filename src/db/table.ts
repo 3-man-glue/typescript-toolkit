@@ -1,4 +1,4 @@
-import { PlainObject } from 'common-types'
+import { PlainObject } from '@utils/common-types'
 import { Engine } from 'db/engine/interfaces'
 import { Condition, DataFactory, Query, Schema, State } from 'db/interfaces'
 
