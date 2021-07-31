@@ -1,6 +1,6 @@
 import { createServer, RequestListener, Server } from 'http'
 import { HttpServerConfig, LoaderFunction } from './interfaces'
-import { Logger } from '@logger/logger'
+import { Logger } from '@utils/logger'
 
 export class HttpServer {
   private static httpServer: HttpServer

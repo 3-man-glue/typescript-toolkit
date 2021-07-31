@@ -1,4 +1,4 @@
-import { PlainObject } from 'common-types'
+import { PlainObject } from '@utils/common-types'
 import { Identity } from '@http/identity/interfaces'
 import { HttpException } from '@http/exception/http-exception'
 

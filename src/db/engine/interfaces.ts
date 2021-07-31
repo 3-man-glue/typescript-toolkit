@@ -1,5 +1,5 @@
 import { Condition } from 'db/interfaces'
-import { PlainObject } from 'common-types'
+import { PlainObject } from '@utils/common-types'
 
 export interface Engine {
   select<T>(condition: Condition<T>, tableName: string): Promise<PlainObject[]>

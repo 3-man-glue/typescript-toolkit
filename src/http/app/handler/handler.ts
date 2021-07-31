@@ -16,11 +16,11 @@ export abstract class Handler<T, K> implements HandlerInterface<T, K> {
   public async invoke(): Promise<void> {
     try {
       await this.handle()
+      await this.next()
     } catch (e) {
       this.context.exception = e
+      throw e
     }
-
-    await this.next()
   }
 
   public setContext<P, Q>(context: HttpContext<P, Q>): this {

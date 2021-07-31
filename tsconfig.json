@@ -29,6 +29,10 @@
       "@db/*": ["./db/*"],
       "@logger/*": ["./logger/*"],
       "@config/*": ["./config/*"],
+      "@utils/*": ["./utils/*"],
+      "@ddd/*": ["./ddd/*"],
+      "@cache/*": ["./cache/*"],
+      "@mq/*": ["./mq/*"],
 
     },
     "rootDirs": [

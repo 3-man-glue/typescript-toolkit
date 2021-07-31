@@ -1,30 +1,30 @@
-import path from 'path'
-import { Api as ApiInterface, ApiMethod } from './interfaces'
 import { HttpContext } from '@http/context/interfaces'
 import { Handler } from './handler'
 
 export abstract class Controller<T, K> extends Handler<T, K> {
-  public static api: ApiInterface
-
-  public static method: ApiMethod
-
   public context!: HttpContext<T, K>
 
-  static get path(): string {
-    const { domain = '', version = '', path: routePath } = this.api
-
-    return path.join('/', domain, version, routePath)
+  protected get request(): Readonly<T> {
+    return Object.freeze(this.context.request)
   }
 
-  get request(): T {
-    return this.context.request
-  }
-
-  set response(value: K) {
+  protected set response(value: K) {
     this.context.response = value
   }
 
-  set status(value: number) {
+  protected set status(value: number) {
     this.context.status = value
+  }
+
+  protected get params(): Readonly<Record<string, unknown>> {
+    return Object.freeze({ ...(this.context.metadata[ 'reqParams' ] as Record<string, unknown>) })
+  }
+
+  protected get query(): Readonly<Record<string, unknown>> {
+    return Object.freeze({ ...(this.context.metadata[ 'reqQuery' ] as Record<string, unknown>) })
+  }
+
+  protected get headers(): Readonly<Record<string, unknown>> {
+    return Object.freeze({ ...(this.context.metadata[ 'reqHeaders' ] as Record<string, unknown>) })
   }
 }
