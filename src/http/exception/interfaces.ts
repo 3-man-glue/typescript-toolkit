@@ -1,4 +1,5 @@
-import { PlainObject } from 'common-types'
+import { PlainObject } from '@utils/common-types'
+
 export interface HttpExceptionObject {
   status: number
   message: string
