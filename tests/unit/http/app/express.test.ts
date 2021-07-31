@@ -1,6 +1,6 @@
 import 'reflect-metadata'
 import express, { Request, Response } from 'express'
-import logger from '@logger/logger'
+import logger from '@utils/logger'
 import { Controller } from '@http/app/handler/controller'
 import { Get } from '@http/app/handler/route-builder'
 import { ContextDto } from '@http/context/interfaces'

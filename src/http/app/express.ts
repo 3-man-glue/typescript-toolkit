@@ -5,7 +5,7 @@ import { ContextDto, HttpContext } from '@http/context/interfaces'
 import { RouteBuilder } from './handler/interfaces'
 import { HttpException } from '@http/exception/http-exception'
 import { InternalServerException } from '@http/exception/internal-server'
-import logger from '@logger/logger'
+import logger from '@utils/logger'
 
 export class ExpressApp implements HttpApp {
   private static appInstance: ExpressApp

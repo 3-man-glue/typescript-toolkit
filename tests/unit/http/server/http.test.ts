@@ -1,8 +1,8 @@
 import { createServer, Server } from 'http'
 import { HttpServer } from '@http/server/http'
-import logger from '@logger/logger'
+import logger from '@utils/logger'
 
-jest.mock('@logger/logger')
+jest.mock('@utils/logger')
 jest.mock('http')
 
 const mockedServer = {
@@ -38,7 +38,6 @@ describe('HttpServer', () => {
 
   describe('start()', () => {
     beforeEach(() => {
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       jest.spyOn(process, 'exit').mockImplementation()
     })
 
