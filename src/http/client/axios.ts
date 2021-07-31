@@ -1,6 +1,6 @@
 import { Service } from 'typedi'
 import axios, { AxiosInstance } from 'axios'
-import { PlainObject } from 'common-types'
+import { PlainObject } from '@utils/common-types'
 import { HttpClient, ResponseHttp } from '@http/client/interfaces'
 import { InternalServerException } from '@http/exception/internal-server'
 
