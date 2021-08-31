@@ -30,7 +30,8 @@
  *  }
  *  ```
  */
-import { Identity } from '@http/identity/interfaces'
+
+import { Identity, PlainObject } from '@utils/common-types'
 
 export interface UseCase<T = void, K = void> {
   execute(input: T): K | Promise<K>
@@ -58,6 +59,7 @@ export interface DomainEvent<T extends DomainState, K extends EventParams = Reco
   timestamp: Readonly<number>
   params: Readonly<K>
   context: EventContext<T>
+  toJSON(): PlainObject
 }
 
 export interface DomainState {
@@ -78,4 +80,8 @@ export interface EventEmitter<T extends DomainState> {
   emit<K extends EventParams = Record<string, unknown>>(Event: EventConstructor<T, K>, params?: K): this
 
   commit(): DomainEvent<T>[]
+}
+
+export interface Publisher<T extends DomainState> {
+  publish(event: EventEmitter<T>, topic: string): Promise<void>
 }

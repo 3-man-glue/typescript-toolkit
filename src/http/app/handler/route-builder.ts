@@ -4,6 +4,7 @@ import {
   ApiMethod,
   ContextMapper,
   HandlerConstructor,
+  Middleware,
   RouteBuilder as RouteBuilderInterface
 } from '@http/app/handler/interfaces'
 import { ContextDto } from '@http/context/interfaces'
@@ -19,7 +20,7 @@ export function Post(api: Api): RouteBuilderInterface {
 }
 
 function createBaseBuilder(api: Api): RouteBuilderInterface {
-  const { domain = 'platform', version = '', path: routePath } = api
+  const { domain = '', version = '', path: routePath } = api
 
   return new RouteBuilder().setMethod('get').setPath(path.join('/', domain, version, routePath))
 }
@@ -29,12 +30,24 @@ class RouteBuilder implements RouteBuilderInterface {
 
   protected path!: string
 
+  #middlewares: Middleware[] = []
+
   protected method!: ApiMethod
 
   protected mapper!: ContextMapper
 
   public setChain(...HandlerChain: HandlerConstructor<ContextDto, ContextDto>[]): RouteBuilder {
     this.Chain = HandlerChain
+
+    return this
+  }
+
+  get middlewares(): Middleware[] {
+    return this.#middlewares
+  }
+
+  public setMiddlewares(...middlewares: Middleware[]): RouteBuilder {
+    this.#middlewares = middlewares
 
     return this
   }

@@ -1,7 +1,7 @@
 import { PlainObject } from '@utils/common-types'
 
 export type ResponseHttp = {
-  data: PlainObject
+  data: unknown
   headers: PlainObject
   status: number
 }

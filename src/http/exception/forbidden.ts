@@ -1,4 +1,4 @@
-import { HttpException } from './http-exception'
+import { HttpException } from '@http/exception/http-exception'
 
 export class ForbiddenException extends HttpException {
   constructor(message?: string) {

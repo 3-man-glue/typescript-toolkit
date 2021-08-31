@@ -2,4 +2,4 @@ export interface HttpServerConfig {
   port: number
 }
 
-export type LoaderFunction = () => Promise<void>
+export type LoaderFunction = () => Promise<void> | void

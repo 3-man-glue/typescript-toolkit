@@ -3,6 +3,8 @@ import { DomainState, EventConstructor, EventEmitter as EventEmitterInterface, E
 import { DomainEvent } from '@ddd/event'
 
 export class DomainEventEmitter<T extends DomainState> extends Entity<T> implements EventEmitterInterface<T> {
+  protected idPrefix!: string
+
   protected events: DomainEvent<T>[] = []
 
   get changedEvents(): Readonly<DomainEvent<T>[]> {
