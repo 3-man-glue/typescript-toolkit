@@ -1,6 +1,7 @@
 import { DomainEvent as DomainEventInterface, DomainState, EventContext, EventParams } from '@ddd/interfaces'
 import IdGen from '@utils/id-generator'
 import { Identity } from '@http/identity/interfaces'
+import { PlainObject } from '@utils/common-types'
 
 export abstract class DomainEvent<T extends DomainState, K extends EventParams = Record<string, unknown>>
 implements DomainEventInterface<T, K> {
@@ -23,5 +24,17 @@ implements DomainEventInterface<T, K> {
   constructor(id?: string, timestamp?: number) {
     this.id = id ?? IdGen.cuid({ value: 'EV' })
     this.timestamp = timestamp ?? Date.now()
+  }
+
+  public toJSON(): PlainObject {
+    return Object.freeze({
+      id: this.id,
+      timestamp: this.timestamp,
+      action: this.action,
+      params: this.params,
+      context: this.context,
+      subject: this.subject,
+      subjectId: this.subjectId,
+    })
   }
 }

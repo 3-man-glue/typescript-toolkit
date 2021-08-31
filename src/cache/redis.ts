@@ -59,4 +59,8 @@ export class Redis implements CacheInterface {
       })
     })
   }
+
+  public closeConnection(): void {
+    this.client.end()
+  }
 }

@@ -39,10 +39,17 @@ export class HttpServer {
     return this
   }
 
-  public start(): Promise<void> {
-    return this.loader()
-      .then(() => this.bootstrap())
-      .catch((e) => this.raiseException(e))
+  public async start(): Promise<void> {
+    try {
+      await this.loader()
+      this.bootstrap()
+    } catch (e) {
+      this.raiseException(e)
+    }
+  }
+
+  public async stop(): Promise<void> {
+    await this.server.close()
   }
 
   private bootstrap(): void {

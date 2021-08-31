@@ -51,10 +51,10 @@ describe('Route builder', () => {
   })
 
   describe('builder', () => {
-    it('should set /platform as a default domain path by default', () => {
+    it('should set / as a default domain path by default', () => {
       const route = Get({ path: '' }).setChain(jest.fn()).setContextMapper(jest.fn()).build()
 
-      expect(route.path).toBe('/platform')
+      expect(route.path).toBe('/')
     })
 
     it('should throw when build without setup', () => {

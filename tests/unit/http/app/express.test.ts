@@ -1,5 +1,5 @@
 import 'reflect-metadata'
-import express, { Request, Response } from 'express'
+import express, { NextFunction, Request, Response } from 'express'
 import logger from '@utils/logger'
 import { Controller } from '@http/app/handler/controller'
 import { Get } from '@http/app/handler/route-builder'
@@ -7,9 +7,15 @@ import { ContextDto } from '@http/context/interfaces'
 import { InternalServerException } from '@http/exception/internal-server'
 import { HttpException } from '@http/exception/http-exception'
 import { ExpressApp } from '@http/app/express'
+import { Middleware } from '@http/app/handler/interfaces'
 
 jest.mock('express', () => {
-  return jest.fn().mockReturnValue({ get: jest.fn(), post: jest.fn() })
+  const express = jest.fn().mockReturnValue({ get: jest.fn(), post: jest.fn(), use: jest.fn() })
+  // eslint-disable-next-line
+  // @ts-ignore
+  express.json = jest.fn()
+
+  return express
 })
 
 class MockController extends Controller<Record<string, never>, ContextDto> {
@@ -43,7 +49,29 @@ describe('ExpressApp', () => {
       app.registerRoute(routeBuilder)
 
       expect(app.engine.get).toHaveBeenCalledTimes(1)
-      expect(app.engine.get).toHaveBeenCalledWith('/platform/path', expect.any(Function))
+      expect(app.engine.get).toHaveBeenCalledWith('/path', expect.any(Function))
+    })
+  })
+
+  describe('Express Route middleware', () => {
+    const mockNextFn = jest.fn() as unknown as NextFunction
+
+    it('should call next properly', async () => {
+      const mockMiddleware = jest.fn((_req: Request, _res: Response, next: NextFunction) => {
+        next()
+      })
+      const app = ExpressApp.instance.registerRoute(
+        Get({ path: '/path' }).setMiddlewares(mockMiddleware as unknown as Middleware).setChain(MockController),
+      )
+      const expressRouteHandlerArgs = jest.spyOn(app.engine, 'get').mock.calls[ 0 ]
+      const middlewareHandler = expressRouteHandlerArgs ? expressRouteHandlerArgs[ 1 ] : undefined
+
+      if (middlewareHandler) {
+        await middlewareHandler(jest.fn() as unknown as Request, jest.fn() as unknown as Response, mockNextFn)
+      }
+
+      expect(mockNextFn).toHaveBeenCalledTimes(1)
+      expect(mockNextFn).toHaveBeenCalledWith()
     })
   })
 
@@ -53,8 +81,7 @@ describe('ExpressApp', () => {
       json: jest.fn().mockReturnThis(),
     } as unknown as Response
 
-    class ExceptionWithoutCode extends HttpException {
-    }
+    class ExceptionWithoutCode extends HttpException {}
 
     beforeEach(() => {
       jest.spyOn(logger, 'error').mockImplementation()
@@ -63,7 +90,7 @@ describe('ExpressApp', () => {
     it('should respond to client properly', async () => {
       const app = ExpressApp.instance.registerRoute(Get({ path: '/path' }).setChain(MockController))
       const expressRouteHandlerArgs = jest.spyOn(app.engine, 'get').mock.calls[ 0 ]
-      const routeHandler = expressRouteHandlerArgs ? expressRouteHandlerArgs[ 1 ]: undefined
+      const routeHandler = expressRouteHandlerArgs ? expressRouteHandlerArgs[ 1 ] : undefined
       const expectedJson = { mock: 'response' }
 
       if (routeHandler) {
@@ -79,7 +106,7 @@ describe('ExpressApp', () => {
     it('should intercept with error response when response object failed with standard error', async () => {
       const app = ExpressApp.instance.registerRoute(Get({ path: '/path' }).setChain(MockController))
       const expressRouteHandlerArgs = jest.spyOn(app.engine, 'get').mock.calls[ 0 ]
-      const routeHandler = expressRouteHandlerArgs ? expressRouteHandlerArgs[ 1 ]: undefined
+      const routeHandler = expressRouteHandlerArgs ? expressRouteHandlerArgs[ 1 ] : undefined
       const expectedJson = { mock: 'response' }
       const expectedErrorJson = { code: 'InternalServerException', message: new InternalServerException().message }
       mockResFn.json = jest.fn().mockImplementationOnce(() => {
@@ -102,7 +129,7 @@ describe('ExpressApp', () => {
     it('should intercept with error response when response object failed with http exception', async () => {
       const app = ExpressApp.instance.registerRoute(Get({ path: '/path' }).setChain(MockController))
       const expressRouteHandlerArgs = jest.spyOn(app.engine, 'get').mock.calls[ 0 ]
-      const routeHandler = expressRouteHandlerArgs ? expressRouteHandlerArgs[ 1 ]: undefined
+      const routeHandler = expressRouteHandlerArgs ? expressRouteHandlerArgs[ 1 ] : undefined
       const expectedJson = { mock: 'response' }
       const expectedErrorJson = { message: 'exception without code' }
       mockResFn.json = jest.fn().mockImplementationOnce(() => {

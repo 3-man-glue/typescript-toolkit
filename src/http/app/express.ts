@@ -1,4 +1,4 @@
-import express, { Express, Request, Response } from 'express'
+import express, { Express, NextFunction, Request, Response } from 'express'
 import { HttpApp } from './interfaces'
 import { getEmptyContext } from '@http/context/context'
 import { ContextDto, HttpContext } from '@http/context/interfaces'
@@ -7,13 +7,16 @@ import { HttpException } from '@http/exception/http-exception'
 import { InternalServerException } from '@http/exception/internal-server'
 import logger from '@utils/logger'
 
+export type ExpressHandler = (req: Request, res: Response, next: NextFunction) => Promise<void>
+
 export class ExpressApp implements HttpApp {
   private static appInstance: ExpressApp
 
   public engine: Express
 
-  private constructor(express: Express) {
-    this.engine = express
+  private constructor(expressInstance: Express) {
+    this.engine = expressInstance
+    this.engine.use(express.json())
   }
 
   static get instance(): ExpressApp {
@@ -27,7 +30,7 @@ export class ExpressApp implements HttpApp {
 
   public registerRoute(builder: RouteBuilder): ExpressApp {
     const route = builder.setContextMapper(mapper).build()
-    this.engine[ route.method ](route.path, async (req: Request, res: Response) => {
+    this.engine[ route.method ](route.path, ...builder.middlewares, async (req: Request, res: Response) => {
       try {
         const { status, response } = await route.handle(req, res)
         res.status(status).json(response)
@@ -35,7 +38,7 @@ export class ExpressApp implements HttpApp {
         const exception = e instanceof HttpException ? e : new InternalServerException().withCause(e)
 
         res.status(exception.status).json(formatErrorResponse(exception))
-        logger.error(exception.toString())
+        logger.error(exception)
       }
     })
 
@@ -44,14 +47,10 @@ export class ExpressApp implements HttpApp {
 }
 
 function formatErrorResponse(e: HttpException): Record<string, string> {
-  return Object.assign(
-    {},
-    e.code ? { code: e.code }: undefined,
-    { message: e.message },
-  )
+  return Object.assign({}, e.code ? { code: e.code } : undefined, { message: e.message })
 }
 
-function mapper(req: Request): HttpContext<ContextDto, ContextDto> {
+export function mapper(req: Request): HttpContext<ContextDto, ContextDto> {
   return {
     ...getEmptyContext(),
     request: req.body as ContextDto,
@@ -59,6 +58,7 @@ function mapper(req: Request): HttpContext<ContextDto, ContextDto> {
       reqParams: Object.freeze(req.params),
       reqQuery: Object.freeze(req.query),
       reqHeaders: Object.freeze(req.headers),
+      reqFiles: Object.freeze(req.files) ?? [ Object.freeze(req.file) ],
     },
   }
 }
