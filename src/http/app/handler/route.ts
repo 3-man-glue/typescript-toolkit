@@ -3,7 +3,7 @@ import {
   ApiMethod,
   ContextMapper,
   HandlerConstructor,
-  Route as RouteInterface
+  RouteInterface
 } from '@http/app/handler/interfaces'
 import { ContextDto, HttpContext } from '@http/context/interfaces'
 import { InternalServerException } from '@http/exception/internal-server'

@@ -1,5 +1,5 @@
 import { Logger } from '@utils/logger'
-import { Subscription } from '@mq/server/subscription'
+import { Subscription } from '@mq/subscription'
 import { BaseSubscriber } from '@mq/subscriber'
 import Container, { Service } from 'typedi'
 import { MessageDto } from '@mq/interfaces'

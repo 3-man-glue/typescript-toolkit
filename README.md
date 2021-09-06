@@ -2,6 +2,8 @@
 
 TypeScript template components for backend HTTP/S application
 
+### Install
+  * run `yarn add git+ssh://git@gitlab.com:sertiscorp/dev/7-11-chat/backend/ts-http-toolkit.git#{branch|tag}`
 #### Run Cassandra database local
   * required `docker, docker-compose`
   * please make sure you have `APP_ENV` key on .env (or copy `.env.example` to `.env`)
