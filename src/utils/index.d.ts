@@ -7,8 +7,14 @@ interface PrefixOptions {
   value: string
   delimiter?: string
 }
+
 declare function cuid(prefix?: PrefixOptions): string
 declare function nanoid(length?: number, prefix?: PrefixOptions): string
+declare const IdGenerator: {
+    cuid: typeof cuid;
+    nanoid: typeof nanoid;
+}
+declare const logger: WinstonLogger
 
 export declare class JoiValidator implements JsonSchemaValidator {
   validate<T extends DataValidator>(data: T, schema: JoiSchemaValidator): boolean

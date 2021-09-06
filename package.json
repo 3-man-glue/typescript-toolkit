@@ -10,7 +10,7 @@
     "@sertiscorp:registry": "https://gitlab.com/api/v4/projects/25743614/packages/npm/"
   },
   "exports": {
-     ".": "./src/index.js",
+     ".": "./src/index.ts",
     "./*": "./src/*"
   },
    "typesVersions": {
