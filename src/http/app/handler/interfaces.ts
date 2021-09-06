@@ -34,7 +34,7 @@ export type ContextMapper = (...args: any[]) => HttpContext<ContextDto, ContextD
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Middleware extends ExpressHandler {}
-export interface Route {
+export interface RouteInterface {
   path: string
 
   method: ApiMethod
@@ -55,7 +55,7 @@ export interface RouteBuilder {
 
   setChain(...HandlerChain: HandlerConstructor<ContextDto, ContextDto>[]): RouteBuilder
 
-  build(): Route
+  build(): RouteInterface
 
   middlewares: Middleware[]
 }

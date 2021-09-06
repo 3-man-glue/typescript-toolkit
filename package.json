@@ -1,10 +1,23 @@
 {
   "name": "ts-http-toolkit",
   "version": "1.0.0",
-  "main": "app.js",
+  "main": "src/index.ts",
+  "types": "src/index.d.ts",
   "repository": "git@gitlab.com:sertiscorp/dev/7-11-chat/backend/ts-http-toolkit.git",
   "author": "Software Engineering Team <Sertis Co.Ltd.>",
   "license": "MIT",
+  "publishConfig": {
+    "@sertiscorp:registry": "https://gitlab.com/api/v4/projects/25743614/packages/npm/"
+  },
+  "exports": {
+     ".": "./src/index.js",
+    "./*": "./src/*"
+  },
+   "typesVersions": {
+    "*": {
+      "*": [ "src/*", "src/*/index.d.ts" ]
+    }
+  },
   "dependencies": {
     "@elastic/ecs-winston-format": "^1.3.0",
     "@google-cloud/pubsub": "^2.16.1",
@@ -55,7 +68,7 @@
     "migration:down:local": "yarn run migration:setup && docker-compose -f docker-compose.liquibase.yml up rollback && docker-compose -f docker-compose.liquibase.yml rm -fsv",
     "migration:history": "yarn run migration:setup && docker-compose -f docker-compose.liquibase.yml up history && docker-compose -f docker-compose.liquibase.yml rm -fsv",
     "start": "node app.js",
-    "lint": "eslint --config .eslintrc.json --ext ts src tests",
+    "lint": "eslint --config .eslintrc.json --ext ts,.d.ts src tests",
     "test": "jest --collectCoverage"
   },
   "eslintIgnore": [
