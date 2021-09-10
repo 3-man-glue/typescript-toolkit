@@ -1,5 +1,5 @@
-import { Identity, IdentityObject } from './interfaces'
 import { IdentityException } from '@http/exception/identity'
+import { Identity, IdentityObject } from '@utils/common-types'
 
 export class Actor implements Identity {
   public id: string

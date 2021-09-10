@@ -8,7 +8,7 @@ export interface HttpExceptionObject {
   cause?: PlainObject
 }
 
-export interface HttpException {
+export interface HttpExceptionInterface {
   status: number
   message: string
   code?: string

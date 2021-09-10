@@ -1,7 +1,7 @@
 import { Service } from 'typedi'
 import Joi from 'joi'
-import { DataValidator } from '@http/app/handler/interfaces'
 import { JsonSchemaValidator, JoiSchemaValidator } from '@http/app/validator/interfaces'
+import { DataValidator } from '@utils/validator/interfaces'
 
 const pick = <T, K extends keyof T>(fields: K[], data: T): Partial<T> => {
   return Object.keys(data).reduce((result: Partial<T>, key: string) => {

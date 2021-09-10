@@ -15,4 +15,5 @@ export type DataValidator = {
   params?: PlainObject
   body?: PlainObject
   query?: PlainObject
+  headers?: PlainObject
 }

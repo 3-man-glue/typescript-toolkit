@@ -1,4 +1,4 @@
-import { DomainState, Entity as EntityInterface } from '@ddd/interfaces'
+import { DomainState, EntityInterface } from '@ddd/interfaces'
 import IdGen from '@utils/id-generator'
 
 export abstract class Entity<T extends DomainState> implements EntityInterface<T> {

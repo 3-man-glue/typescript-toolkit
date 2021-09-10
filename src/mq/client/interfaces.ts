@@ -1,9 +1,5 @@
 import { PlainObject } from '@utils/common-types'
 import { MessageDto } from '@mq/interfaces'
-
-export type GoogleCloudConfig = {
-  projectId: string
-}
 export type NackFunction = () => void
 
 export interface PubSubClient<T> {

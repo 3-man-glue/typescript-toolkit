@@ -1,5 +1,4 @@
-import { PlainObject } from '@utils/common-types'
-import { Identity } from '@http/identity/interfaces'
+import { Identity, PlainObject } from '@utils/common-types'
 import { HttpException } from '@http/exception/http-exception'
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface

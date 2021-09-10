@@ -1,5 +1,5 @@
-import { DataValidator } from '@http/app/handler/interfaces'
 import { ObjectSchema } from 'joi'
+import { DataValidator } from '@utils/validator/interfaces'
 
 export interface JsonSchemaValidator {
   validate(data: DataValidator, schema: JoiSchemaValidator): boolean

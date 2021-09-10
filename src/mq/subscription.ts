@@ -1,6 +1,7 @@
-import { LoaderFunction, SubscriberConstructor } from '@mq/interfaces'
+import { SubscriberConstructor } from '@mq/interfaces'
 import Container from 'typedi'
 import { Logger } from '@utils/logger'
+import { LoaderFunction } from '@http/server/interfaces'
 
 export class Subscription {
   private readonly logger: Logger

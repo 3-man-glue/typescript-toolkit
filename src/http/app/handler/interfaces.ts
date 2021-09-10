@@ -1,10 +1,9 @@
 import { ContextDto, HttpContext } from '@http/context/interfaces'
-import { PlainObject } from '@utils/common-types'
 import { ExpressHandler } from '@http/app/express'
 
 export type ApiMethod = 'get' | 'post' | 'put' | 'patch' | 'delete'
 
-export interface Handler<T, K> {
+export interface HandlerInterface<T, K> {
   context: HttpContext<T, K>
 
   invoke(): void | Promise<void>
@@ -21,7 +20,7 @@ export interface Api {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type HandlerConstructor<T, K> = new (...args: any[]) => Handler<T, K>
+export type HandlerConstructor<T, K> = new (...args: any[]) => HandlerInterface<T, K>
 
 export interface ControllerConstructor<T, K> extends HandlerConstructor<T, K> {
   path: string
@@ -58,11 +57,4 @@ export interface RouteBuilder {
   build(): RouteInterface
 
   middlewares: Middleware[]
-}
-
-export type DataValidator = {
-  params: PlainObject
-  body: PlainObject
-  query: PlainObject
-  headers: PlainObject
 }

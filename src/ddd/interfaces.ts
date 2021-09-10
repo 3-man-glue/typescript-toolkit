@@ -37,20 +37,13 @@ export interface UseCase<T = void, K = void> {
   execute(input: T): K | Promise<K>
 }
 
-/**
- * Encapsulated state object of entity or aggregate
- */
-export interface State {
-  id: string
-}
-
-export interface Entity<T extends DomainState> {
+export interface EntityInterface<T extends DomainState> {
   id: string
 
   getState(): Readonly<T>
 }
 
-export interface DomainEvent<T extends DomainState, K extends EventParams = Record<string, unknown>> {
+export interface DomainEventInterface<T extends DomainState, K extends EventParams = Record<string, unknown>> {
   id: Readonly<string>
   subject: Readonly<string>
   subjectId: Readonly<string>
@@ -74,12 +67,14 @@ export type EventContext<T extends DomainState> = {
 export type EventParams = Record<string, unknown>
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type EventConstructor<T extends DomainState, K extends EventParams> = new (...args: any[]) => DomainEvent<T, K>
+export type EventConstructor<T extends DomainState, K extends EventParams> = new (
+  ...args: any[]
+) => DomainEventInterface<T, K>
 
 export interface EventEmitter<T extends DomainState> {
   emit<K extends EventParams = Record<string, unknown>>(Event: EventConstructor<T, K>, params?: K): this
 
-  commit(): DomainEvent<T>[]
+  commit(): DomainEventInterface<T>[]
 }
 
 export interface Publisher<T extends DomainState> {

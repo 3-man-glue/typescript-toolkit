@@ -7,8 +7,6 @@ export interface Subscriber {
   subscribe(): void
 }
 
-export type LoaderFunction = () => Promise<void>
-
 export interface PublisherAdapter {
   subscribe<T extends MessageDto>(subject: string, handler: MessageHandler<T>): void
   publish(topic: string, data: PlainObject): Promise<void>
