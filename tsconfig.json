@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
     "declaration": true,
-    "target": "es6",
+    "target": "ESNext",
     "module": "commonjs",
     "allowJs": false,
     "sourceMap": true,
     "sourceRoot": "src",
-    "outDir": "build/dist/",
+    "outDir": "build",
     "removeComments": true,
     "strict": true,
     "strictNullChecks": true,
@@ -23,18 +23,21 @@
     "noPropertyAccessFromIndexSignature": true,
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
-    "baseUrl": "./src/",
+    "baseUrl": "src/",
+    "plugins": [
+      {
+        "transform": "@zerollup/ts-transform-paths",
+      }
+    ],
     "paths": {
-      "*": ["*", "./*"],
-      "@http/*": ["./http/*"],
-      "@db/*": ["./db/*"],
-      "@logger/*": ["./logger/*"],
-      "@config/*": ["./config/*"],
-      "@utils/*": ["./utils/*"],
-      "@ddd/*": ["./ddd/*"],
-      "@cache/*": ["./cache/*"],
-      "@mq/*": ["./mq/*"],
-
+      "@http/*": ["http/*"],
+      "@db/*": ["db/*"],
+      "@logger/*": ["logger/*"],
+      "@config/*": ["config/*"],
+      "@utils/*": ["utils/*"],
+      "@ddd/*": ["ddd/*"],
+      "@cache/*": ["cache/*"],
+      "@mq/*": ["mq/*"],
     },
     "rootDirs": [
       "src"
@@ -54,7 +57,8 @@
     "node_modules",
     "build",
     "dist",
-    "coverage"
+    "coverage",
+    "**/*.test.ts"
   ],
   "include": [
     "src",

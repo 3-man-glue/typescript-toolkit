@@ -16,8 +16,6 @@ export interface Identity {
   id: string,
   alias: string,
   externalId?: string,
-
   toJSON(): Readonly<IdentityObject>,
-
   toString(): string,
 }

@@ -1,8 +1,9 @@
 import { PubSub, Message } from '@google-cloud/pubsub'
 import { PlainObject } from '@utils/common-types'
 import { Logger } from '@utils/logger'
+import { GoogleCloudConfig } from '@config/interfaces'
 import { Service } from 'typedi'
-import { GoogleCloudConfig, NackFunction, PubSubClient } from './interfaces'
+import { NackFunction, PubSubClient } from './interfaces'
 
 @Service()
 export class GooglePubSub<T> implements PubSubClient<T> {

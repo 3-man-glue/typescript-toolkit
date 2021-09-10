@@ -1,4 +1,4 @@
-import { HttpException as HttpExceptionInterface, HttpExceptionObject } from './interfaces'
+import { HttpExceptionInterface, HttpExceptionObject } from './interfaces'
 import { PlainObject } from '@utils/common-types'
 
 export abstract class HttpException extends Error implements HttpExceptionInterface {

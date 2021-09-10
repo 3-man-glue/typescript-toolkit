@@ -20,7 +20,9 @@ export const multipartFormInterceptor = (options: MultipartFormOptions = {}): Mi
 }
 
 const filterFileByExt = (acceptedExts: string[]) => {
-  return function (req: Express.Request, file: Express.Multer.File, cb: CallableFunction) {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  return function (request: Express.Request, file: Express.Multer.File, cb: CallableFunction) {
     if (!acceptedExts.length) {
       return cb(null, true)
     }

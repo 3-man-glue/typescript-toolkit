@@ -1,8 +1,9 @@
+import { CacheException } from '@http/exception/cache'
+import { RedisOption } from '@config/interfaces'
 import redis, { RedisClient } from 'redis'
 import { Service } from 'typedi'
 import { promisify } from 'util'
-import { Cache as CacheInterface, RedisOption } from './interface'
-import { CacheException } from '@http/exception/cache'
+import { CacheInterface } from './interface'
 
 @Service()
 export class Redis implements CacheInterface {

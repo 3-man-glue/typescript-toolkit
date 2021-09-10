@@ -1,7 +1,6 @@
-import { DomainEvent as DomainEventInterface, DomainState, EventContext, EventParams } from '@ddd/interfaces'
+import { DomainEventInterface, DomainState, EventContext, EventParams } from '@ddd/interfaces'
 import IdGen from '@utils/id-generator'
-import { Identity } from '@http/identity/interfaces'
-import { PlainObject } from '@utils/common-types'
+import { Identity, PlainObject } from '@utils/common-types'
 
 export abstract class DomainEvent<T extends DomainState, K extends EventParams = Record<string, unknown>>
 implements DomainEventInterface<T, K> {
