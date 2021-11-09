@@ -1,4 +1,4 @@
-import { HttpContext } from '@http/context/interfaces'
+import { HttpContext } from '@http-kit/context/interfaces'
 import { Handler } from './handler'
 
 export abstract class Controller<T, K> extends Handler<T, K> {

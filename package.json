@@ -1,6 +1,6 @@
 {
-  "name": "ts-http-toolkit",
-  "version": "1.0.0",
+  "name": "@sertiscorp/ts-http-toolkit",
+  "version": "0.0.1-beta",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
   "author": "Software Engineering Team <Sertis Co.Ltd.>",
@@ -9,6 +9,9 @@
   "files": [
     "build"
   ],
+  "publishConfig": {
+    "@sertiscorp:registry": "https://gitlab.com/api/v4/projects/25743614/packages/npm/"
+  },
   "dependencies": {
     "@elastic/ecs-winston-format": "^1.3.0",
     "@google-cloud/pubsub": "^2.16.1",

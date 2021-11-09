@@ -1,6 +1,6 @@
 import { Service } from 'typedi'
 import Joi from 'joi'
-import { JsonSchemaValidator, JoiSchemaValidator } from '@http/app/validator/interfaces'
+import { JsonSchemaValidator, JoiSchemaValidator } from '@http-kit/app/validator/interfaces'
 import { DataValidator } from '@utils/validator/interfaces'
 
 const pick = <T, K extends keyof T>(fields: K[], data: T): Partial<T> => {

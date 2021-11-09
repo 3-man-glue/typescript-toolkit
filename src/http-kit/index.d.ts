@@ -1,7 +1,7 @@
 /// <reference types="node" />
-import { HttpClient, ResponseHttp } from '@http/client/interfaces'
-import { ContextDto, HttpContext } from '@http/context/interfaces'
-import { HttpException as HttpExceptionInterface } from '@http/exception/http-exception'
+import { HttpClient, ResponseHttp } from '@http-kit/client/interfaces'
+import { ContextDto, HttpContext } from '@http-kit/context/interfaces'
+import { HttpException as HttpExceptionInterface } from '@http-kit/exception/http-exception'
 import { Identity, IdentityObject, PlainObject } from '@utils/common-types'
 import { Logger } from '@utils/logger'
 import { Express, NextFunction, Request, Response } from 'express'

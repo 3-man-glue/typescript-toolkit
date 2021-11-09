@@ -1,5 +1,5 @@
-import { Get, Post } from '@http/app/handler/route-builder'
-import { InternalServerException } from '@http/exception/internal-server'
+import { Get, Post } from '@http-kit/app/handler/route-builder'
+import { InternalServerException } from '@http-kit/exception/internal-server'
 
 describe('Route builder', () => {
   afterEach(() => {

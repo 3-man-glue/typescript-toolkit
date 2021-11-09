@@ -1,5 +1,5 @@
-import { IdentityException } from '@http/exception/identity'
-import { Actor } from '@http/identity/actor'
+import { IdentityException } from '@http-kit/exception/identity'
+import { Actor } from '@http-kit/identity/actor'
 
 describe('Actor', () => {
 

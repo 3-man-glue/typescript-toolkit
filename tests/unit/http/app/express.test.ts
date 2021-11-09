@@ -1,13 +1,13 @@
 import 'reflect-metadata'
 import express, { NextFunction, Request, Response } from 'express'
 import logger from '@utils/logger'
-import { Controller } from '@http/app/handler/controller'
-import { Get } from '@http/app/handler/route-builder'
-import { ContextDto } from '@http/context/interfaces'
-import { InternalServerException } from '@http/exception/internal-server'
-import { HttpException } from '@http/exception/http-exception'
-import { ExpressApp } from '@http/app/express'
-import { Middleware } from '@http/app/handler/interfaces'
+import { Controller } from '@http-kit/app/handler/controller'
+import { Get } from '@http-kit/app/handler/route-builder'
+import { ContextDto } from '@http-kit/context/interfaces'
+import { InternalServerException } from '@http-kit/exception/internal-server'
+import { HttpException } from '@http-kit/exception/http-exception'
+import { ExpressApp } from '@http-kit/app/express'
+import { Middleware } from '@http-kit/app/handler/interfaces'
 
 jest.mock('express', () => {
   const express = jest.fn().mockReturnValue({ get: jest.fn(), post: jest.fn(), use: jest.fn() })

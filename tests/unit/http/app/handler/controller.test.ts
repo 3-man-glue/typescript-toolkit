@@ -1,6 +1,6 @@
-import { Controller } from '@http/app/handler/controller'
-import { ContextDto } from '@http/context/interfaces'
-import { getEmptyContext } from '@http/context/context'
+import { Controller } from '@http-kit/app/handler/controller'
+import { ContextDto } from '@http-kit/context/interfaces'
+import { getEmptyContext } from '@http-kit/context/context'
 
 describe('Controller Abstraction', () => {
   it('Should be able to modify context status', () => {

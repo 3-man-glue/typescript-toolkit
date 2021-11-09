@@ -1,4 +1,4 @@
-import { HttpException } from '@http/exception/http-exception'
+import { HttpException } from '@http-kit/exception/http-exception'
 
 describe('HttpException Abstraction', () => {
   class ConcreteException extends HttpException {

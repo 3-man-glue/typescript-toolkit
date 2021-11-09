@@ -1,5 +1,5 @@
 import { RequestListener } from 'http'
-import { RouteBuilder } from '@http/app/handler/interfaces'
+import { RouteBuilder } from '@http-kit/app/handler/interfaces'
 
 export interface HttpApp {
   engine: Readonly<RequestListener>

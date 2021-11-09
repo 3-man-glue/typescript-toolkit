@@ -1,5 +1,5 @@
 import { createServer, Server } from 'http'
-import { HttpServer } from '@http/server/http'
+import { HttpServer } from '@http-kit/server/http'
 import logger from '@utils/logger'
 
 jest.mock('@utils/logger')

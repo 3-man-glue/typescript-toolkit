@@ -1,10 +1,10 @@
 import 'reflect-metadata'
 import { Container, Service } from 'typedi'
-import { Handler } from '@http/app/handler/handler'
-import { ContextDto } from '@http/context/interfaces'
-import { Route } from '@http/app/handler/route'
-import { InternalServerException } from '@http/exception/internal-server'
-import { getEmptyContext } from '@http/context/context'
+import { Handler } from '@http-kit/app/handler/handler'
+import { ContextDto } from '@http-kit/context/interfaces'
+import { Route } from '@http-kit/app/handler/route'
+import { InternalServerException } from '@http-kit/exception/internal-server'
+import { getEmptyContext } from '@http-kit/context/context'
 
 describe('Route', () => {
   class IndependentHandlerA extends Handler<ContextDto, ContextDto> {

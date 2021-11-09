@@ -1,6 +1,6 @@
 import { Container } from 'typedi'
 import { HandlerInterface, HandlerConstructor } from './interfaces'
-import { ContextDto, HttpContext } from '@http/context/interfaces'
+import { ContextDto, HttpContext } from '@http-kit/context/interfaces'
 
 export abstract class Handler<T, K> implements HandlerInterface<T, K> {
   context!: HttpContext<T, K>

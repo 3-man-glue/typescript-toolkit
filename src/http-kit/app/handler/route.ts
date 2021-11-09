@@ -4,9 +4,9 @@ import {
   ContextMapper,
   HandlerConstructor,
   RouteInterface
-} from '@http/app/handler/interfaces'
-import { ContextDto, HttpContext } from '@http/context/interfaces'
-import { InternalServerException } from '@http/exception/internal-server'
+} from '@http-kit/app/handler/interfaces'
+import { ContextDto, HttpContext } from '@http-kit/context/interfaces'
+import { InternalServerException } from '@http-kit/exception/internal-server'
 
 export class Route implements RouteInterface {
   public readonly path: string

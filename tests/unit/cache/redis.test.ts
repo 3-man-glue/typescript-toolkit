@@ -1,5 +1,5 @@
 import redis, { RedisClient } from 'redis'
-import { CacheException } from '@http/exception/cache'
+import { CacheException } from '@http-kit/exception/cache'
 import { Redis } from '@cache/redis'
 
 const expectedConfig = {
