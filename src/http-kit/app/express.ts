@@ -1,10 +1,10 @@
 import express, { Express, NextFunction, Request, Response } from 'express'
 import { HttpApp } from './interfaces'
-import { getEmptyContext } from '@http/context/context'
-import { ContextDto, HttpContext } from '@http/context/interfaces'
+import { getEmptyContext } from '@http-kit/context/context'
+import { ContextDto, HttpContext } from '@http-kit/context/interfaces'
 import { RouteBuilder } from './handler/interfaces'
-import { HttpException } from '@http/exception/http-exception'
-import { InternalServerException } from '@http/exception/internal-server'
+import { HttpException } from '@http-kit/exception/http-exception'
+import { InternalServerException } from '@http-kit/exception/internal-server'
 import logger from '@utils/logger'
 
 export type ExpressHandler = (req: Request, res: Response, next: NextFunction) => Promise<void>

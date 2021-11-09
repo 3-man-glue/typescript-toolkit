@@ -6,10 +6,10 @@ import {
   HandlerConstructor,
   Middleware,
   RouteBuilder as RouteBuilderInterface
-} from '@http/app/handler/interfaces'
-import { ContextDto } from '@http/context/interfaces'
-import { InternalServerException } from '@http/exception/internal-server'
-import { Route } from '@http/app/handler/route'
+} from '@http-kit/app/handler/interfaces'
+import { ContextDto } from '@http-kit/context/interfaces'
+import { InternalServerException } from '@http-kit/exception/internal-server'
+import { Route } from '@http-kit/app/handler/route'
 
 export function Get(api: Api): RouteBuilderInterface {
   return createBaseBuilder(api).setMethod('get')

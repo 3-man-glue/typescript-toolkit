@@ -9,7 +9,7 @@ module.exports = {
   verbose: true,
   moduleNameMapper: {
     '^@logger/(.*)$': '<rootDir>/src/logger/$1',
-    '^@http/(.*)$': '<rootDir>/src/http/$1',
+    '^@http-kit/(.*)$': '<rootDir>/src/http-kit/$1',
     '^@db/(.*)$': '<rootDir>/src/db/$1',
     '^@config/(.*)$': '<rootDir>/src/config/$1',
     '^@utils/(.*)$': '<rootDir>/src/utils/$1',

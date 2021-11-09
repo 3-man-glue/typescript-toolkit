@@ -1,5 +1,5 @@
-import { ContextDto, HttpContext } from '@http/context/interfaces'
-import { ExpressHandler } from '@http/app/express'
+import { ContextDto, HttpContext } from '@http-kit/context/interfaces'
+import { ExpressHandler } from '@http-kit/app/express'
 
 export type ApiMethod = 'get' | 'post' | 'put' | 'patch' | 'delete'
 

@@ -1,8 +1,8 @@
 import { Service } from 'typedi'
 import axios, { AxiosInstance } from 'axios'
 import { PlainObject } from '@utils/common-types'
-import { HttpClient, ResponseHttp } from '@http/client/interfaces'
-import { InternalServerException } from '@http/exception/internal-server'
+import { HttpClient, ResponseHttp } from '@http-kit/client/interfaces'
+import { InternalServerException } from '@http-kit/exception/internal-server'
 
 const ECONNREFUSED_CODE = 'ECONNREFUSED'
 const ECONNABORTED_CODE = 'ECONNABORTED'

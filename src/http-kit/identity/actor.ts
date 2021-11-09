@@ -1,4 +1,4 @@
-import { IdentityException } from '@http/exception/identity'
+import { IdentityException } from '@http-kit/exception/identity'
 import { Identity, IdentityObject } from '@utils/common-types'
 
 export class Actor implements Identity {

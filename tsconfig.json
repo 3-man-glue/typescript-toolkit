@@ -30,7 +30,7 @@
       }
     ],
     "paths": {
-      "@http/*": ["http/*"],
+      "@http-kit/*": ["http-kit/*"],
       "@db/*": ["db/*"],
       "@logger/*": ["logger/*"],
       "@config/*": ["config/*"],

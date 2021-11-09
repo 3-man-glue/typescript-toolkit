@@ -1,5 +1,5 @@
 import { PlainObject } from '@utils/common-types'
-import { DBException } from '@http/exception/db'
+import { DBException } from '@http-kit/exception/db'
 import { Operation, Condition } from '@db/interfaces'
 import { ReturnedQuery } from '@db/engine/interfaces'
 

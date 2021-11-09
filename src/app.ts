@@ -1,6 +1,6 @@
 import express from 'express'
 import logger from '@utils/logger'
-import { HttpServer } from '@http/server/http'
+import { HttpServer } from '@http-kit/server/http'
 
 const app = express()
 

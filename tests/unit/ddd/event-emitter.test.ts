@@ -1,7 +1,7 @@
 import { DomainState, EventContext } from '@ddd/interfaces'
 import { DomainEvent } from '@ddd/event'
 import { DomainEventEmitter } from '@ddd/event-emitter'
-import { Anonymous } from '@http/identity/anonymous'
+import { Anonymous } from '@http-kit/identity/anonymous'
 
 jest.mock('@utils/id-generator', () => ({
   cuid: jest.fn().mockReturnValue('test'),

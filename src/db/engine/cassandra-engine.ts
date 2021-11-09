@@ -1,4 +1,4 @@
-import { DBException } from '@http/exception/db'
+import { DBException } from '@http-kit/exception/db'
 import { getInsertQueries, getSelectQuery } from '@db/engine/generate-query'
 import { Condition } from '@db/interfaces'
 import cassandra from 'cassandra-driver'

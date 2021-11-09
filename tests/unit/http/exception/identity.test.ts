@@ -1,5 +1,5 @@
-import { HttpException } from '@http/exception/http-exception'
-import { IdentityException } from '@http/exception/identity'
+import { HttpException } from '@http-kit/exception/http-exception'
+import { IdentityException } from '@http-kit/exception/identity'
 
 describe('IdentityException', () => {
   it('Should be implemented properly with default construction', () => {

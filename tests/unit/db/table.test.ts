@@ -2,7 +2,7 @@ import { PlainObject } from '@utils/common-types'
 import { Engine } from '@db/engine/interfaces'
 import { Operation, Schema, State } from '@db/interfaces'
 import { Table } from '@db/table'
-import { DBException } from '@http/exception/db'
+import { DBException } from '@http-kit/exception/db'
 
 interface TestState extends State {
   attrA: string,

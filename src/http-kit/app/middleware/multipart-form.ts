@@ -1,5 +1,5 @@
-import { BadRequestException } from '@http/exception/bad-request'
-import { Middleware } from '@http/app/handler/interfaces'
+import { BadRequestException } from '@http-kit/exception/bad-request'
+import { Middleware } from '@http-kit/app/handler/interfaces'
 import multer from 'multer'
 
 interface MultipartFormOptions {

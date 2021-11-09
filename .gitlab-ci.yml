@@ -25,18 +25,18 @@ Linting:
       when: always
       allow_failure: false
 
-# Build package:
-#   stage: build 
-#   image: node:14-alpine
-#   script:
-#     - yarn install
-#     - yarn build
-#     - |
-#       if [[ ! -f .npmrc ]]; then
-#         {
-#           echo '@${CI_PROJECT_ROOT_NAMESPACE}:registry=https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/packages/npm/'
-#           echo '//gitlab.com/api/v4/packages/npm/:_authToken=${CI_JOB_TOKEN}'
-#           echo '//gitlab.com/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}'
-#         } >> .npmrc
-#       fi
-#     - npm publish
+Build package:
+  stage: build 
+  image: node:14-alpine
+  script:
+    - yarn install
+    - yarn build
+    - |
+      if [[ ! -f .npmrc ]]; then
+        {
+          echo '@${CI_PROJECT_ROOT_NAMESPACE}:registry=https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/packages/npm/'
+          echo '//gitlab.com/api/v4/packages/npm/:_authToken=${CI_JOB_TOKEN}'
+          echo '//gitlab.com/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}'
+        } >> .npmrc
+      fi
+    - npm publish
