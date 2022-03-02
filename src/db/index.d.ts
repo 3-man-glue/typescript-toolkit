@@ -1,6 +1,7 @@
 import { ConfigService } from '@config/config'
 import { Engine, ReturnedQuery } from '@db/engine/interfaces'
 import { PlainObject } from '@utils/common-types'
+import cassandra from 'cassandra-driver'
 export interface Engine {
   select<T>(condition: Condition<T>, tableName: string): Promise<PlainObject[]>
   insert(data: PlainObject[], tableName: string): Promise<void>
@@ -10,6 +11,13 @@ export interface Engine {
 export declare type ReturnedQuery = {
   query: string
   params: unknown[]
+}
+
+export declare type CassandraConsistenciesString = keyof typeof cassandra.types.consistencies
+
+export declare type ConsistencyOptions = {
+  read: CassandraConsistenciesString
+  write: CassandraConsistenciesString
 }
 
 export declare const getInsertQueries: (data: PlainObject[], tableName: string) => ReturnedQuery[]

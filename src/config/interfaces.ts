@@ -1,3 +1,4 @@
+import { CassandraConsistenciesString } from '@db/index'
 import { ClientOpts } from 'redis'
 
 export type GoogleCloudConfig = {
@@ -33,6 +34,29 @@ export type CassandraConfig = {
   keyspace: string
   dataCenter: string
   contactPoints: string[]
+  readConsistency: CassandraConsistenciesString
+  writeConsistency: CassandraConsistenciesString
+}
+
+export type EventTopic = {
+  batch: string,
+  broadcast: string,
+  segment: string,
+  user: string,
+}
+
+export type PubSubConfig = {
+  projectId: string
+  topics: EventTopic
+}
+
+export type EventStreamConfig = {
+  streamTopicName: string
+  streamSubscriptionName: string
+}
+
+export type VideoConfig = {
+  width: number
 }
 
 export interface ConfigInterface {
@@ -41,4 +65,8 @@ export interface ConfigInterface {
   security: Readonly<SecurityConfig>
   googleCloud: Readonly<GoogleCloudConfig>
   cassandra: Readonly<CassandraConfig>
+  pubSub: Readonly<PubSubConfig>
+  eventStream: Readonly<EventStreamConfig>
+  video: Readonly<VideoConfig>
 }
+

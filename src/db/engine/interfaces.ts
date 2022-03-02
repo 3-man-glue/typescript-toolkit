@@ -1,5 +1,6 @@
 import { Condition } from 'db/interfaces'
 import { PlainObject } from '@utils/common-types'
+import cassandra from 'cassandra-driver'
 
 export interface Engine {
   select<T>(condition: Condition<T>, tableName: string): Promise<PlainObject[]>
@@ -11,4 +12,11 @@ export interface Engine {
 export type ReturnedQuery = {
   query: string,
   params: unknown[]
+}
+
+export type CassandraConsistenciesString = keyof typeof cassandra.types.consistencies
+
+export type ConsistencyOptions = {
+  read: CassandraConsistenciesString
+  write: CassandraConsistenciesString
 }

@@ -6,8 +6,12 @@ import {
   SecurityConfig,
   SendbirdConfig,
   GoogleCloudConfig,
-  CassandraConfig
+  CassandraConfig,
+  PubSubConfig,
+  EventStreamConfig,
+  VideoConfig
 } from '@config/interfaces'
+
 export declare class ConfigService implements ConfigInterface {
   readonly gateway: Readonly<GatewayConfig>
 
@@ -20,6 +24,12 @@ export declare class ConfigService implements ConfigInterface {
   readonly security: Readonly<SecurityConfig>
 
   readonly cassandra: Readonly<CassandraConfig>
+
+  readonly pubSub: Readonly<PubSubConfig>
+
+  readonly eventStream: Readonly<EventStreamConfig>
+
+  readonly video: Readonly<VideoConfig>
 
   constructor()
 }
@@ -52,12 +62,37 @@ export declare type CassandraConfig = {
   dataCenter: string
   contactPoints: string[]
 }
+
+export declare type EventTopic = {
+  batch: string,
+  broadcast: string,
+  segment: string,
+  user: string,
+}
+
+export declare type PubSubConfig = {
+  projectId: string
+  topics: EventTopic
+}
+
+export declare type EventStreamConfig = {
+  streamTopicName: string
+  streamSubscriptionName: string
+}
+
+export declare type VideoConfig = {
+  width: number
+}
+
 export interface ConfigInterface {
   sendbird: Readonly<SendbirdConfig>
   redis: Readonly<RedisOption>
   security: Readonly<SecurityConfig>
   googleCloud: Readonly<GoogleCloudConfig>
   cassandra: Readonly<CassandraConfig>
+  pubSub: Readonly<PubSubConfig>
+  eventStream: Readonly<EventStreamConfig>
+  video: Readonly<VideoConfig>
 }
 
 export declare function setupConfig(): void
