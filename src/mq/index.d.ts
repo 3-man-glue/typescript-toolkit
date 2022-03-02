@@ -3,6 +3,8 @@ import { MessageHandler, MessageHandlerConstructor } from '@mq/client/interfaces
 import { LoaderFunction, MessageDto, PublisherAdapter, Subscriber, SubscriberConstructor } from '@mq/interfaces'
 import { PlainObject } from '@utils/common-types'
 import { Logger } from '@utils/logger'
+import { DictMapper } from '@config/interfaces'
+
 export declare type GoogleCloudConfig = {
   projectId: string
 }
@@ -57,3 +59,7 @@ export interface PublisherAdapter {
 }
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface MessageDto {}
+
+export declare const googleCloudDictionary: DictMapper
+
+export declare const pubSubsDictionary: DictMapper

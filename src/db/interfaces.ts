@@ -46,3 +46,30 @@ export interface Schema {
 export interface State {
   id: string,
 }
+
+export const cassandraDictionary = {
+  username: {
+    env: 'DATABASE_CASSANDRA_USERNAME',
+  },
+  password: {
+    env: 'DATABASE_CASSANDRA_PASSWORD',
+  },
+  keyspace: {
+    env: 'DATABASE_CASSANDRA_KEYSPACE',
+  },
+  readConsistency: {
+    env: 'DATABASE_CASSANDRA_READ_CONSISTENCY',
+    default: 'localOne',
+  },
+  writeConsistency: {
+    env: 'DATABASE_CASSANDRA_WRITE_CONSISTENCY',
+    default: 'quorum',
+  },
+  dataCenter: {
+    env: 'DATABASE_CASSANDRA_DATA_CENTER',
+  },
+  contactPoints: {
+    env: 'DATABASE_CASSANDRA_CONTACT_POINTS',
+    type: 'array',
+  },
+}

@@ -15,3 +15,15 @@ export interface PublisherAdapter {
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface MessageDto {
 }
+
+export const googleCloudDictionary = {
+  projectId: {
+    env: 'GOOGLE_CLOUD_PROJECT',
+  },
+}
+
+export const pubSubDictionary = {
+  projectId: {
+    env: 'PUBSUB_PROJECT_ID',
+  },
+}

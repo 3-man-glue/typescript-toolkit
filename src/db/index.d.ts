@@ -2,6 +2,7 @@ import { ConfigService } from '@config/config'
 import { Engine, ReturnedQuery } from '@db/engine/interfaces'
 import { PlainObject } from '@utils/common-types'
 import cassandra from 'cassandra-driver'
+import { DictMapper } from '@config/interfaces'
 export interface Engine {
   select<T>(condition: Condition<T>, tableName: string): Promise<PlainObject[]>
   insert(data: PlainObject[], tableName: string): Promise<void>
@@ -94,3 +95,5 @@ export interface Schema {}
 export interface State {
   id: string
 }
+
+export declare const cassandraDictionary: DictMapper
