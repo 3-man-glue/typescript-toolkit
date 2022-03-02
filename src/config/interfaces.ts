@@ -1,5 +1,19 @@
-import { CassandraConsistenciesString } from '@db/index'
+import { CassandraConsistenciesString } from '@db/engine/interfaces'
 import { ClientOpts } from 'redis'
+
+export enum DictType {
+  NUMBER = 'number',
+  ARRAY = 'array',
+}
+export interface DictMapper {
+  env: string
+  default?: string | number
+  type?: string
+}
+
+export interface Dictionary {
+  [key: string]: DictMapper
+}
 
 export type GoogleCloudConfig = {
   projectId: string
@@ -21,13 +35,6 @@ export interface RedisOption extends ClientOpts {
   timeToLive: number
 }
 
-export type HashAlgorithm = 'sha256'
-
-export type SecurityConfig = {
-  hashAlgorithm: HashAlgorithm
-  serverSideKey: string
-}
-
 export type CassandraConfig = {
   username: string
   password: string
@@ -38,16 +45,8 @@ export type CassandraConfig = {
   writeConsistency: CassandraConsistenciesString
 }
 
-export type EventTopic = {
-  batch: string,
-  broadcast: string,
-  segment: string,
-  user: string,
-}
-
 export type PubSubConfig = {
   projectId: string
-  topics: EventTopic
 }
 
 export type EventStreamConfig = {
@@ -55,18 +54,6 @@ export type EventStreamConfig = {
   streamSubscriptionName: string
 }
 
-export type VideoConfig = {
-  width: number
-}
-
 export interface ConfigInterface {
-  sendbird: Readonly<SendbirdConfig>
-  redis: Readonly<RedisOption>
-  security: Readonly<SecurityConfig>
-  googleCloud: Readonly<GoogleCloudConfig>
-  cassandra: Readonly<CassandraConfig>
-  pubSub: Readonly<PubSubConfig>
-  eventStream: Readonly<EventStreamConfig>
-  video: Readonly<VideoConfig>
+  resolve<T>(dict: Dictionary): T
 }
-

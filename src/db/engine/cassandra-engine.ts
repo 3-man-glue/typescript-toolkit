@@ -3,7 +3,7 @@ import { getInsertQueries, getSelectQuery } from '@db/engine/generate-query'
 import { Condition } from '@db/interfaces'
 import cassandra from 'cassandra-driver'
 import { Engine as EngineInterface } from '@db/engine/interfaces'
-import { ConfigService } from '@config/config'
+import { CassandraConfig } from '@config/interfaces'
 import { PlainObject } from '@utils/common-types'
 import { Service } from 'typedi'
 
@@ -11,16 +11,16 @@ import { Service } from 'typedi'
 export class CassandraEngine implements EngineInterface {
   private client: cassandra.Client
 
-  constructor(config: ConfigService) {
+  constructor(config: CassandraConfig) {
     try {
       const authProvider = new cassandra.auth
-        .PlainTextAuthProvider(config.cassandra.username, config.cassandra.password)
+        .PlainTextAuthProvider(config.username, config.password)
 
       this.client = new cassandra.Client({
         authProvider,
-        contactPoints: config.cassandra.contactPoints,
-        localDataCenter: config.cassandra.dataCenter,
-        keyspace: config.cassandra.keyspace,
+        contactPoints: config.contactPoints,
+        localDataCenter: config.dataCenter,
+        keyspace: config.keyspace,
       })
     } catch (error) {
       throw new DBException(error.message)

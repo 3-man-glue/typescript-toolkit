@@ -1,17 +1,17 @@
 import { Service } from 'typedi'
+import { PubSubConfig } from '@config/interfaces'
 import { PubSub, Message as PubSubMessage } from '@google-cloud/pubsub'
-import { ConfigService } from '@config/config'
-import { PlainObject } from '@utils/common-types'
-import { MessageDto, PublisherAdapter } from '@mq/interfaces'
-import logger from '@utils/logger'
 import { MessageHandler } from '@mq/client/interfaces'
+import { MessageDto, PublisherAdapter } from '@mq/interfaces'
+import { PlainObject } from '@utils/common-types'
+import logger from '@utils/logger'
 
 @Service()
 export class PubSubAdapter implements PublisherAdapter {
   private readonly pubsub: Readonly<PubSub>
 
-  constructor({ googleCloud: pubsub }: ConfigService) {
-    this.pubsub = new PubSub({ projectId: pubsub.projectId })
+  constructor(config: PubSubConfig) {
+    this.pubsub = new PubSub({ projectId: config.projectId })
   }
 
   public subscribe<T extends MessageDto>(subject: string, handler: MessageHandler<T>): void {
