@@ -38,6 +38,7 @@
       "@ddd/*": ["ddd/*"],
       "@cache/*": ["cache/*"],
       "@mq/*": ["mq/*"],
+      "@event-stream/*": ["event-stream/*"],
     },
     "rootDirs": [
       "src"
