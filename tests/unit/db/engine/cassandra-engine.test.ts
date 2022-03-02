@@ -1,25 +1,38 @@
-import { Container } from 'typedi'
-import 'reflect-metadata'
 import cassandra from 'cassandra-driver'
 import { CassandraEngine } from '@db/engine/cassandra-engine'
 import { Operation } from '@db/interfaces'
+import { CassandraConsistenciesString } from '@db/engine/interfaces'
+
 jest.mock('cassandra-driver')
 
-afterAll(() => {
-  Container.reset()
-})
-
 describe('CassandraEngine', () => {
+  let cassandraEngine: CassandraEngine
+
+  beforeEach(() => {
+    const config = {
+      username: 'username',
+      password: 'password',
+      keyspace: 'keyspace',
+      dataCenter: 'dataCenter',
+      contactPoints: [ 'contactPoints' ],
+      readConsistency: 'localOne' as CassandraConsistenciesString,
+      writeConsistency: 'quorum' as CassandraConsistenciesString,
+    }
+
+    cassandraEngine = new CassandraEngine(config)
+  })
+
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
 
   it('should return Instance of CassandraEngine', () => {
-    const cassandraEngine: CassandraEngine = Container.get(CassandraEngine)
     expect(cassandraEngine).toBeInstanceOf(CassandraEngine)
     expect(cassandra.Client).toHaveBeenCalledTimes(1)
   })
 
   describe('select', () => {
     it('should call execute given valid input', async () => {
-      const cassandraEngine: CassandraEngine = Container.get(CassandraEngine)
       await cassandraEngine.select({
         status: {
           [Operation.EQ]: 1,
@@ -34,7 +47,6 @@ describe('CassandraEngine', () => {
 
   describe('insert', () => {
     it('should call batch given valid input', async () => {
-      const cassandraEngine: CassandraEngine = Container.get(CassandraEngine)
       await cassandraEngine.insert([
         { status: 1 }
       ], 'broadcast')
@@ -47,7 +59,6 @@ describe('CassandraEngine', () => {
     })
 
     it('should throw error given empty data', async () => {
-      const cassandraEngine: CassandraEngine = Container.get(CassandraEngine)
       await expect(cassandraEngine.insert([], 'broadcast')).rejects.toThrowError(
         'Data not provide'
       )
