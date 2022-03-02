@@ -7,8 +7,12 @@ import {
   SecurityConfig,
   SendbirdConfig,
   GoogleCloudConfig,
-  CassandraConfig
+  CassandraConfig,
+  PubSubConfig,
+  EventStreamConfig,
+  VideoConfig
 } from '@config/interfaces'
+import { CassandraConsistenciesString } from '@db/engine/interfaces'
 
 @Service()
 export class ConfigService implements ConfigInterface {
@@ -23,6 +27,12 @@ export class ConfigService implements ConfigInterface {
   public readonly security: Readonly<SecurityConfig>
 
   public readonly cassandra: Readonly<CassandraConfig>
+
+  public readonly pubSub: Readonly<PubSubConfig>
+
+  public readonly eventStream: Readonly<EventStreamConfig>
+
+  public readonly video: Readonly<VideoConfig>
 
   constructor() {
     this.gateway = {
@@ -55,11 +65,35 @@ export class ConfigService implements ConfigInterface {
     }
 
     this.cassandra = {
-      username: process.env['DATABASE_CASSANDRA_USERNAME'] ?? '',
-      password: process.env['DATABASE_CASSANDRA_PASSWORD'] ?? '',
-      keyspace: process.env['DATABASE_CASSANDRA_KEYSPACE'] ?? '',
-      dataCenter: process.env['DATABASE_CASSANDRA_DATA_CENTER'] ?? '',
-      contactPoints: ( process.env['DATABASE_CASSANDRA_CONTACT_POINTS'] ?? '' ).split(','),
+      username: process.env[ 'DATABASE_CASSANDRA_USERNAME' ] ?? '',
+      password: process.env[ 'DATABASE_CASSANDRA_PASSWORD' ] ?? '',
+      keyspace: process.env[ 'DATABASE_CASSANDRA_KEYSPACE' ] ?? '',
+      readConsistency: (process.env[ 'DATABASE_CASSANDRA_READ_CONSISTENCY' ]
+        ?? 'localOne') as CassandraConsistenciesString,
+      writeConsistency: (process.env[ 'DATABASE_CASSANDRA_WRITE_CONSISTENCY' ]
+        ?? 'quorum') as CassandraConsistenciesString,
+      dataCenter: process.env[ 'DATABASE_CASSANDRA_DATA_CENTER' ] ?? '',
+      contactPoints: (process.env[ 'DATABASE_CASSANDRA_CONTACT_POINTS' ] ?? '').split(','),
     }
+
+    this.pubSub = {
+      projectId: process.env[ 'PUBSUB_PROJECT_ID' ] ?? '',
+      topics: {
+        batch: process.env[ 'PUBSUB_TOPIC_BATCH' ] ?? 'batch-events',
+        broadcast: process.env[ 'PUBSUB_TOPIC_BROADCAST' ] ?? 'broadcast-events',
+        segment: process.env[ 'PUBSUB_TOPIC_SEGMENT' ] ?? 'segment-events',
+        user: process.env[ 'PUBSUB_TOPIC_USER' ] ?? 'user-events',
+      },
+    }
+
+    this.eventStream = {
+      streamTopicName: process.env[ 'EVENT_STREAM_TOPIC_NAME' ] ?? '',
+      streamSubscriptionName: process.env[ 'EVENT_STREAM_SUBSCRIPTION_NAME' ] ?? '',
+    }
+
+    this.video = {
+      width: process.env[ 'VIDEO_MAX_WIDTH' ] ? parseInt(process.env[ 'VIDEO_MAX_WIDTH' ], 10) : 0,
+    }
+
   }
 }
