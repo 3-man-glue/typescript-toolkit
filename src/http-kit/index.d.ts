@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /// <reference types="node" />
 import { HttpClient, ResponseHttp } from '@http-kit/client/interfaces'
 import { ContextDto, HttpContext } from '@http-kit/context/interfaces'
@@ -17,6 +18,10 @@ export declare class HttpServer {
   start(): Promise<void>
 
   stop(): Promise<void>
+}
+
+export class PaginationPipe extends Handler<ContextDto, PaginationResponse | ParsedPaginationResponse> {
+  public handle(): void
 }
 
 export interface HttpServerConfig {
@@ -238,6 +243,22 @@ export declare type DataValidator = {
   query: PlainObject
   headers: PlainObject
 }
+export interface ParsedPaginationResponse {
+  limit: number
+  total: number
+  current_page: number
+  items: PlainObject[]
+  filters?: PlainObject | null
+}
+export interface PaginationResponse<T = PlainObject> {
+  result: T[]
+  page: {
+    total: number
+    current: number
+    size: number
+  }
+  filters?: PlainObject
+}
 
 export declare abstract class RequestValidator<T, K> extends Handler<T, K> {
   protected readonly validator: JoiValidator
@@ -279,7 +300,8 @@ interface MultipartFormOptions {
   limitSize?: number
   acceptedExts?: string[]
 }
-export declare const multipartFormInterceptor: (options?: MultipartFormOptions) => Middleware
+export type FilterFileFunc = (req: Request, file: Express.Multer.File, cb: CallableFunction) => void
+export const multipartFormInterceptor: (options: MultipartFormOptions) => Middleware
 export declare class JoiValidator implements JsonSchemaValidator {
   validate(data: DataValidator, schema: JoiSchemaValidator): boolean
 }
@@ -294,7 +316,7 @@ export interface JoiSchemaValidator {
   params?: ObjectSchema<unknown>
 }
 
-export declare type ExpressHandler = (req: Request, res: Response, next: NextFunction) => Promise<void>
+export type ExpressHandler = (req: Request, res: Response, next: NextFunction) => Promise<void> | void
 export declare class ExpressApp implements HttpApp {
   engine: Express
 

@@ -15,19 +15,7 @@ declare const IdGenerator: {
     nanoid: typeof nanoid;
 }
 declare const logger: WinstonLogger
-
-export declare class JoiValidator implements JsonSchemaValidator {
-  validate<T extends DataValidator>(data: T, schema: JoiSchemaValidator): boolean
-}
 export declare type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
-export interface JsonSchemaValidator {
-  validate<T extends DataValidator>(data: T, schema: JoiSchemaValidator): boolean
-}
-export interface JoiSchemaValidator {
-  query?: ObjectSchema<unknown>
-  body?: ObjectSchema<unknown>
-  params?: ObjectSchema<unknown>
-}
 export declare type DataValidator = {
   params?: PlainObject
   body?: PlainObject

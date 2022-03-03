@@ -1,6 +1,6 @@
 import { DomainState, EventContext, EventData, EventParams } from '@ddd/interfaces'
 import { DomainEvent } from '@ddd/events/event'
-import { Anonymous } from '@http-kit/identity/anonymous'
+import { Anonymous } from '@http-kit/app/identity/anonymous'
 import { DomainEventEmitter } from '@ddd/events/emitter'
 import { Action } from '@ddd/action'
 

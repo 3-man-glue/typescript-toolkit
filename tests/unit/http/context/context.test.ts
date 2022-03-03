@@ -1,6 +1,6 @@
 import { getEmptyContext } from '@http-kit/context/context'
 import { ContextDto, HttpContext } from '@http-kit/context/interfaces'
-import { Anonymous } from '@http-kit/identity/anonymous'
+import { Anonymous } from '@http-kit/app/identity/anonymous'
 
 describe('Http Context', () => {
   describe('getEmptyContext()', () => {
