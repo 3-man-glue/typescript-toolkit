@@ -39,6 +39,7 @@
       "@cache/*": ["cache/*"],
       "@mq/*": ["mq/*"],
       "@event-stream/*": ["event-stream/*"],
+      "@scheduler/*": ["scheduler/*"],
     },
     "rootDirs": [
       "src"
