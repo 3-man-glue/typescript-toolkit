@@ -47,6 +47,20 @@ export interface State {
   id: string,
 }
 
+export interface PageOptions {
+  size: number
+  page: number
+}
+
+export interface PaginationMetadata<T> {
+  result: T[]
+  page: {
+    total: number
+    current: number
+    size: number
+  }
+}
+
 export const cassandraDictionary = {
   username: {
     env: 'DATABASE_CASSANDRA_USERNAME',
