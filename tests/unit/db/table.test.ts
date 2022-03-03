@@ -1,10 +1,10 @@
 import { PlainObject } from '@utils/common-types'
 import { Engine } from '@db/engine/interfaces'
-import { Operation, Schema, State } from '@db/interfaces'
+import { Operation, Schema, DBState } from '@db/interfaces'
 import { Table } from '@db/table'
 import { DBException } from '@http-kit/exception/db'
 
-interface TestState extends State {
+interface TestState extends DBState {
   attrA: string,
   attrB: string[],
   attrC: number,
