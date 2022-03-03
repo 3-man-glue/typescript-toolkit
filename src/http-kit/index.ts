@@ -26,8 +26,8 @@ export * from '@http-kit/exception/not-found'
 export * from '@http-kit/exception/projector'
 export * from '@http-kit/exception/unauthorized'
 // identity
-export * from '@http-kit/identity/actor'
-export * from '@http-kit/identity/anonymous'
+export * from '@http-kit/app/identity/actor'
+export * from '@http-kit/app/identity/anonymous'
 // server
 export * from '@http-kit/server/http'
 export * from '@http-kit/server/interfaces'

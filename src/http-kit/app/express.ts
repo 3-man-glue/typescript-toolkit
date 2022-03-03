@@ -7,7 +7,7 @@ import { HttpException } from '@http-kit/exception/http-exception'
 import { InternalServerException } from '@http-kit/exception/internal-server'
 import logger from '@utils/logger'
 
-export type ExpressHandler = (req: Request, res: Response, next: NextFunction) => Promise<void>
+export type ExpressHandler = (req: Request, res: Response, next: NextFunction) => Promise<void> | void
 
 export class ExpressApp implements HttpApp {
   private static appInstance: ExpressApp
@@ -46,7 +46,7 @@ export class ExpressApp implements HttpApp {
   }
 }
 
-function formatErrorResponse(e: HttpException): Record<string, string> {
+export function formatErrorResponse(e: HttpException): Record<string, string> {
   return Object.assign({}, e.code ? { code: e.code } : undefined, { message: e.message })
 }
 

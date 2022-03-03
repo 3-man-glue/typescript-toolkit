@@ -3,8 +3,8 @@ import { Container, Service } from 'typedi'
 import { Handler } from '@http-kit/app/handler/handler'
 import { ContextDto, HttpContext } from '@http-kit/context/interfaces'
 import { getEmptyContext } from '@http-kit/context/context'
-import { Actor } from '@http-kit/identity/actor'
-import { Anonymous } from '@http-kit/identity/anonymous'
+import { Actor } from '@http-kit/app/identity/actor'
+import { Anonymous } from '@http-kit/app/identity/anonymous'
 
 describe('Handler Abstraction', () => {
   class IndependentHandlerA extends Handler<ContextDto, ContextDto> {

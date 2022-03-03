@@ -1,5 +1,7 @@
+/* eslint-disable camelcase */
 import { ContextDto, HttpContext } from '@http-kit/context/interfaces'
 import { ExpressHandler } from '@http-kit/app/express'
+import { PlainObject } from '@utils/common-types'
 
 export type ApiMethod = 'get' | 'post' | 'put' | 'patch' | 'delete'
 
@@ -57,4 +59,29 @@ export interface RouteBuilder {
   build(): RouteInterface
 
   middlewares: Middleware[]
+}
+
+export type DataValidator = {
+  params: PlainObject
+  body: PlainObject
+  query: PlainObject
+  headers: PlainObject
+}
+
+export interface ParsedPaginationResponse {
+  limit: number
+  total: number
+  current_page: number
+  items: PlainObject[]
+  filters?: PlainObject | null
+}
+
+export interface PaginationResponse<T = PlainObject> {
+  result: T[]
+  page: {
+    total: number
+    current: number
+    size: number
+  }
+  filters?: PlainObject
 }
