@@ -97,6 +97,18 @@ export declare class ProjectorException extends HttpExceptionInterface {
 export declare class UnauthorizedException extends HttpExceptionInterface {
   constructor(message?: string)
 }
+
+export declare class MediaException extends HttpExceptionInterface {
+  constructor(message?: string)
+}
+
+export declare class NotImplementedException extends HttpExceptionInterface {
+  constructor(message?: string)
+}
+
+export declare class RemoteStorageException extends HttpExceptionInterface {
+  constructor(message?: string)
+}
 export interface HttpException {
   status: number
   message: string
