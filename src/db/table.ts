@@ -1,8 +1,8 @@
 import { PlainObject } from '@utils/common-types'
 import { Engine } from '@db/engine/interfaces'
-import { Condition, DataFactory, Query, Schema, State } from '@db/interfaces'
+import { Condition, DataFactory, Query, Schema, DBState } from '@db/interfaces'
 
-export abstract class Table<T extends State> implements DataFactory<T>, Query<T> {
+export abstract class Table<T extends DBState> implements DataFactory<T>, Query<T> {
   private name: string
 
   protected engine: Engine

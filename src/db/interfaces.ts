@@ -23,12 +23,12 @@ export type OperationPattern = {
   [K in Operation]?: unknown
 }
 
-export interface DataFactory<T extends State> {
+export interface DataFactory<T extends DBState> {
   plainObjectFactory(state: T): PlainObject
   stateObjectFactory(object: PlainObject): T
 }
 
-export interface Query<T extends State> {
+export interface Query<T extends DBState> {
   select(condition: Condition<T>): Promise<T[]>,
   insert(data: T[]): Promise<void>,
   update(data: T[], condition: Condition<T>): Promise<void>,
@@ -43,7 +43,7 @@ export interface QueryFunction {
 export interface Schema {
 }
 
-export interface State {
+export interface DBState {
   id: string,
 }
 
