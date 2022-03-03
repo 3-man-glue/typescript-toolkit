@@ -3,11 +3,16 @@ import { Engine, ReturnedQuery } from '@db/engine/interfaces'
 import { PlainObject } from '@utils/common-types'
 import cassandra from 'cassandra-driver'
 import { DictMapper } from '@config/interfaces'
+import { QueryOptions } from '@db/engine/generate-query'
+
 export interface Engine {
-  select<T>(condition: Condition<T>, tableName: string): Promise<PlainObject[]>
+  updateCounter(subject: string, subjectId: string, changingValue: number): Promise<void>
+  select<T>(condition: Condition<T>, tableName: string, options?: QueryOptions): Promise<PlainObject[]>
+  concurrentSelect<T>(conditions: Condition<T>[], tableName: string, options?: QueryOptions): Promise<PlainObject[]>
   insert(data: PlainObject[], tableName: string): Promise<void>
   update(data: PlainObject[], condition: PlainObject, tableName: string): Promise<void>
   delete(condition: PlainObject, tableName: string): Promise<void>
+  raw(query: string, params: unknown[]): Promise<void>
 }
 export declare type ReturnedQuery = {
   query: string
@@ -22,7 +27,12 @@ export declare type ConsistencyOptions = {
 }
 
 export declare const getInsertQueries: (data: PlainObject[], tableName: string) => ReturnedQuery[]
-export declare const getSelectQuery: <T>(condition: Condition<T>, tableName: string) => ReturnedQuery
+export declare const getUpdateCounterQuery: (condition: Record<string, unknown>, changingValue: number) => ReturnedQuery
+export declare const getSelectQuery: <T>(
+  condition: Condition<T>,
+  tableName: string,
+  options?: QueryOptions,
+) => ReturnedQuery
 
 export declare class CassandraEngine implements Engine {
 
@@ -94,6 +104,20 @@ export interface QueryFunction {
 export interface Schema {}
 export interface State {
   id: string
+}
+
+export declare interface PageOptions {
+  size: number
+  page: number
+}
+
+export declare interface PaginationMetadata<T> {
+  result: T[]
+  page: {
+    total: number
+    current: number
+    size: number
+  }
 }
 
 export declare const cassandraDictionary: DictMapper
