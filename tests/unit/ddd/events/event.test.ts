@@ -1,5 +1,5 @@
 import { Identity } from '@utils/common-types'
-import { DomainEvent } from '@ddd/event'
+import { DomainEvent } from '@ddd/events/event'
 
 jest.mock('@utils/id-generator', () => ({ cuid: jest.fn().mockReturnValue('random-cuid') }))
 

@@ -6,8 +6,10 @@ export abstract class Entity<T extends DomainState> implements EntityInterface<T
 
   protected state: T
 
-  constructor(state?: T) {
-    this.state = state ? state: { id: IdGen.cuid({ value: this.idPrefix }) } as T
+  constructor(params?:  Partial<{ state: T, idPrefix: string }>) {
+    this.state = params?.state
+      ? params.state
+      : { id: IdGen.cuid(params?.idPrefix ? { value: params.idPrefix } : undefined) } as T
   }
 
   get id(): string {

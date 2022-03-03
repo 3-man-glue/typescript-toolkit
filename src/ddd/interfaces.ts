@@ -1,3 +1,6 @@
+import { Identity, PlainObject } from '@utils/common-types'
+import { Action } from './action'
+
 /**
  *  ## UseCase interface
  *   - Represent only one domain use-case in particular bounded-context
@@ -31,10 +34,15 @@
  *  ```
  */
 
-import { Identity, PlainObject } from '@utils/common-types'
-
 export interface UseCase<T = void, K = void> {
   execute(input: T): K | Promise<K>
+}
+
+/**
+ * Encapsulated state object of entity or aggregate
+ */
+export interface State {
+  id: string
 }
 
 export interface EntityInterface<T extends DomainState> {
@@ -77,6 +85,50 @@ export interface EventEmitter<T extends DomainState> {
   commit(): DomainEventInterface<T>[]
 }
 
-export interface Publisher<T extends DomainState> {
-  publish(event: EventEmitter<T>, topic: string): Promise<void>
+export interface EventPublisherInterface {
+  publish<T extends DomainState>(event: EventEmitter<T>)
+    : Promise<DomainEventInterface<T>[]>
+}
+
+export interface EventData<T extends DomainState, K extends EventParams> {
+  state: Partial<T>
+  Event: EventConstructor<T, K>
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ActionConstructor<T extends DomainState, K extends EventParams> = new (...args: any[]) => Action<T, K>
+
+export interface EventMessage {
+  id: string
+  /**
+   * Use a class name as event name
+   */
+  name: string
+  /**
+   * Action causing the event
+   */
+  action: string
+  /**
+   * Aggregate Root Id
+   */
+  rootId: string
+  /**
+   * Entity class name
+   */
+  subject: string
+
+  /**
+   * Entity id / event emitter id
+   */
+  subjectId: string
+
+  context: EventContext<DomainState>
+
+  params: EventParams
+  /**
+   * Identity who calls for action and triggers the event
+   */
+  actor: Identity
+
+  timestamp: number
 }

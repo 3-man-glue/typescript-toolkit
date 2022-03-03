@@ -53,13 +53,16 @@ export interface Subscriber {
   subscribe(): void
 }
 export declare type LoaderFunction = () => Promise<void>
-export interface PublisherAdapter {
-  subscribe<T extends MessageDto>(subject: string, handler: MessageHandler<T>): void
-  publish(topic: string, data: PlainObject): Promise<void>
-}
+
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface MessageDto {}
 
 export declare const googleCloudDictionary: DictMapper
 
 export declare const pubSubsDictionary: DictMapper
+
+export interface MessageQueueAdapter {
+  createTopic(topic: string): Promise<void>
+  subscribe<T extends MessageDto>(subject: string, handler: MessageHandler<T>): void
+  publish(topic: string, data: PlainObject): Promise<void>
+}
