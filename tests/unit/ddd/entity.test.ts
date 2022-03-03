@@ -1,7 +1,7 @@
 import { DomainState } from '@ddd/interfaces'
 import { Entity } from '@ddd/entity'
 
-jest.mock('@utils/id-generator', () => ({ cuid: jest.fn().mockReturnValue('random-cuid') }))
+jest.mock('cuid', () => jest.fn().mockReturnValue('random-cuid'))
 
 describe('Entity Abstraction', () => {
   afterEach(() => {
@@ -29,7 +29,7 @@ describe('Entity Abstraction', () => {
 
   beforeEach(() => {
     defaultTestState = { id: 'entity-id', attrA: 'attribute-a', attrB: 999999, attrC: true }
-    testEntity = new ConcreteEntity(defaultTestState)
+    testEntity = new ConcreteEntity({ state: defaultTestState })
   })
 
   describe('Constructor', () => {
@@ -42,18 +42,55 @@ describe('Entity Abstraction', () => {
 
     it('Should constructor with whole state', () => {
       const expectedState = { id: 'id-a', attrA: 'value', attrB: 111111, attrC: true }
-      const testEntity = new ConcreteEntity({ id: 'id-a', attrA: 'value', attrB: 111111, attrC: true })
+      const testEntity = new ConcreteEntity({ state: { id: 'id-a', attrA: 'value', attrB: 111111, attrC: true } })
+
+      expect(testEntity.getState()).toStrictEqual(expectedState)
+    })
+
+    it('should able to prefix the generated id', () => {
+      class TestEntity extends Entity<TestState> {
+        constructor() {
+          super({ idPrefix: 'PREFIX' })
+        }
+      }
+
+      const testEntity = new TestEntity()
+
+      expect(testEntity.id).toBe('PREFIX:random-cuid')
+    })
+
+    it('should ignore when the prefix is defined with empty string', () => {
+      class TestEntity extends Entity<TestState> {
+        constructor() {
+          super({ idPrefix: '' })
+        }
+      }
+
+      const testEntity = new TestEntity()
+
+      expect(testEntity.id).toBe('random-cuid')
+    })
+
+    it('should ignore when id is provided whether prefix is defined', () => {
+      class TestEntity extends Entity<TestState> {
+        constructor(state: TestState) {
+          super({ state, idPrefix: 'PREFIX' })
+        }
+      }
+
+      const expectedState = { id: 'id-a', attrA: 'value', attrB: 111111, attrC: true }
+      const testEntity = new TestEntity(expectedState)
 
       expect(testEntity.getState()).toStrictEqual(expectedState)
     })
   })
 
   describe('Getter', () => {
-    it('Should return id', () => {
+    it('should return id', () => {
       expect(testEntity.id).toBe('entity-id')
     })
 
-    it('Should return entity state', () => {
+    it('should return entity state', () => {
       const expectedState = { id: 'entity-id', attrA: 'attribute-a', attrB: 999999, attrC: true }
 
       expect(testEntity.getState()).toStrictEqual(expectedState)
@@ -61,7 +98,7 @@ describe('Entity Abstraction', () => {
   })
 
   describe('State modification', () => {
-    it('Should set state with whole state except its id', () => {
+    it('should set state with whole state except its id', () => {
       const expectedState = { id: 'entity-id', attrA: 'new-value', attrB: 10000, attrC: false }
 
       testEntity.setStateProxy()
@@ -69,7 +106,7 @@ describe('Entity Abstraction', () => {
       expect(testEntity.getState()).toStrictEqual(expectedState)
     })
 
-    it('Should path state with partial state except its id', () => {
+    it('should path state with partial state except its id', () => {
       const expectedState = { id: 'entity-id', attrA: 'attribute-a', attrB: NaN, attrC: true }
 
       testEntity.patchStateProxy()

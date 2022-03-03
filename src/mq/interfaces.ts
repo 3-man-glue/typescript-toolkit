@@ -7,7 +7,14 @@ export interface Subscriber {
   subscribe(): void
 }
 
+// don't forget to remove these lines when sync mq folder
 export interface PublisherAdapter {
+  subscribe<T extends MessageDto>(subject: string, handler: MessageHandler<T>): void
+  publish(topic: string, data: PlainObject): Promise<void>
+}
+
+export interface MessageQueueAdapter {
+  createTopic(topic: string): Promise<void>
   subscribe<T extends MessageDto>(subject: string, handler: MessageHandler<T>): void
   publish(topic: string, data: PlainObject): Promise<void>
 }
