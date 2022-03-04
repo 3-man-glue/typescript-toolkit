@@ -64,3 +64,8 @@ export interface EventDBState extends PlainObject {
   timestamp: number
   created_at: number
 }
+
+export type EventStreamConfig = {
+  streamTopicName: string
+  streamSubscriptionName: string
+}

@@ -1,22 +1,27 @@
 import 'reflect-metadata'
-import Container from 'typedi'
-import { redisDictionary } from '@cache/interface'
+import { RedisOption, redisDictionary } from '@cache/interface'
 import { ConfigService } from '@config/config'
-import { RedisOption } from '@config/interfaces'
-
+import { setupConfig } from '@config/setup-config'
 interface OtherConfigs {
   host: string
 }
 
 describe('Config Service', () => {
   let configService: ConfigService
+  let originalEnv: Record<string, string>
 
   beforeEach(() => {
-    configService = Container.get(ConfigService)
+    const additionalEnv = setupConfig()
+    originalEnv = JSON.parse(JSON.stringify(process.env))
+
+    configService = new ConfigService(additionalEnv)
   })
 
-  // should unskip this on update config service
-  it.skip('should resolve config properly', () => {
+  afterEach(() => {
+    process.env = JSON.parse(JSON.stringify(originalEnv))
+  })
+
+  it('should resolve config properly', () => {
     const expectedConfig = {
       host: '127.0.0.1',
       port: 6379,

@@ -1,3 +1,4 @@
+import { CassandraConsistenciesString } from '@db/engine/interfaces'
 import { PlainObject } from '@utils/common-types'
 
 export enum Operation {
@@ -59,6 +60,16 @@ export interface PaginationMetadata<T> {
     current: number
     size: number
   }
+}
+
+export type CassandraConfig = {
+  username: string
+  password: string
+  keyspace: string
+  dataCenter: string
+  contactPoints: string[]
+  readConsistency: CassandraConsistenciesString
+  writeConsistency: CassandraConsistenciesString
 }
 
 export const cassandraDictionary = {

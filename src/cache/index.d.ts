@@ -1,4 +1,4 @@
-import redis from 'redis'
+import redis, { ClientOpts } from 'redis'
 import { DictMapper } from '@config/interfaces'
 export class Redis {
   constructor(options: RedisOption)
@@ -24,3 +24,7 @@ export interface RedisOption extends redis.ClientOpts {
 }
 
 export declare const redisDictionary: DictMapper
+
+export interface RedisOption extends ClientOpts {
+  timeToLive: number
+}

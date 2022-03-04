@@ -1,4 +1,4 @@
-import { EventStreamConfig } from '@config/interfaces'
+import { EventStreamConfig } from '@event-stream/interfaces'
 import {
   DomainEventInterface,
   DomainState,
