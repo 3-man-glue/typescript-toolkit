@@ -1,5 +1,5 @@
 import { CacheException } from '@http-kit/exception/cache'
-import { RedisOption } from '@config/interfaces'
+import { RedisOption } from '@cache/interface'
 import redis, { RedisClient } from 'redis'
 import { Service } from 'typedi'
 import { promisify } from 'util'

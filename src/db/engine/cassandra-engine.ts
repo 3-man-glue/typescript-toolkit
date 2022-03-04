@@ -1,7 +1,6 @@
 import { DBException } from '@http-kit/exception/db'
 import { getInsertQueries, getSelectQuery } from '@db/engine/generate-query'
-import { Condition } from '@db/interfaces'
-import { CassandraConfig } from '@config/interfaces'
+import { CassandraConfig, Condition } from '@db/interfaces'
 import cassandra, { ExecutionProfile } from 'cassandra-driver'
 import { ConsistencyOptions, Engine as EngineInterface } from '@db/engine/interfaces'
 import { PlainObject } from '@utils/common-types'

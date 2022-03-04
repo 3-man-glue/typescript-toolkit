@@ -120,4 +120,14 @@ export declare interface PaginationMetadata<T> {
   }
 }
 
+export type CassandraConfig = {
+  username: string
+  password: string
+  keyspace: string
+  dataCenter: string
+  contactPoints: string[]
+  readConsistency: CassandraConsistenciesString
+  writeConsistency: CassandraConsistenciesString
+}
+
 export declare const cassandraDictionary: DictMapper
