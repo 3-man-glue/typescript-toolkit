@@ -1,19 +1,28 @@
+import { InternalServerException } from '@http-kit/exception/internal-server'
 import { SecretManagerServiceClient } from '@google-cloud/secret-manager'
+import { PlainObject } from '@utils/common-types'
 import logger from '@utils/logger'
-export async function setupSecretManager(): Promise<void> {
+
+type EnvParams = {
+  gcpProjectId: string
+  gcpSecretName: string
+}
+
+export async function setupSecretManager(env: EnvParams): Promise<PlainObject> {
   const client = new SecretManagerServiceClient()
-  const gcpProjectId = process.env['GCP_PROJECT_ID']
-  const secretName = process.env['GCP_SECRET_NAME']
+  const gcpProjectId = env['gcpProjectId']
+  const secretName = env['gcpSecretName']
   try {
     const [ secret ] = await client.accessSecretVersion({
       name: `projects/${gcpProjectId}/secrets/${secretName}/versions/latest`,
     })
-    const secretValue = secret.payload?.data
+    const secretValue: PlainObject = secret.payload?.data
       ? JSON.parse(secret.payload.data.toString())
       : {}
 
-    process.env = { ...process.env, ...secretValue }
+    return secretValue
   } catch (error) {
     logger.error(`Unable to get registerSecret: ${error}`, { exception: error })
+    throw new InternalServerException(`Unable to get registerSecret: ${error}`)
   }
 }
