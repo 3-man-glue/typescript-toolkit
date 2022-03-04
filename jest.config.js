@@ -18,6 +18,7 @@ module.exports = {
     '^@mq/(.*)$': '<rootDir>/src/mq/$1',
     '^@scheduler/(.*)$': '<rootDir>/src/scheduler/$1',
     '^@event-stream/(.*)$': '<rootDir>/src/event-stream/$1',
+    '^@gcp/(.*)$': '<rootDir>/src/gcp/$1',
   },
   roots: ['<rootDir>/tests/'],
 }
