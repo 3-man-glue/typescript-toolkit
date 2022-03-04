@@ -1,9 +1,8 @@
 import Container from 'typedi'
-import { PublisherAdapter, Subscriber, MessageDto } from '@mq/interfaces'
-import { MessageHandlerConstructor } from '@mq/client/interfaces'
+import { MessageQueueAdapter, Subscriber, MessageDto, MessageHandlerConstructor } from '@mq/interfaces'
 
 export abstract class BaseSubscriber<T extends MessageDto> implements Subscriber {
-  protected client!: PublisherAdapter
+  protected client!: MessageQueueAdapter
 
   protected readonly subject!: string
 
