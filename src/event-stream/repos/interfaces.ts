@@ -1,25 +1,6 @@
-/* eslint-disable camelcase */
-import { DictMapper } from '@config/interfaces'
-import { EventState } from '@event-stream/repos/interfaces'
-import { Engine } from '@db/engine/interfaces'
 import { PlainObject } from '@utils/common-types'
 
-export const eventStreamDictionary: DictMapper
-
-export class Event {
-  constructor(state: EventState)
-
-  get state(): EventState
-}
-
-export class EventRepository {
-  constructor(dbClient: Engine)
-
-  getByAggregateRoot(id: string): Promise<Event[]>
-
-  save(event: Event): Promise<void>
-}
-
+/* eslint-disable camelcase */
 export interface EventState {
   rootId: string
   subjectId: string
