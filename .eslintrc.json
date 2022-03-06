@@ -9,7 +9,7 @@
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended"
   ],
-  "ignorePatterns": ["build/**", "dist/**"],
+  "ignorePatterns": ["build/**", "dist/**", "*.d.ts"],
   "settings": {
     "import/resolver": {
       "node": {
