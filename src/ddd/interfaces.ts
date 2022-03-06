@@ -74,10 +74,9 @@ export type EventContext<T extends DomainState> = {
 
 export type EventParams = Record<string, unknown>
 
+export type EventConstructor<T extends DomainState, K extends EventParams>
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type EventConstructor<T extends DomainState, K extends EventParams> = new (
-  ...args: any[]
-) => DomainEventInterface<T, K>
+  = new ( ...args: any[] ) => DomainEventInterface<T, K>
 
 export interface EventEmitter<T extends DomainState> {
   emit<K extends EventParams = Record<string, unknown>>(Event: EventConstructor<T, K>, params?: K): this
