@@ -1,52 +1,158 @@
-import 'reflect-metadata'
-import { RedisOption, redisDictionary } from '@cache/interface'
 import { ConfigService } from '@config/config'
-import { setupConfig } from '@config/setup-config'
-interface OtherConfigs {
-  host: string
-}
+import { DictType } from '@config/interfaces'
 
 describe('Config Service', () => {
   let configService: ConfigService
-  let originalEnv: Record<string, string>
+  let originalEnv: NodeJS.ProcessEnv
+  const additionalEnv = {
+    ADDITIONAL_KEY: 'value',
+    PRESET_KEY: 'overwritten',
+    INTEGER: '999',
+    DECIMAL: '999.99',
+    STRING_LIST: 'a , b , c',
+    NUMERIC_LIST: '1,23,45',
+    INVALID_DECIMAL: 'v1.0.0',
+    INVALID_INTEGER: 'Infinity',
+  }
 
   beforeEach(() => {
-    const additionalEnv = setupConfig()
+    process.env[ 'PRESET_KEY' ] = 'preset-value'
     originalEnv = JSON.parse(JSON.stringify(process.env))
-
     configService = new ConfigService(additionalEnv)
+    expect(process.env[ 'PRESET_KEY' ]).toBe('overwritten')
   })
 
   afterEach(() => {
     process.env = JSON.parse(JSON.stringify(originalEnv))
+    expect(process.env[ 'PRESET_KEY' ]).toBe('preset-value')
   })
 
-  it('should resolve config properly', () => {
-    const expectedConfig = {
-      host: '127.0.0.1',
-      port: 6379,
-      url: 'redis://example.com/',
-      password: 'password',
-      timeToLive: 10,
-    }
-    const config = configService.resolve<RedisOption>(redisDictionary)
+  describe('resolve', () => {
+    it('should resolve when env variable is existing', () => {
+      type Expected = { additionalKey: string }
+      const dictionary = { additionalKey: { env: 'ADDITIONAL_KEY' } }
+      const expectedConfig: Expected = { additionalKey: 'value' }
 
-    expect(config).toStrictEqual(expectedConfig)
-  })
+      const config = configService.resolve<Expected>(dictionary)
 
-  it('should resolve other configs', () => {
-    process.env['OTHERS_CONFIG'] = 'testing-value'
-    const dictionary = {
-      host: {
-        env: 'OTHERS_CONFIG',
-      },
-    }
-    const expectedConfig = {
-      host: 'testing-value',
-    }
+      expect(config).toStrictEqual<Expected>(expectedConfig)
+    })
 
-    const config = configService.resolve<OtherConfigs>(dictionary)
+    it('should resolve empty value when env variable does not exist and default not specified', () => {
+      type Expected = { additionalKey: string }
+      const dictionary = { additionalKey: { env: 'ADDITIONAL_KEY_NOT_EXIST' } }
+      const expectedConfig: Expected = { additionalKey: '' }
 
-    expect(config).toStrictEqual(expectedConfig)
+      const config = configService.resolve<Expected>(dictionary)
+
+      expect(config).toStrictEqual<Expected>(expectedConfig)
+    })
+
+    it('should resolve default value when env variable does not exist', () => {
+      type Expected = { additionalKey: string }
+      const dictionary = { additionalKey: { env: 'ADDITIONAL_KEY_NOT_EXIST', default: 'default-value' } }
+      const expectedConfig: Expected = { additionalKey: 'default-value' }
+
+      const config = configService.resolve<Expected>(dictionary)
+
+      expect(config).toStrictEqual<Expected>(expectedConfig)
+    })
+
+    it('should resolve integer value as int when output type is NUMBER and value is not decimal', () => {
+      type Expected = { additionalKey: number }
+      const dictionary = { additionalKey: { env: 'INTEGER', type: DictType.NUMBER } }
+      const expectedConfig: Expected = { additionalKey: 999 }
+
+      const config = configService.resolve<Expected>(dictionary)
+
+      expect(config).toStrictEqual<Expected>(expectedConfig)
+    })
+
+    it('should resolve decimal value as int when output type is NUMBER and value is decimal', () => {
+      type Expected = { additionalKey: number }
+      const dictionary = { additionalKey: { env: 'DECIMAL', type: DictType.NUMBER } }
+      const expectedConfig: Expected = { additionalKey: 999.99 }
+
+      const config = configService.resolve<Expected>(dictionary)
+
+      expect(config).toStrictEqual<Expected>(expectedConfig)
+    })
+
+    it('should resolve list of trimmed string when output type is ARRAY', () => {
+      type Expected = { stringList: string[], numericList: string[] }
+      const dictionary = {
+        stringList: { env: 'STRING_LIST', type: DictType.ARRAY },
+        numericList: { env: 'NUMERIC_LIST', type: DictType.ARRAY },
+      }
+      const expectedConfig: Expected = { stringList: [ 'a', 'b', 'c' ], numericList: [ '1', '23', '45' ] }
+
+      const config = configService.resolve<Expected>(dictionary)
+
+      expect(config).toStrictEqual<Expected>(expectedConfig)
+    })
+
+    it('should throw error when output type is NUMBER but no default value specified', () => {
+      let isThrown = false
+      try {
+        const dictionary = {
+          invalidDecimal: { env: 'INVALID_INTEGER', type: DictType.NUMBER },
+        }
+
+        configService.resolve(dictionary)
+      } catch (e) {
+        isThrown = true
+        expect(e).toBeInstanceOf(TypeError)
+      }
+
+      expect(isThrown).toBeTruthy()
+    })
+
+    it('should throw error when output type is NUMBER but default value is invalid', () => {
+      let isThrown = false
+      try {
+        const dictionary = {
+          invalidDecimal: { env: 'INVALID_INTEGER', default: '', type: DictType.NUMBER },
+        }
+
+        configService.resolve(dictionary)
+      } catch (e) {
+        isThrown = true
+        expect(e).toBeInstanceOf(TypeError)
+      }
+
+      expect(isThrown).toBeTruthy()
+    })
+
+    it('should throw error when env variable type is not a valid integer', () => {
+      let isThrown = false
+      try {
+        const dictionary = {
+          invalidDecimal: { env: 'INVALID_INTEGER', type: DictType.NUMBER },
+        }
+
+        configService.resolve(dictionary)
+      } catch (e) {
+        isThrown = true
+        expect(e).toBeInstanceOf(TypeError)
+      }
+
+      expect(isThrown).toBeTruthy()
+    })
+
+    it('should throw error when env variable type is not a valid decimal', () => {
+      let isThrown = false
+      try {
+        const dictionary = {
+          invalidDecimal: { env: 'INVALID_DECIMAL', type: DictType.NUMBER },
+        }
+
+        configService.resolve(dictionary)
+      } catch (e) {
+        isThrown = true
+        expect(e).toBeInstanceOf(TypeError)
+      }
+
+      expect(isThrown).toBeTruthy()
+    })
   })
 })
