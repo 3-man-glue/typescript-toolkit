@@ -1,13 +1,11 @@
-import { Service } from 'typedi'
 import { Engine } from '@db/engine/interfaces'
 import { Operation } from '@db/interfaces'
 import { Event } from '@event-stream/models/event'
 import { EventDBState } from '@event-stream/repos/interfaces'
 import { PlainObject } from '@utils/common-types'
 
-@Service()
 export class EventRepository {
-  #dbClient: Engine
+  readonly #dbClient: Engine
 
   constructor(dbClient: Engine) {
     this.#dbClient = dbClient

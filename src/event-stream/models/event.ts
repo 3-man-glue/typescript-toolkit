@@ -1,7 +1,7 @@
 import { EventState } from '@event-stream/repos/interfaces'
 
 export class Event {
-  #state: EventState
+  readonly #state: EventState
 
   constructor(state: EventState) {
     this.#state = state
