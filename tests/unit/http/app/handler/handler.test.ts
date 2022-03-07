@@ -74,6 +74,12 @@ describe('Handler Abstraction', () => {
     }
   }
 
+  class FakeErrorHandler extends Handler<ContextDto, ContextDto> {
+    protected handle(): void | Promise<void> {
+      throw new Error('fake error')
+    }
+  }
+
   describe('Constructor', () => {
     it('Should have context undefined', () => {
       const handler = new IndependentHandlerA()
@@ -156,6 +162,22 @@ describe('Handler Abstraction', () => {
       await handler.invoke()
 
       expect(handler.context).toStrictEqual(expectedContext)
+    })
+
+    it('should throw and set exception to context when handle function raised the exception', async () => {
+      let isThrown = false
+      const handler = new FakeErrorHandler().setContext(getEmptyContext())
+      const expectedError = new Error('fake error')
+
+      try {
+        await handler.invoke()
+      } catch (e) {
+        isThrown = true
+        expect(e).toStrictEqual(expectedError)
+        expect(handler.context.exception).toStrictEqual(expectedError)
+      }
+
+      expect(isThrown).toBeTruthy()
     })
   })
 

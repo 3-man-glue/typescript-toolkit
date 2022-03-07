@@ -9,6 +9,7 @@ const mockedServer = {
   listen: jest.fn(),
   on: jest.fn(),
   emit: jest.fn(),
+  close: jest.fn(),
 } as unknown as Server
 
 beforeEach(() => {
@@ -107,6 +108,17 @@ describe('HttpServer', () => {
 
       expect(logger.error).toBeCalledTimes(1)
       expect(process.exit).toBeCalledWith(1)
+    })
+  })
+
+  describe('stop()', () => {
+    it('should close the server', async () => {
+      const fakeApp = jest.fn()
+
+      const server = HttpServer.create(fakeApp, logger)
+      await server.stop()
+
+      expect(mockedServer.close).toHaveBeenCalledTimes(1)
     })
   })
 })

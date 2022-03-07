@@ -1,4 +1,3 @@
-import { Service } from 'typedi'
 import axios, { AxiosInstance } from 'axios'
 import { PlainObject } from '@utils/common-types'
 import { HttpClient, ResponseHttp } from '@http-kit/client/interfaces'
@@ -8,7 +7,6 @@ const ECONNREFUSED_CODE = 'ECONNREFUSED'
 const ECONNABORTED_CODE = 'ECONNABORTED'
 const INTERNAL_EXCEPTION_CODES = [ ECONNREFUSED_CODE, ECONNABORTED_CODE ]
 
-@Service({ transient: true })
 export class AxiosHttpClient implements HttpClient {
   private readonly client: Readonly<AxiosInstance>
 
