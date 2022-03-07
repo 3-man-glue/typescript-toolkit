@@ -1,6 +1,6 @@
+import cassandra from 'cassandra-driver'
 import { Condition } from 'db/interfaces'
 import { PlainObject } from '@utils/common-types'
-import cassandra from 'cassandra-driver'
 import { QueryOptions } from '@db/engine/generate-query'
 
 export interface Engine {

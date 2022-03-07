@@ -51,37 +51,60 @@ describe('GetConditionParams', () => {
 
 describe('GetSelectQuery', () => {
   const tableName = 'broadcast'
-  it('should return empty string given empty condition', () => {
+  it('should return empty string with empty condition', () => {
     const expectedQuery = 'SELECT * FROM broadcast'
     const { query } = getSelectQuery({}, tableName)
     expect(query).toBe(expectedQuery)
   })
 
-  it('should return valid query string given condition', () => {
+  it('should return valid query string with condition', () => {
     const condition = { status: { [Operation.EQ]: 1 } }
     const expectedQuery = 'SELECT * FROM broadcast WHERE status = ?'
     const { query } = getSelectQuery(condition, tableName)
     expect(query).toBe(expectedQuery)
   })
 
-  it('should return valid query string given multiple condition', () => {
+  it('should return valid query string when set multiple condition', () => {
     const condition = { status: { [Operation.EQ]: 1 }, id: { IN: [ 1, 2, 3 ] } }
     const expectedQuery = 'SELECT * FROM broadcast WHERE status = ? AND id IN ?'
     const { query } = getSelectQuery(condition, tableName)
     expect(query).toBe(expectedQuery)
   })
 
-  it('should return valid query string given condition with order', () => {
+  it('should return valid query string when set condition with order', () => {
     const condition = { status: { order: 'asc', [Operation.EQ]: 1 } }
     const expectedQuery = 'SELECT * FROM broadcast WHERE status = ? ORDER BY status asc'
     const { query } = getSelectQuery(condition, tableName)
     expect(query).toBe(expectedQuery)
   })
 
-  it('should return valid query string given condition with multiple orders', () => {
+  it('should return valid query string when set condition with multiple orders', () => {
     const condition = { status: { [Operation.EQ]: 1, order: 'asc' }, id: { [Operation.EQ]: 1, order: 'asc' } }
     const expectedQuery = 'SELECT * FROM broadcast WHERE status = ? AND id = ? ORDER BY status asc,id asc'
     const { query } = getSelectQuery(condition, tableName)
     expect(query).toBe(expectedQuery)
+  })
+
+  describe('options', () => {
+    it('should return valid query string with raw field selector', () => {
+      const options = { rawSelect: 'a, b, c' }
+      const expectedQuery = 'SELECT a, b, c FROM broadcast'
+      const { query } = getSelectQuery({ }, tableName, options)
+      expect(query).toBe(expectedQuery)
+    })
+
+    it('should return valid query string with limit', () => {
+      const options = { rawSelect: 'a, b, c', limit: 20 }
+      const expectedQuery = 'SELECT a, b, c FROM broadcast LIMIT 20'
+      const { query } = getSelectQuery({ }, tableName, options)
+      expect(query).toBe(expectedQuery)
+    })
+
+    it('should return valid query string with allow filtering', () => {
+      const options = { rawSelect: 'a, b, c', limit: 20, allowFiltering: true }
+      const expectedQuery = 'SELECT a, b, c FROM broadcast ALLOW FILTERING LIMIT 20'
+      const { query } = getSelectQuery({ }, tableName, options)
+      expect(query).toBe(expectedQuery)
+    })
   })
 })
