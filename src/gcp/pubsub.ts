@@ -1,11 +1,8 @@
 import { PubSubConfig } from '@gcp/interfaces'
-import { Service } from 'typedi'
 import { PubSub, Message as PubSubMessage } from '@google-cloud/pubsub'
-import { PlainObject } from '@utils/common-types'
 import logger from '@utils/logger'
 import { MessageDto, MessageQueueAdapter, MessageHandler } from '@mq/interfaces'
 
-@Service()
 export class PubSubAdapter implements MessageQueueAdapter {
   private readonly pubsub: Readonly<PubSub>
 
@@ -49,7 +46,7 @@ export class PubSubAdapter implements MessageQueueAdapter {
     })
   }
 
-  public async publish(topic: string, data: PlainObject): Promise<void> {
+  public async publish<T>(topic: string, data: T): Promise<void> {
     try {
       const dataBuffer = Buffer.from(JSON.stringify(data), 'utf8')
       await this.pubsub.topic(topic).publish(dataBuffer)
