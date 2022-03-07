@@ -1,15 +1,13 @@
-import 'reflect-metadata'
-import { Readable } from 'stream'
-import Container from 'typedi'
+/* eslint-disable no-underscore-dangle */
+import { Readable, Writable } from 'stream'
 import { Bucket, Storage } from '@google-cloud/storage'
 import { CloudStorage } from '@gcp/cloud-storage'
 import { GoogleCloudConfig } from '@gcp/interfaces'
 import { RemoteStorageException } from '@http-kit/exception/remote-storage'
 
-jest.mock('stream')
 jest.mock('@utils/id-generator', () => ({ cuid: jest.fn().mockReturnValue('random-cuid') }))
 
-const mockGoogleStream = jest.fn()
+const mockGoogleStream = new Writable()
 
 const mockFileFunctions = {
   createWriteStream: jest.fn().mockReturnValue(mockGoogleStream),
@@ -45,47 +43,43 @@ describe('Cloud Storage', () => {
   })
 
   afterEach(() => {
-    Container.reset()
     jest.resetModules()
     jest.clearAllMocks()
   })
 
   describe('upload', () => {
-    it('should upload the given stram properly', () => {
+    it('should upload the given stram properly', (done) => {
       const stream = new Readable()
+      stream._read = jest.fn()
       const pipeSpy = jest.spyOn(stream, 'pipe')
       const unpipeSpy = jest.spyOn(stream, 'unpipe')
-      let fileName: string
 
       cloudStorage.upload('fake-file-name', stream)
-        .then(name => {
-          fileName = name
+        .then(fileName => {
+          expect(pipeSpy).toBeCalledWith(mockGoogleStream)
+          expect(unpipeSpy).toBeCalled()
+          expect(fileName).toBe('fake-file-name/random-cuid')
+          done()
         })
-      stream.emit('end')
+        .catch(e => done(e))
 
-      expect(pipeSpy).toBeCalledWith(mockGoogleStream)
-      setTimeout(() => {
-        expect(unpipeSpy).toBeCalled()
-        expect(fileName).toBe('fake-file-name/random-cuid')
-      }, 10)
+      stream.emit('end')
     })
 
-    it('should throw an error if the upload fails', () => {
+    it('should throw an error if the upload fails', (done) => {
       const expectedError = new Error('upload failed')
       const stream = new Readable()
+      stream._read = jest.fn()
       const pipeSpy = jest.spyOn(stream, 'pipe')
-      let error: Error
 
       cloudStorage.upload('fake-file-name', stream)
-        .catch(err => {
-          error = err
+        .catch(error => {
+          expect(error).toStrictEqual(expectedError)
+          expect(pipeSpy).toBeCalledWith(mockGoogleStream)
+          done()
         })
       stream.emit('error', expectedError)
 
-      expect(pipeSpy).toBeCalledWith(mockGoogleStream)
-      setTimeout(() => {
-        expect(error).toStrictEqual(expectedError)
-      }, 10)
     })
   })
 

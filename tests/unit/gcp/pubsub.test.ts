@@ -1,8 +1,6 @@
-import 'reflect-metadata'
 import EventEmitter from 'events'
-import Container from 'typedi'
 import { PubSub, Message as PubSubMessage } from '@google-cloud/pubsub'
-import { PubSubAdapter } from '@gcp/pubsub-adapter'
+import { PubSubAdapter } from '@gcp/pubsub'
 import { PubSubConfig } from '@gcp/interfaces'
 import { MessageDto, MessageQueueAdapter } from '@mq/interfaces'
 import logger from '@utils/logger'
@@ -28,7 +26,6 @@ describe('PubSub', () => {
   })
 
   afterEach(() => {
-    Container.reset()
     jest.resetModules()
     jest.clearAllMocks()
   })

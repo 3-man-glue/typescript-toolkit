@@ -1,15 +1,14 @@
 import { initializeApp, getApps } from 'firebase-admin/app'
 import { InternalServerException } from '@http-kit/exception/internal-server'
-import { Service } from 'typedi'
 import { app } from 'firebase-admin'
 
-@Service()
 export class FirebaseApp {
   public app: app.App
 
-  private readonly FIREBASE_NAME = 'firebase-app'
+  private readonly FIREBASE_NAME: string
 
-  constructor() {
+  constructor(firebaseName = 'firebase-app') {
+    this.FIREBASE_NAME = firebaseName
     try {
       const apps = getApps() as app.App[]
 

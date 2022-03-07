@@ -1,17 +1,15 @@
-import { Service } from 'typedi'
 import { Readable } from 'stream'
 import { Bucket, Storage } from '@google-cloud/storage'
 import { GoogleCloudConfig, RemoteStorage } from '@gcp/interfaces'
 import IdGen from '@utils/id-generator'
 import { RemoteStorageException } from '@http-kit/exception/remote-storage'
 
-@Service()
 export class CloudStorage implements RemoteStorage {
   #storage: Storage
 
   #bucket: Bucket
 
-  #delimiter: string
+  readonly #delimiter: string
 
   constructor(config: GoogleCloudConfig) {
     this.#storage = new Storage()

@@ -1,8 +1,8 @@
 /// <reference types="node" />
 import { Readable } from 'stream'
 import { app } from 'firebase-admin'
-import { PlainObject } from '@utils/common-types'
 import { MessageDto, MessageQueueAdapter, MessageHandler } from '@mq/interfaces'
+
 export declare class PubSubAdapter implements MessageQueueAdapter {
   private readonly pubsub
 
@@ -12,7 +12,7 @@ export declare class PubSubAdapter implements MessageQueueAdapter {
 
   subscribe<T extends MessageDto>(subject: string, handler: MessageHandler<T>): void
 
-  publish(topic: string, data: PlainObject): Promise<void>
+  publish<T>(topic: string, data: T): Promise<void>
 
   private formatMessage
 }
@@ -36,12 +36,10 @@ export declare class FirebaseApp {
 
   private readonly FIREBASE_NAME
 
-  constructor()
+  constructor(firebaseName: string)
 }
 
 export declare class CloudStorage implements RemoteStorage {
-  #private
-
   constructor(config: GoogleCloudConfig)
 
   upload(name: string, stream: Readable): Promise<string>
