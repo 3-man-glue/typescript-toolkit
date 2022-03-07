@@ -1,5 +1,3 @@
-import 'reflect-metadata'
-import { Container } from 'typedi'
 import { Engine } from '@db/engine/interfaces'
 import { Operation } from '@db/interfaces'
 import { Event } from '@event-stream/models/event'
@@ -20,10 +18,8 @@ describe('Event Repository', () => {
   })
 
   afterEach(() => {
-    Container.reset()
     jest.clearAllMocks()
     jest.resetModules()
-
     jest.useRealTimers()
   })
 
