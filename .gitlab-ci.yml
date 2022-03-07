@@ -9,6 +9,7 @@ Unit Test:
   script:
     - yarn install
     - yarn run test
+  coverage: '/All files\s*\|\s*(\d*.\d*|\d*)\s*\|\s*(\d*.\d*|\d*)\s*\|\s*(\d*.\d*|\d*)\s*\|\s*(\d*.\d*|\d*)\s*\|/'
   rules:
     - if: '($CI_MERGE_REQUEST_SOURCE_BRANCH_NAME != "master" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop") || $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
       when: always
@@ -26,7 +27,7 @@ Linting:
       allow_failure: false
 
 Build package:
-  stage: build 
+  stage: build
   image: node:14-alpine
   script:
     - yarn install

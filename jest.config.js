@@ -2,8 +2,16 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   coverageProvider: 'v8',
-  collectCoverageFrom: ['src/**/*.ts'],
+  collectCoverageFrom: ['./src/**/*.ts'],
   coveragePathIgnorePatterns: ['interfaces.ts'],
+  coverageThreshold: {
+    global: {
+      branches: 98,
+      functions: 98,
+      lines: 98,
+      statements: 98,
+    },
+  },
   timers: 'modern',
   injectGlobals: true,
   verbose: true,
