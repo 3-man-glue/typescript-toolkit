@@ -1,17 +1,15 @@
-import { DBException } from '@http-kit/exception/db'
-import { getInsertQueries, getSelectQuery } from '@db/engine/generate-query'
-import { CassandraConfig, Condition } from '@db/interfaces'
 import cassandra, { ExecutionProfile } from 'cassandra-driver'
+import { DBException } from '@http-kit/exception/db'
+import { getInsertQueries, getSelectQuery, getUpdateCounterQuery, QueryOptions  } from '@db/engine/generate-query'
+import { CassandraConfig, Condition } from '@db/interfaces'
 import { ConsistencyOptions, Engine as EngineInterface } from '@db/engine/interfaces'
 import { PlainObject } from '@utils/common-types'
-import { Service } from 'typedi'
-import { getUpdateCounterQuery, QueryOptions } from './generate-query'
+import { NotImplementedException } from '@http-kit/exception/not-implemented'
 
-@Service()
 export class CassandraEngine implements EngineInterface {
-  private client: cassandra.Client
+  private readonly client: cassandra.Client
 
-  private consistencyOptions: Record<string, cassandra.types.consistencies>
+  private readonly consistencyOptions: Record<string, cassandra.types.consistencies>
 
   private readonly CONCURRENT_LEVEL_LIMIT = 50
 
@@ -98,28 +96,26 @@ export class CassandraEngine implements EngineInterface {
     }
 
     return result.resultItems
-      ? result.resultItems.flatMap((result) => {
-        return result.rows
-      })
+      ? result.resultItems.flatMap(result => (result.rows))
       : []
   }
 
-  async insert(data: PlainObject[], tableName: string): Promise<void> {
+  public async insert(data: PlainObject[], tableName: string): Promise<void> {
     const queries = getInsertQueries(data, tableName)
     await this.client.batch(queries, { prepare: true, consistency: this.consistencyOptions['write'] })
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  update(_data: PlainObject[], _condition: PlainObject, _tableName: string): Promise<void> {
-    return Promise.resolve()
+  public update(_data: PlainObject[], _condition: PlainObject, _tableName: string): Promise<void> {
+    throw new NotImplementedException('update method not implemented for Cassandra Adaptor')
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  delete(_condition: PlainObject, _tableName: string): Promise<void> {
-    return Promise.resolve()
+  public delete(_condition: PlainObject, _tableName: string): Promise<void> {
+    throw new NotImplementedException('delete method not implemented for Cassandra Adaptor')
   }
 
-  async raw(query: string, params: unknown[] = []): Promise<void> {
+  public async raw(query: string, params: unknown[] = []): Promise<void> {
     await this.client.execute(query, params, { prepare: true })
   }
 }

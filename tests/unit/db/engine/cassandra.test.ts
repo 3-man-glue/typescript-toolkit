@@ -1,8 +1,9 @@
 import cassandra from 'cassandra-driver'
-import { CassandraEngine } from '@db/engine/cassandra-engine'
+import { CassandraEngine } from '@db/engine/cassandra'
 import { Operation } from '@db/interfaces'
 import { CassandraConsistenciesString, Engine } from '@db/engine/interfaces'
 import { DBException } from '@http-kit/exception/db'
+import { NotImplementedException } from '@http-kit/exception/not-implemented'
 
 jest.mock('cassandra-driver')
 
@@ -73,13 +74,13 @@ describe('CassandraEngine', () => {
       await cassandraEngine.select(
         {
           status: {
-            [Operation.EQ]: 1,
+            [ Operation.EQ ]: 1,
           },
         },
         'broadcast',
       )
 
-      const mockClientInstance = (cassandra.Client as unknown as jest.Mock).mock.instances[0]
+      const mockClientInstance = (cassandra.Client as unknown as jest.Mock).mock.instances[ 0 ]
       expect(mockClientInstance.execute).toHaveBeenCalledWith('SELECT * FROM broadcast WHERE status = ?', [ 1 ], {
         prepare: true,
         consistency: cassandra.types.consistencies.localOne,
@@ -125,7 +126,7 @@ describe('CassandraEngine', () => {
       })
       await cassandraEngine.insert([ { status: 1 } ], 'broadcast')
 
-      const mockClientInstance = (cassandra.Client as unknown as jest.Mock).mock.instances[0]
+      const mockClientInstance = (cassandra.Client as unknown as jest.Mock).mock.instances[ 0 ]
       expect(mockClientInstance.batch).toHaveBeenCalledWith(
         [ { query: 'INSERT INTO broadcast (status) VALUES (?)', params: [ 1 ] } ],
         { prepare: true, consistency: cassandra.types.consistencies.localOne },
@@ -134,21 +135,49 @@ describe('CassandraEngine', () => {
   })
 
   describe('select', () => {
-    it('should call execute given valid input', async () => {
-      const cassandraEngine = new CassandraEngine(mockConfigService, {
+    let cassandraEngine: CassandraEngine
+
+    beforeEach(() => {
+      cassandraEngine = new CassandraEngine(mockConfigService, {
         read: 'localOne',
         write: 'localOne',
       })
-      await cassandraEngine.select(
+    })
+
+    it('should resolve empty list when result does not contain row', async () => {
+      const mockClientInstance = (cassandra.Client as unknown as jest.Mock).mock.instances[ 0 ]
+      mockClientInstance.execute = jest.fn().mockResolvedValue({})
+
+      const output = await cassandraEngine.select(
         {
           status: {
-            [Operation.EQ]: 1,
+            [ Operation.EQ ]: 1,
           },
         },
         'broadcast',
       )
 
-      const mockClientInstance = (cassandra.Client as unknown as jest.Mock).mock.instances[0]
+      expect(output).toHaveLength(0)
+      expect(mockClientInstance.execute).toHaveBeenCalledWith('SELECT * FROM broadcast WHERE status = ?', [ 1 ], {
+        prepare: true,
+        consistency: cassandra.types.consistencies.localOne,
+      })
+    })
+
+    it('should resolve list of items when result does contain row', async () => {
+      const mockClientInstance = (cassandra.Client as unknown as jest.Mock).mock.instances[ 0 ]
+      mockClientInstance.execute = jest.fn().mockResolvedValue({ rows: [ { k: 1 }, { k: 2 } ] })
+      const expectedOutput = [ { k: 1 }, { k: 2 } ]
+      const output = await cassandraEngine.select(
+        {
+          status: {
+            [ Operation.EQ ]: 1,
+          },
+        },
+        'broadcast',
+      )
+
+      expect(output).toStrictEqual(expectedOutput)
       expect(mockClientInstance.execute).toHaveBeenCalledWith('SELECT * FROM broadcast WHERE status = ?', [ 1 ], {
         prepare: true,
         consistency: cassandra.types.consistencies.localOne,
@@ -163,19 +192,79 @@ describe('CassandraEngine', () => {
         write: 'localOne',
       })
       jest.spyOn(cassandra.concurrent, 'executeConcurrent')
-        .mockResolvedValueOnce( { errors: [], resultItems: [] } as unknown as cassandra.concurrent.ResultSetGroup)
+        .mockResolvedValueOnce({ errors: [], resultItems: [] } as unknown as cassandra.concurrent.ResultSetGroup)
 
-      await cassandraEngine.concurrentSelect(
+      const output = await cassandraEngine.concurrentSelect(
         [ {
           status: {
-            [Operation.EQ]: 1,
+            [ Operation.EQ ]: 1,
           },
         } ],
         'broadcast',
       )
 
+      expect(output).toHaveLength(0)
       expect(cassandra.concurrent.executeConcurrent).toHaveBeenCalledWith(
-        expect.any(cassandra.Client), [ { query: 'SELECT * FROM broadcast WHERE status = ?', params: [ 1 ]  } ], {
+        expect.any(cassandra.Client), [ { query: 'SELECT * FROM broadcast WHERE status = ?', params: [ 1 ] } ], {
+          executionProfile: 'read-consistency',
+          collectResults: true,
+          concurrencyLevel: 50,
+        })
+    })
+
+    it('should return list of rows when data does exist', async () => {
+      const cassandraEngine = new CassandraEngine(mockConfigService, {
+        read: 'localOne',
+        write: 'localOne',
+      })
+      const resultItems = [
+        { rows: [ { k: 1 }, { k: 2 }, { k: 3 } ] },
+        { rows: [] },
+        { rows: [ { k: 4 }, { k: 5 } ] },
+      ]
+      jest.spyOn(cassandra.concurrent, 'executeConcurrent')
+        .mockResolvedValueOnce({ errors: [], resultItems } as unknown as cassandra.concurrent.ResultSetGroup)
+      const expectedOutput = [ { k: 1 }, { k: 2 }, { k: 3 }, { k: 4 }, { k: 5 } ]
+
+      const output = await cassandraEngine.concurrentSelect(
+        [ {
+          status: {
+            [ Operation.EQ ]: 1,
+          },
+        } ],
+        'broadcast',
+      )
+
+      expect(output).toStrictEqual(expectedOutput)
+      expect(cassandra.concurrent.executeConcurrent).toHaveBeenCalledWith(
+        expect.any(cassandra.Client), [ { query: 'SELECT * FROM broadcast WHERE status = ?', params: [ 1 ] } ], {
+          executionProfile: 'read-consistency',
+          collectResults: true,
+          concurrencyLevel: 50,
+        })
+    })
+
+    it('should return empty list of rows when result item does not exist', async () => {
+      const cassandraEngine = new CassandraEngine(mockConfigService, {
+        read: 'localOne',
+        write: 'localOne',
+      })
+
+      jest.spyOn(cassandra.concurrent, 'executeConcurrent')
+        .mockResolvedValueOnce({ errors: [] } as unknown as cassandra.concurrent.ResultSetGroup)
+
+      const output = await cassandraEngine.concurrentSelect(
+        [ {
+          status: {
+            [ Operation.EQ ]: 1,
+          },
+        } ],
+        'broadcast',
+      )
+
+      expect(output).toHaveLength(0)
+      expect(cassandra.concurrent.executeConcurrent).toHaveBeenCalledWith(
+        expect.any(cassandra.Client), [ { query: 'SELECT * FROM broadcast WHERE status = ?', params: [ 1 ] } ], {
           executionProfile: 'read-consistency',
           collectResults: true,
           concurrencyLevel: 50,
@@ -188,7 +277,7 @@ describe('CassandraEngine', () => {
         write: 'localOne',
       })
       jest.spyOn(cassandra.concurrent, 'executeConcurrent')
-        .mockResolvedValueOnce( { errors: [ new Error() ] } as unknown as cassandra.concurrent.ResultSetGroup)
+        .mockResolvedValueOnce({ errors: [ new Error() ] } as unknown as cassandra.concurrent.ResultSetGroup)
 
       await expect(cassandraEngine.concurrentSelect([], 'broadcast')).rejects.toBeInstanceOf(DBException)
     })
@@ -202,7 +291,7 @@ describe('CassandraEngine', () => {
       })
       await cassandraEngine.insert([ { status: 1 } ], 'broadcast')
 
-      const mockClientInstance = (cassandra.Client as unknown as jest.Mock).mock.instances[0]
+      const mockClientInstance = (cassandra.Client as unknown as jest.Mock).mock.instances[ 0 ]
       expect(mockClientInstance.batch).toHaveBeenCalledWith(
         [ { query: 'INSERT INTO broadcast (status) VALUES (?)', params: [ 1 ] } ],
         { prepare: true, consistency: cassandra.types.consistencies.localOne },
@@ -226,12 +315,64 @@ describe('CassandraEngine', () => {
       })
       await cassandraEngine.updateCounter('Segment', 'SMT1202', 1)
 
-      const mockClientInstance = (cassandra.Client as unknown as jest.Mock).mock.instances[0]
+      const mockClientInstance = (cassandra.Client as unknown as jest.Mock).mock.instances[ 0 ]
       expect(mockClientInstance.execute).toHaveBeenCalledWith(
         'UPDATE counter SET value = value + ? WHERE subject = ? AND subject_id = ?',
         [ 1, 'Segment', 'SMT1202' ],
         { prepare: true, consistency: cassandra.types.consistencies.localOne },
       )
+    })
+  })
+
+  describe('update and delete', () => {
+    let cassandraEngine: CassandraEngine
+    beforeEach(() => {
+      cassandraEngine = new CassandraEngine(mockConfigService, { read: 'quorum', write: 'localOne' })
+    })
+
+    it('should throw Not Implemented Exception when update method is called', async () => {
+      let isThrown = false
+      try {
+        await cassandraEngine.update([], {}, 'table')
+      } catch (e) {
+        isThrown = true
+        expect(e).toBeInstanceOf(NotImplementedException)
+      }
+
+      expect(isThrown).toBeTruthy()
+    })
+
+    it('should throw Not Implemented Exception when delete method is called', async () => {
+      let isThrown = false
+      try {
+        await cassandraEngine.delete({}, 'table')
+      } catch (e) {
+        isThrown = true
+        expect(e).toBeInstanceOf(NotImplementedException)
+      }
+
+      expect(isThrown).toBeTruthy()
+    })
+  })
+
+  describe('rawQuery', () => {
+    let cassandraEngine: CassandraEngine
+    beforeEach(() => {
+      cassandraEngine = new CassandraEngine(mockConfigService, { read: 'quorum', write: 'localOne' })
+    })
+
+    it('should call driver execute with empty params', async () => {
+      await cassandraEngine.raw('raw-query')
+
+      const mockClientInstance = (cassandra.Client as unknown as jest.Mock).mock.instances[ 0 ]
+      expect(mockClientInstance.execute).toHaveBeenCalledWith('raw-query', [], { prepare: true })
+    })
+
+    it('should call driver execute with query and params', async () => {
+      await cassandraEngine.raw('raw-query', [ 'fake' ])
+
+      const mockClientInstance = (cassandra.Client as unknown as jest.Mock).mock.instances[ 0 ]
+      expect(mockClientInstance.execute).toHaveBeenCalledWith('raw-query', [ 'fake' ], { prepare: true })
     })
   })
 })

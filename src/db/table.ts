@@ -3,13 +3,13 @@ import { Engine } from '@db/engine/interfaces'
 import { Condition, DataFactory, Query, Schema, DBState } from '@db/interfaces'
 
 export abstract class Table<T extends DBState> implements DataFactory<T>, Query<T> {
-  private name: string
+  private readonly name: string
 
   protected engine: Engine
 
   protected schema: Schema
 
-  constructor(engine: Engine, schema: Schema, name: string) {
+  protected constructor(engine: Engine, schema: Schema, name: string) {
     this.engine = engine
     this.schema = schema
     this.name = name
