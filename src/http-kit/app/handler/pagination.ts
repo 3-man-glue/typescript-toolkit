@@ -1,10 +1,8 @@
 import { PaginationPipeException } from '@http-kit/exception/pagination'
-import { Service } from 'typedi'
 import { Handler } from '@http-kit/app/handler/handler'
 import { ContextDto } from '@http-kit/context/interfaces'
 import { PaginationResponse, ParsedPaginationResponse } from '@http-kit/app/handler/interfaces'
 
-@Service()
 export class PaginationPipe extends Handler<ContextDto, PaginationResponse | ParsedPaginationResponse> {
   public handle(): void {
     const response = this.context.response as PaginationResponse
