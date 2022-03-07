@@ -50,7 +50,7 @@ describe('Redis', () => {
     })
 
     beforeEach(() => {
-      jest.spyOn(redis, 'createClient').mockReturnValue({ get: mockGet }  as unknown as RedisClient)
+      jest.spyOn(redis, 'createClient').mockReturnValue({ get: mockGet } as unknown as RedisClient)
     })
 
     it('should get the given key properly', async () => {
@@ -107,7 +107,7 @@ describe('Redis', () => {
     })
 
     beforeEach(() => {
-      jest.spyOn(redis, 'createClient').mockReturnValue({ set: mockSet }  as unknown as RedisClient)
+      jest.spyOn(redis, 'createClient').mockReturnValue({ set: mockSet } as unknown as RedisClient)
     })
 
     it('should set the given key properly', async () => {
@@ -117,11 +117,11 @@ describe('Redis', () => {
 
       expect(mockSet).toHaveBeenCalledTimes(1)
       expect(mockSet).toHaveBeenCalledWith(
-        'expectedKey', 'expectedValue', 'EX', (60 * 60 * 24) * 999, expect.any(Function)
+        'expectedKey', 'expectedValue', 'EX', (60 * 60 * 24) * 999, expect.any(Function),
       )
     })
 
-    it('shoud throw when Redis cannot set the given value', async () => {
+    it('should throw when Redis cannot set the given value', async () => {
       const instanceUnderTest = new Redis(expectedConfig)
       let isThrown = false
 
@@ -157,7 +157,7 @@ describe('Redis', () => {
     })
 
     beforeEach(() => {
-      jest.spyOn(redis, 'createClient').mockReturnValue({ del: mockDelete }  as unknown as RedisClient)
+      jest.spyOn(redis, 'createClient').mockReturnValue({ del: mockDelete } as unknown as RedisClient)
     })
 
     it('should delete the given key properly', async () => {
@@ -202,6 +202,21 @@ describe('Redis', () => {
 
       expect(mockDelete).toHaveBeenCalledTimes(1)
       expect(isThrown).toBeTruthy()
+    })
+  })
+
+  describe('closeConnection', () => {
+    const mockEnd = jest.fn()
+    beforeEach(() => {
+      jest.spyOn(redis, 'createClient').mockReturnValue({ end: mockEnd } as unknown as RedisClient)
+    })
+
+    it('should end the redis client connection', () => {
+      const instanceUnderTest = new Redis(expectedConfig)
+
+      instanceUnderTest.closeConnection()
+
+      expect(mockEnd).toHaveBeenCalledTimes(1)
     })
   })
 })
