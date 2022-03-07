@@ -3,13 +3,13 @@ module.exports = {
   testEnvironment: 'node',
   coverageProvider: 'v8',
   collectCoverageFrom: ['./src/**/*.ts'],
-  coveragePathIgnorePatterns: ['interfaces.ts'],
+  coveragePathIgnorePatterns: ['interfaces.ts', 'logger.ts', '<rootDir>/src/http-kit/exception/'],
   coverageThreshold: {
     global: {
-      branches: 98,
-      functions: 98,
-      lines: 98,
-      statements: 98,
+      branches: 95,
+      functions: 95,
+      lines: 95,
+      statements: 95,
     },
   },
   timers: 'modern',
