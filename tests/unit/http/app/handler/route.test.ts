@@ -62,6 +62,21 @@ describe('Route', () => {
       expect(spyMapper).toHaveBeenCalledWith('arg1', 'arg2')
     })
 
+    it('Should throw error when no handler', async () => {
+      let isThrown = false
+      const spyMapper = jest.fn().mockReturnValue(getEmptyContext())
+
+      try {
+        const route = new Route('put', '/path/to/something', spyMapper, [])
+        await route.handle('arg1', 'arg2')
+      } catch (error) {
+        isThrown = true
+        expect(error).toBeInstanceOf(InternalServerException)
+      }
+
+      expect(isThrown).toBeTruthy()
+    })
+
     it('Should be able to handle input with single independent handler', async () => {
       const spyMapper = jest.fn().mockReturnValue(getEmptyContext())
       const resultFromHandler = { metadata: { mutatingKey: 'Value from handler B' } }
