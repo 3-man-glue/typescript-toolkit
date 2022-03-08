@@ -6,7 +6,7 @@
     "allowJs": false,
     "sourceMap": true,
     "sourceRoot": "src",
-    "outDir": "build",
+    "outDir": "",
     "removeComments": true,
     "strict": true,
     "strictNullChecks": true,
@@ -59,6 +59,7 @@
   "exclude": [
     "node_modules",
     "build",
+    "libs",
     "dist",
     "coverage",
     "**/*.test.ts"
@@ -68,6 +69,6 @@
     "tests"
   ],
   "files": [
-    "src/app.ts"
+    "src/index.ts"
   ]
 }
