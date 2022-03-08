@@ -12,6 +12,7 @@ module.exports = {
       statements: 95,
     },
   },
+  reporters: ['default', 'jest-junit'],
   timers: 'modern',
   injectGlobals: true,
   verbose: true,
