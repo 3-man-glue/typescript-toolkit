@@ -1,0 +1,96 @@
+include:
+  - project: 'sertiscorp/devops/gitlab-ci-templates'
+    ref: master
+    file: 'base.yaml'
+
+Unit Test:
+  stage: test
+  image: node:14-alpine
+  script:
+    - yarn install
+    - yarn run test
+  coverage: '/All files\s*\|\s*(\d*.\d*|\d*)\s*\|\s*(\d*.\d*|\d*)\s*\|\s*(\d*.\d*|\d*)\s*\|\s*(\d*.\d*|\d*)\s*\|/'
+  artifacts:
+    when: always
+    reports:
+      junit: junit.xml
+      cobertura: coverage/clover.xml
+  rules:
+    - if: '($CI_MERGE_REQUEST_SOURCE_BRANCH_NAME != "master" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop")'
+      when: always
+      allow_failure: false
+    - if: $CI_COMMIT_REF_PROTECTED
+      when: always
+      allow_failure: false
+
+Static Test:
+  stage: test
+  image: node:14-alpine
+  script:
+    - yarn install --dev
+    - yarn run lint
+  rules:
+    - if: '($CI_MERGE_REQUEST_SOURCE_BRANCH_NAME != "master" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop")'
+      when: always
+      allow_failure: false
+    - if: $CI_COMMIT_REF_PROTECTED
+      when: always
+      allow_failure: false
+
+Build package:
+  stage: build
+  image: node:14-alpine
+  script:
+    - yarn install
+    - yarn build
+  artifacts:
+    paths:
+      - cache
+      - config
+      - db
+      - ddd
+      - event-stream
+      - gcp
+      - http-kit
+      - mq
+      - scheduler
+      - secret
+      - utils
+      - index.*
+  rules:
+    - if: '($CI_MERGE_REQUEST_SOURCE_BRANCH_NAME != "master" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop")'
+      when: always
+      allow_failure: false
+    - if: $CI_COMMIT_REF_PROTECTED
+      when: always
+      allow_failure: false
+
+Deploy npm:
+  stage: deploy
+  image: node:14-alpine
+  script:
+    - |
+      if [[ ! -f .npmrc ]]; then
+        {
+          echo '//registry.npmjs.org/:_authToken='$NPM_PUBLIC_KEY
+          echo 'email=chatcommerce@sertiscorp.com'
+          echo 'always-auth=true'
+        } >> .npmrc
+      fi
+    - |
+      tagOption=""
+      case $CI_COMMIT_BRANCH in
+        release/*)
+        echo "--tag beta"
+        ;;
+        develop)
+        echo "--tag alpha"
+        ;;
+      esac
+    - npm publish --access public $tagOption
+  when: manual
+  allow_failure: false
+  only:
+    - develop
+    - /^release.*/i
+    - tags

@@ -1,0 +1,23 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+  <changeSet id="TSC-26-04-create-segment-table" author="Songpon Imyen &lt;simye@sertiscorp.com&gt;">
+    <sql>
+      create table if not exists broadcast.segment
+      (
+          segment_id uuid,
+          segment_name varchar,
+          created_at timestamp,
+          user_count int,
+          primary key (segment_name)
+      );
+    </sql>
+    <rollback>
+      <dropTable tableName="segment"/>
+    </rollback>
+  </changeSet>
+</databaseChangeLog>

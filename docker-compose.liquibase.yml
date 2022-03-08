@@ -1,0 +1,26 @@
+version: '3.3'
+services:
+    history:
+        network_mode: host
+        container_name: liquibase-rollback
+        volumes:
+            - ./liquibase/changelog:/liquibase/changelog
+            - ./liquibase/libs:/liquibase/classpath
+        image: liquibase/liquibase:4.3.5
+        command: --defaultsFile=/liquibase/changelog/liquibase.docker.properties history 
+    rollback:
+        network_mode: host
+        container_name: liquibase-rollback
+        volumes:
+            - ./liquibase/changelog:/liquibase/changelog
+            - ./liquibase/libs:/liquibase/classpath
+        image: liquibase/liquibase:4.3.5
+        command: --defaultsFile=/liquibase/changelog/liquibase.docker.properties rollbackCount 1
+    update:
+        network_mode: host
+        container_name: liquibase-update
+        volumes:
+            - ./liquibase/changelog:/liquibase/changelog
+            - ./liquibase/libs:/liquibase/classpath
+        image: liquibase/liquibase:4.3.5
+        command: --defaultsFile=/liquibase/changelog/liquibase.docker.properties update

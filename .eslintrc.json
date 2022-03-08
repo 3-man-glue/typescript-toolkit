@@ -1,0 +1,87 @@
+{
+  "env": {
+    "node": true,
+    "jest": true
+  },
+  "parser": "@typescript-eslint/parser",
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "ignorePatterns": ["build/**", "dist/**", "*.d.ts"],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "moduleDirectory": ["node_modules", "src/"]
+      },
+      "typescript": {}
+    }
+  },
+  "plugins": ["@typescript-eslint"],
+  "rules": {
+    "indent": ["error", 2],
+    "eqeqeq": "error",
+    "no-empty": "error",
+    "no-return-await": "error",
+    "no-useless-return": "error",
+    "max-len": [
+      "error",
+      {
+        "code": 120,
+        "tabWidth": 2
+      }
+    ],
+    "max-params": [
+      "error",
+      {
+        "max": 4
+      }
+    ],
+    "max-depth": ["warn", 4],
+    "no-console": "error",
+    "no-unreachable-loop": "error",
+    "no-param-reassign": "error",
+    "curly": ["error", "all"],
+    "object-curly-spacing": ["error", "always"],
+    "no-warning-comments": "error",
+    "radix": "error",
+    "require-await": "error",
+    "array-bracket-spacing": ["error", "always"],
+    "camelcase": [
+      "error",
+      {
+        "properties": "never",
+        "ignoreDestructuring": true
+      }
+    ],
+    "comma-dangle": [
+      "error",
+      {
+        "arrays": "only-multiline",
+        "objects": "always-multiline",
+        "exports": "only-multiline",
+        "functions": "only-multiline"
+      }
+    ],
+    "eol-last": "error",
+    "key-spacing": "error",
+    "no-lonely-if": "error",
+    "no-multiple-empty-lines": [
+      "error",
+      {
+        "max": 1
+      }
+    ],
+    "no-trailing-spaces": "error",
+    "quotes": ["error", "single", { "avoidEscape": true } ],
+    "no-confusing-arrow": "error",
+    "no-useless-constructor": "error",
+    "semi": ["error", "never"],
+    "newline-before-return": "error",
+    "lines-between-class-members": ["error", "always"],
+    "operator-linebreak": ["error", "before"],
+    "no-underscore-dangle": "error",
+    "no-duplicate-imports": "error"
+  }
+}

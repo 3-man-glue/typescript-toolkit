@@ -1,0 +1,41 @@
+import TimeConverter, { TimeUnit } from '@utils/time-converter'
+
+describe('Tracking Date', () => {
+
+  it('should convert the given time units properly (to the smaller unit)', () => {
+    expect(TimeConverter.convert(9, TimeUnit.DAY, TimeUnit.DAY)).toBe(9)
+    expect(TimeConverter.convert(9, TimeUnit.DAY, TimeUnit.HOUR)).toBe(9 * 24)
+    expect(TimeConverter.convert(9, TimeUnit.DAY, TimeUnit.MINUTE)).toBe(9 * 24 * 60)
+    expect(TimeConverter.convert(9, TimeUnit.DAY, TimeUnit.SECOND)).toBe(9 * 24 * 60 * 60)
+    expect(TimeConverter.convert(9, TimeUnit.DAY, TimeUnit.MILLISECOND)).toBe(9 * 24 * 60 * 60 * 1000)
+    expect(TimeConverter.convert(9, TimeUnit.HOUR, TimeUnit.MINUTE)).toBe(9 * 60)
+    expect(TimeConverter.convert(9, TimeUnit.HOUR, TimeUnit.SECOND)).toBe(9 * 60 * 60)
+    expect(TimeConverter.convert(9, TimeUnit.HOUR, TimeUnit.MILLISECOND)).toBe(9 * 60 * 60 * 1000)
+    expect(TimeConverter.convert(9, TimeUnit.DAY, TimeUnit.MILLISECOND)).toBe(777600000)
+    expect(TimeConverter.convert(9, TimeUnit.HOUR, TimeUnit.MILLISECOND)).toBe(32400000)
+    expect(TimeConverter.convert(9, TimeUnit.MINUTE, TimeUnit.MILLISECOND)).toBe(540000)
+    expect(TimeConverter.convert(9, TimeUnit.SECOND, TimeUnit.MILLISECOND)).toBe(9000)
+    expect(TimeConverter.convert(9, TimeUnit.SECOND, TimeUnit.SECOND)).toBe(9)
+  })
+
+  it('should convert the given time units properly (to the bigger unit)', () => {
+    expect(TimeConverter.convert(9, TimeUnit.HOUR, TimeUnit.DAY).toFixed(2))
+      .toBe((9 / 24).toFixed(2))
+    expect(TimeConverter.convert(9, TimeUnit.MINUTE, TimeUnit.DAY).toFixed(4))
+      .toBe((9 / (24 * 60)).toFixed(4))
+    expect(TimeConverter.convert(9, TimeUnit.SECOND, TimeUnit.DAY).toFixed(9))
+      .toBe((9 / (24 * 60 * 60)).toFixed(9))
+    expect(TimeConverter.convert(9, TimeUnit.MILLISECOND, TimeUnit.DAY).toFixed(12))
+      .toBe((9 / (24 * 60 * 60 * 1000)).toFixed(12))
+    expect(TimeConverter.convert(9, TimeUnit.MINUTE, TimeUnit.HOUR).toFixed(2))
+      .toBe((9 / 60).toFixed(2))
+    expect(TimeConverter.convert(9, TimeUnit.SECOND, TimeUnit.HOUR).toFixed(4))
+      .toBe((9 / (60 * 60)).toFixed(4))
+    expect(TimeConverter.convert(9, TimeUnit.MILLISECOND, TimeUnit.HOUR).toFixed(10))
+      .toBe((9 / (60 * 60 * 1000)).toFixed(10))
+    expect(TimeConverter.convert(9, TimeUnit.MILLISECOND, TimeUnit.MINUTE).toFixed(5))
+      .toBe((9 / (60 * 1000)).toFixed(5))
+    expect(TimeConverter.convert(9, TimeUnit.MILLISECOND, TimeUnit.SECOND).toFixed(3))
+      .toBe((9 / 1000).toFixed(3))
+  })
+})

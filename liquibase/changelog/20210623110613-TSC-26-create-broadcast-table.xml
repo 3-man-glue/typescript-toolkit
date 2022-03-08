@@ -1,0 +1,30 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+  <property  name="set.uuid"  value="set&lt;uuid&gt;"  dbms="cassandra"/>
+  <changeSet id="TSC-26-02-create--broadcast-table" author="Songpon Imyen &lt;simye@sertiscorp.com&gt;">
+    <sql>
+      create table if not exists broadcast.broadcast
+      (
+          broadcast_id           uuid,
+          broadcast_year_hour    int,
+          broadcast_at           timestamp,
+          message                varchar,
+          target_segments        ${set.uuid},
+          type                   varchar,
+          status                 varchar,
+          open_count             int,
+          is_tracking_open_count boolean,
+          open_count_date        timestamp,
+          primary key ((broadcast_id), broadcast_at, broadcast_year_hour)
+      ) with clustering order by (broadcast_at desc);
+    </sql>
+    <rollback>
+      <dropTable tableName="broadcast"/>
+    </rollback>
+  </changeSet>
+</databaseChangeLog>
