@@ -27,6 +27,7 @@ module.exports = {
     '^@scheduler/(.*)$': '<rootDir>/src/scheduler/$1',
     '^@event-stream/(.*)$': '<rootDir>/src/event-stream/$1',
     '^@gcp/(.*)$': '<rootDir>/src/gcp/$1',
+    '^firebase-admin/(.*)$': '<rootDir>/node_modules/firebase-admin/lib/$1',
   },
   roots: ['<rootDir>/tests/'],
 }
