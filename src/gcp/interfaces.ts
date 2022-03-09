@@ -19,3 +19,9 @@ export type GoogleStorageConfig = {
 export type PubSubConfig = {
   projectId: string
 }
+
+export const pubSubDictionary = {
+  projectId: {
+    env: 'PUBSUB_PROJECT_ID',
+  },
+}
