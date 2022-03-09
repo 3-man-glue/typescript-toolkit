@@ -1,6 +1,7 @@
 /// <reference types="node" />
 import { Readable } from 'stream'
 import { app } from 'firebase-admin'
+import { DictMapper } from '@config/interfaces'
 import { MessageDto, MessageQueueAdapter, MessageHandler } from '@mq/interfaces'
 
 export declare class PubSubAdapter implements MessageQueueAdapter {
@@ -50,3 +51,5 @@ export declare class CloudStorage implements RemoteStorage {
 export type PubSubConfig = {
   projectId: string
 }
+
+export const pubSubDictionary: DictMapper
