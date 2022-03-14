@@ -2,7 +2,7 @@ import EventEmitter from 'events'
 import { PubSub, Message as PubSubMessage } from '@google-cloud/pubsub'
 import { PubSubAdapter } from '@gcp/pubsub'
 import { PubSubConfig } from '@gcp/interfaces'
-import { MessageDto, MessageQueueAdapter } from '@mq/interfaces'
+import { MessageDto } from '@mq/interfaces'
 import logger from '@utils/logger'
 
 jest.mock('@google-cloud/pubsub')
@@ -13,7 +13,7 @@ interface MockMessageDto extends MessageDto {
 }
 
 describe('PubSub', () => {
-  let clientPubSub: MessageQueueAdapter
+  let clientPubSub: PubSubAdapter
   let fakeSubscription: EventEmitter
   let mockPubSubInstance: PubSub
 
@@ -28,6 +28,47 @@ describe('PubSub', () => {
   afterEach(() => {
     jest.resetModules()
     jest.clearAllMocks()
+  })
+
+  describe('getTopicMetaData', () => {
+    it('should return metadata properly', async () => {
+      const expectedMetadata = [ {
+        labels: {},
+        name: 'projects/testing-pubsub/topics/topic-name',
+        messageStoragePolicy: null,
+        kmsKeyName: '',
+        schemaSettings: null,
+        satisfiesPzs: false,
+        messageRetentionDuration: null,
+      } ]
+      const mockGetMetadataFunction = jest.fn().mockResolvedValueOnce(expectedMetadata)
+      mockPubSubInstance.topic = jest.fn().mockReturnValueOnce({
+        getMetadata: mockGetMetadataFunction,
+      })
+
+      const metadata = await clientPubSub.getTopicMetadata('topic-name')
+
+      expect(mockGetMetadataFunction).toHaveBeenCalledTimes(1)
+      expect(metadata).toStrictEqual(expectedMetadata)
+    })
+
+    it('should throw when it cannot resolve metadata', async () => {
+      const expectedError = new Error('cannot resolve metadata')
+      const mockGetMetadataFunction = jest.fn().mockRejectedValueOnce(expectedError)
+      mockPubSubInstance.topic = jest.fn().mockReturnValueOnce({
+        getMetadata: mockGetMetadataFunction,
+      })
+      let isThrown = false
+
+      try {
+        await clientPubSub.getTopicMetadata('topic-name')
+      } catch (error) {
+        expect(error).toStrictEqual(expectedError)
+        isThrown = true
+      }
+
+      expect(isThrown).toBeTruthy()
+    })
   })
 
   describe('createTopic', () => {
