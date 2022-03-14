@@ -1,5 +1,5 @@
 import { PubSubConfig } from '@gcp/interfaces'
-import { PubSub, Message as PubSubMessage } from '@google-cloud/pubsub'
+import { PubSub, Message as PubSubMessage, GetTopicMetadataResponse } from '@google-cloud/pubsub'
 import logger from '@utils/logger'
 import { MessageDto, MessageQueueAdapter, MessageHandler } from '@mq/interfaces'
 
@@ -8,6 +8,10 @@ export class PubSubAdapter implements MessageQueueAdapter {
 
   constructor(config: PubSubConfig) {
     this.pubsub = new PubSub({ projectId: config.projectId })
+  }
+
+  public getTopicMetadata(topicName: string): Promise<GetTopicMetadataResponse> {
+    return this.pubsub.topic(topicName).getMetadata()
   }
 
   public async createTopic(topicName: string): Promise<void> {
