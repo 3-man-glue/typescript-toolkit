@@ -71,6 +71,43 @@ describe('PubSub', () => {
     })
   })
 
+  describe('testPermissions', () => {
+    it('should return a map of permissions', async () => {
+      const expectedPermissions = { 'pubsub.topics.publish': true }
+      const mockTestPermissionsFunction = jest.fn().mockReturnValueOnce([ expectedPermissions ])
+      mockPubSubInstance.topic = jest.fn().mockReturnValueOnce({
+        iam: {
+          testPermissions: mockTestPermissionsFunction,
+        },
+      })
+
+      const permissions = await clientPubSub.testPermissions('testing-topic', [ 'pubsub.topics.publish' ])
+
+      expect(permissions).toStrictEqual(expectedPermissions)
+      expect(mockPubSubInstance.topic).toBeCalledWith('testing-topic')
+    })
+
+    it('should throw an error when it cannot test the permissions', async () => {
+      const expectedError = new Error('Cannot test the permissions')
+      const mockTestPermissionsFunction = jest.fn().mockRejectedValueOnce(expectedError)
+      let isThrown = false
+      mockPubSubInstance.topic = jest.fn().mockReturnValueOnce({
+        iam: {
+          testPermissions: mockTestPermissionsFunction,
+        },
+      })
+
+      try {
+        await clientPubSub.testPermissions('testing-topic', [ 'pubsub.topics.publish' ])
+      } catch (error) {
+        expect(error).toStrictEqual(expectedError)
+        isThrown = true
+      }
+
+      expect(isThrown).toBeTruthy()
+    })
+  })
+
   describe('createTopic', () => {
     it('should create a topic', async () => {
       mockPubSubInstance.getTopics = jest.fn().mockReturnValueOnce([ [] ])

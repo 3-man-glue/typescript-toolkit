@@ -1,5 +1,5 @@
 import { PubSubConfig } from '@gcp/interfaces'
-import { PubSub, Message as PubSubMessage, GetTopicMetadataResponse } from '@google-cloud/pubsub'
+import { PubSub, Message as PubSubMessage, GetTopicMetadataResponse, IamPermissionsMap } from '@google-cloud/pubsub'
 import logger from '@utils/logger'
 import { MessageDto, MessageQueueAdapter, MessageHandler } from '@mq/interfaces'
 
@@ -12,6 +12,12 @@ export class PubSubAdapter implements MessageQueueAdapter {
 
   public getTopicMetadata(topicName: string): Promise<GetTopicMetadataResponse> {
     return this.pubsub.topic(topicName).getMetadata()
+  }
+
+  public async testPermissions(topicName: string, permissions: string[]): Promise<IamPermissionsMap> {
+    const [ permission ] = await this.pubsub.topic(topicName).iam.testPermissions(permissions)
+
+    return permission
   }
 
   public async createTopic(topicName: string): Promise<void> {
