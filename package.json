@@ -1,6 +1,6 @@
 {
   "name": "@sertis-chat-commerce/ts-toolkit",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "private": false,
   "contributors": [
     "Panya Batphantana <fanneioz@yahoo.co.th>",
@@ -37,7 +37,7 @@
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "firebase-admin": "^10.0.2",
-    "joi": "^17.4.1",
+    "joi": "^17.6.0",
     "module-alias": "^2.2.2",
     "multer": "^1.4.3",
     "nanoid": "^3.1.23",
