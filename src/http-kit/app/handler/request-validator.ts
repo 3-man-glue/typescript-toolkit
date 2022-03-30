@@ -13,8 +13,8 @@ export abstract class RequestValidator<T, K> extends Handler<T, K> {
   protected schema!: JoiSchemaValidator
 
   public handle(): void {
-    if (
-      !this.validator.validate(
+    try {
+      this.validator.validate(
         {
           body: this.context.request as PlainObject,
           query: this.context.metadata['reqQuery'] as PlainObject,
@@ -23,8 +23,8 @@ export abstract class RequestValidator<T, K> extends Handler<T, K> {
         },
         this.schema,
       )
-    ) {
-      throw new BadRequestException()
+    } catch (error) {
+      throw new BadRequestException().withCause(error)
     }
   }
 }

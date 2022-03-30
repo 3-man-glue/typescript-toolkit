@@ -15,11 +15,13 @@ const pick = <T, K extends keyof T>(fields: K[], data: T): Partial<T> => {
 
 @Service()
 export class JoiValidator implements JsonSchemaValidator {
-  validate(data: DataValidator, schema: JoiSchemaValidator): boolean {
+  validate(data: DataValidator, schema: JoiSchemaValidator): void {
     const validSchema = pick([ 'params', 'query', 'body', 'headers' ], schema)
     const object = pick(Object.keys(validSchema) as ( keyof DataValidator )[], data)
     const { error } = Joi.compile(validSchema).validate(object)
 
-    return Boolean(!error)
+    if(error) {
+      throw error
+    }
   }
 }
