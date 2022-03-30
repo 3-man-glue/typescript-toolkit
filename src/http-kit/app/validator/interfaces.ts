@@ -2,7 +2,7 @@ import { ObjectSchema } from 'joi'
 import { DataValidator } from '@http-kit/app/handler/interfaces'
 
 export interface JsonSchemaValidator {
-  validate(data: DataValidator, schema: JoiSchemaValidator): boolean
+  validate(data: DataValidator, schema: JoiSchemaValidator): void
 }
 
 export interface JoiSchemaValidator {
