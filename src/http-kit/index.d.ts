@@ -8,6 +8,8 @@ import { Logger } from '@utils/logger'
 import { Express, NextFunction, Request, Response } from 'express'
 import { RequestListener } from 'http'
 import { ObjectSchema } from 'joi'
+import { ExceptionResponse } from '@http-kit/app/handler/interfaces'
+
 export declare class HttpServer {
   static create(application: RequestListener, logger: Logger): HttpServer
 
@@ -20,8 +22,10 @@ export declare class HttpServer {
   stop(): Promise<void>
 }
 
-export class PaginationPipe extends Handler<ContextDto, PaginationResponse | ParsedPaginationResponse> {
-  public handle(): void
+export declare class PaginationPipe extends Handler<ContextDto, PaginationResponse | ParsedPaginationResponse> {
+}
+
+export declare class ExceptionInterceptor extends Handler<ContextDto, ExceptionResponse> {
 }
 
 export interface HttpServerConfig {
@@ -341,4 +345,9 @@ export declare function mapper(req: Request): HttpContext<ContextDto, ContextDto
 export interface HttpApp {
   engine: Readonly<RequestListener>
   registerRoute(builder: RouteBuilder): HttpApp
+}
+
+export declare interface ExceptionResponse {
+  code?: string
+  message: string
 }

@@ -85,3 +85,8 @@ export interface PaginationResponse<T = PlainObject> {
   }
   filters?: PlainObject
 }
+
+export interface ExceptionResponse {
+  code?: string
+  message: string
+}
