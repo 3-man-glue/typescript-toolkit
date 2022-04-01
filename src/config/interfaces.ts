@@ -1,11 +1,14 @@
+export type EnvType = string | number | boolean
+
 export enum DictType {
   NUMBER = 'number',
+  BOOLEAN = 'boolean',
   ARRAY = 'array',
 }
 
 export interface DictMapper {
   env: string
-  default?: string | number
+  default?: EnvType
   type?: string
 }
 
