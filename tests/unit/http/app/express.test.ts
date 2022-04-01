@@ -4,8 +4,6 @@ import logger from '@utils/logger'
 import { Controller } from '@http-kit/app/handler/controller'
 import { Get } from '@http-kit/app/handler/route-builder'
 import { ContextDto } from '@http-kit/context/interfaces'
-import { InternalServerException } from '@http-kit/exception/internal-server'
-import { HttpException } from '@http-kit/exception/http-exception'
 import { ExpressApp } from '@http-kit/app/express'
 import { Middleware } from '@http-kit/app/handler/interfaces'
 
@@ -81,8 +79,6 @@ describe('ExpressApp', () => {
       json: jest.fn().mockReturnThis(),
     } as unknown as Response
 
-    class ExceptionWithoutCode extends HttpException {}
-
     beforeEach(() => {
       jest.spyOn(logger, 'error').mockImplementation()
     })
@@ -101,52 +97,6 @@ describe('ExpressApp', () => {
       expect(mockResFn.status).toHaveBeenCalledWith(200)
       expect(mockResFn.json).toHaveBeenCalledTimes(1)
       expect(mockResFn.json).toHaveBeenCalledWith(expectedJson)
-    })
-
-    it('should intercept with error response when response object failed with standard error', async () => {
-      const app = ExpressApp.instance.registerRoute(Get({ path: '/path' }).setChain(MockController))
-      const expressRouteHandlerArgs = jest.spyOn(app.engine, 'get').mock.calls[ 0 ]
-      const routeHandler = expressRouteHandlerArgs ? expressRouteHandlerArgs[ 1 ] : undefined
-      const expectedJson = { mock: 'response' }
-      const expectedErrorJson = { code: 'InternalServerException', message: new InternalServerException().message }
-      mockResFn.json = jest.fn().mockImplementationOnce(() => {
-        throw new Error()
-      })
-
-      if (routeHandler) {
-        await routeHandler(jest.fn() as unknown as Request, mockResFn)
-      }
-
-      expect(mockResFn.status).toHaveBeenCalledTimes(2)
-      expect(mockResFn.status).toHaveBeenNthCalledWith(1, 200)
-      expect(mockResFn.status).toHaveBeenNthCalledWith(2, 500)
-      expect(mockResFn.json).toHaveBeenCalledTimes(2)
-      expect(mockResFn.json).toHaveBeenNthCalledWith(1, expectedJson)
-      expect(mockResFn.json).toHaveBeenNthCalledWith(2, expectedErrorJson)
-      expect(logger.error).toHaveBeenCalled()
-    })
-
-    it('should intercept with error response when response object failed with http exception', async () => {
-      const app = ExpressApp.instance.registerRoute(Get({ path: '/path' }).setChain(MockController))
-      const expressRouteHandlerArgs = jest.spyOn(app.engine, 'get').mock.calls[ 0 ]
-      const routeHandler = expressRouteHandlerArgs ? expressRouteHandlerArgs[ 1 ] : undefined
-      const expectedJson = { mock: 'response' }
-      const expectedErrorJson = { message: 'exception without code' }
-      mockResFn.json = jest.fn().mockImplementationOnce(() => {
-        throw new ExceptionWithoutCode(400, 'exception without code')
-      })
-
-      if (routeHandler) {
-        await routeHandler(jest.fn() as unknown as Request, mockResFn)
-      }
-
-      expect(mockResFn.status).toHaveBeenCalledTimes(2)
-      expect(mockResFn.status).toHaveBeenNthCalledWith(1, 200)
-      expect(mockResFn.status).toHaveBeenNthCalledWith(2, 400)
-      expect(mockResFn.json).toHaveBeenCalledTimes(2)
-      expect(mockResFn.json).toHaveBeenNthCalledWith(1, expectedJson)
-      expect(mockResFn.json).toHaveBeenNthCalledWith(2, expectedErrorJson)
-      expect(logger.error).toHaveBeenCalled()
     })
   })
 })
