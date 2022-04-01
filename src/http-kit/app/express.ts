@@ -3,9 +3,6 @@ import { HttpApp } from './interfaces'
 import { getEmptyContext } from '@http-kit/context/context'
 import { ContextDto, HttpContext } from '@http-kit/context/interfaces'
 import { RouteBuilder } from './handler/interfaces'
-import { HttpException } from '@http-kit/exception/http-exception'
-import { InternalServerException } from '@http-kit/exception/internal-server'
-import logger from '@utils/logger'
 
 export type ExpressHandler = (req: Request, res: Response, next: NextFunction) => Promise<void> | void
 
@@ -31,23 +28,12 @@ export class ExpressApp implements HttpApp {
   public registerRoute(builder: RouteBuilder): ExpressApp {
     const route = builder.setContextMapper(mapper).build()
     this.engine[ route.method ](route.path, ...builder.middlewares, async (req: Request, res: Response) => {
-      try {
-        const { status, response } = await route.handle(req, res)
-        res.status(status).json(response)
-      } catch (e) {
-        const exception = e instanceof HttpException ? e : new InternalServerException().withCause(e)
-
-        res.status(exception.status).json(formatErrorResponse(exception))
-        logger.error(exception)
-      }
+      const { status, response } = await route.handle(req, res)
+      res.status(status).json(response)
     })
 
     return this
   }
-}
-
-export function formatErrorResponse(e: HttpException): Record<string, string> {
-  return Object.assign({}, e.code ? { code: e.code } : undefined, { message: e.message })
 }
 
 export function mapper(req: Request): HttpContext<ContextDto, ContextDto> {

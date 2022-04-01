@@ -52,6 +52,8 @@ export interface RouteBuilder {
 
   setMiddlewares(...middlewares: Middleware[]): RouteBuilder
 
+  setCustomExceptionInterceptor(interceptor: HandlerConstructor<ContextDto, ExceptionResponse>): RouteBuilder
+
   setPath(path: string): RouteBuilder
 
   setChain(...HandlerChain: HandlerConstructor<ContextDto, ContextDto>[]): RouteBuilder
@@ -59,6 +61,8 @@ export interface RouteBuilder {
   build(): RouteInterface
 
   middlewares: Middleware[]
+
+  ExceptionInterceptor: HandlerConstructor<ContextDto, ExceptionResponse>
 }
 
 export type DataValidator = {

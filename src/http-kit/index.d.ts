@@ -248,10 +248,12 @@ export interface RouteBuilder {
   setContextMapper(mapper: ContextMapper): RouteBuilder
   setMethod(method: ApiMethod): RouteBuilder
   setMiddlewares(...middlewares: Middleware[]): RouteBuilder
+  setCustomExceptionInterceptor(interceptor: HandlerConstructor<ContextDto, ExceptionResponse>): RouteBuilder
   setPath(path: string): RouteBuilder
   setChain(...HandlerChain: HandlerConstructor<ContextDto, ContextDto>[]): RouteBuilder
   build(): Route
   middlewares: Middleware[]
+  ExceptionInterceptor: HandlerConstructor<ContextDto, ExceptionResponse>
 }
 export declare type DataValidator = {
   params: PlainObject
@@ -289,6 +291,15 @@ export declare const buildRequestValidatorBySchema: (
 
 export declare function Get(api: Api): RouteBuilder
 export declare function Post(api: Api): RouteBuilder
+
+export declare type ConstructorInput = {
+  method: ApiMethod,
+  path: string,
+  mapper: ContextMapper,
+  Chain: HandlerConstructor<ContextDto, ContextDto>[],
+  ExceptionInterceptor: HandlerConstructor<ContextDto, ExceptionResponse>
+}
+
 export declare class Route implements RouteInterface {
   readonly path: string
 
@@ -298,12 +309,9 @@ export declare class Route implements RouteInterface {
 
   protected Handlers: HandlerConstructor<ContextDto, ContextDto>[]
 
-  constructor(
-    method: ApiMethod,
-    path: string,
-    contextMapper: ContextMapper,
-    Handlers: HandlerConstructor<ContextDto, ContextDto>[],
-  )
+  protected ExceptionInterceptor: HandlerConstructor<ContextDto, ExceptionResponse>
+
+  constructor({ method, path, mapper, Chain, ExceptionInterceptor }: ConstructorInput)
 
   handle(...args: unknown[]): Promise<HttpContext<ContextDto, ContextDto>>
 }

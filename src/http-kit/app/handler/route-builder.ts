@@ -3,6 +3,7 @@ import {
   Api,
   ApiMethod,
   ContextMapper,
+  ExceptionResponse,
   HandlerConstructor,
   Middleware,
   RouteBuilder as RouteBuilderInterface
@@ -10,6 +11,7 @@ import {
 import { ContextDto } from '@http-kit/context/interfaces'
 import { InternalServerException } from '@http-kit/exception/internal-server'
 import { Route } from '@http-kit/app/handler/route'
+import { ExceptionInterceptor } from '@http-kit/app/handler/exception'
 
 export function Get(api: Api): RouteBuilderInterface {
   return createBaseBuilder(api).setMethod('get')
@@ -36,6 +38,8 @@ class RouteBuilder implements RouteBuilderInterface {
 
   protected mapper!: ContextMapper
 
+  #ExceptionInterceptor: HandlerConstructor<ContextDto, ExceptionResponse> = ExceptionInterceptor
+
   public setChain(...HandlerChain: HandlerConstructor<ContextDto, ContextDto>[]): RouteBuilder {
     this.Chain = HandlerChain
 
@@ -46,8 +50,18 @@ class RouteBuilder implements RouteBuilderInterface {
     return this.#middlewares
   }
 
+  get ExceptionInterceptor(): HandlerConstructor<ContextDto, ExceptionResponse> {
+    return this.#ExceptionInterceptor
+  }
+
   public setMiddlewares(...middlewares: Middleware[]): RouteBuilder {
     this.#middlewares = middlewares
+
+    return this
+  }
+
+  public setCustomExceptionInterceptor(Interceptor: HandlerConstructor<ContextDto, ExceptionResponse>): RouteBuilder {
+    this.#ExceptionInterceptor = Interceptor
 
     return this
   }
@@ -76,6 +90,12 @@ class RouteBuilder implements RouteBuilderInterface {
       throw new InternalServerException()
     }
 
-    return new Route(method, path, mapper, Chain)
+    return new Route({
+      method,
+      path,
+      mapper,
+      Chain,
+      ExceptionInterceptor: this.#ExceptionInterceptor,
+    })
   }
 }
