@@ -8,6 +8,8 @@ import { Logger } from '@utils/logger'
 import { Express, NextFunction, Request, Response } from 'express'
 import { RequestListener } from 'http'
 import { ObjectSchema } from 'joi'
+import { ExceptionResponse } from '@http-kit/app/handler/interfaces'
+
 export declare class HttpServer {
   static create(application: RequestListener, logger: Logger): HttpServer
 
@@ -20,8 +22,10 @@ export declare class HttpServer {
   stop(): Promise<void>
 }
 
-export class PaginationPipe extends Handler<ContextDto, PaginationResponse | ParsedPaginationResponse> {
-  public handle(): void
+export declare class PaginationPipe extends Handler<ContextDto, PaginationResponse | ParsedPaginationResponse> {
+}
+
+export declare class ExceptionInterceptor extends Handler<ContextDto, ExceptionResponse> {
 }
 
 export interface HttpServerConfig {
@@ -244,10 +248,12 @@ export interface RouteBuilder {
   setContextMapper(mapper: ContextMapper): RouteBuilder
   setMethod(method: ApiMethod): RouteBuilder
   setMiddlewares(...middlewares: Middleware[]): RouteBuilder
+  setCustomExceptionInterceptor(interceptor: HandlerConstructor<ContextDto, ExceptionResponse>): RouteBuilder
   setPath(path: string): RouteBuilder
   setChain(...HandlerChain: HandlerConstructor<ContextDto, ContextDto>[]): RouteBuilder
   build(): Route
   middlewares: Middleware[]
+  ExceptionInterceptor: HandlerConstructor<ContextDto, ExceptionResponse>
 }
 export declare type DataValidator = {
   params: PlainObject
@@ -285,6 +291,15 @@ export declare const buildRequestValidatorBySchema: (
 
 export declare function Get(api: Api): RouteBuilder
 export declare function Post(api: Api): RouteBuilder
+
+export declare type ConstructorInput = {
+  method: ApiMethod,
+  path: string,
+  mapper: ContextMapper,
+  Chain: HandlerConstructor<ContextDto, ContextDto>[],
+  ExceptionInterceptor: HandlerConstructor<ContextDto, ExceptionResponse>
+}
+
 export declare class Route implements RouteInterface {
   readonly path: string
 
@@ -294,12 +309,9 @@ export declare class Route implements RouteInterface {
 
   protected Handlers: HandlerConstructor<ContextDto, ContextDto>[]
 
-  constructor(
-    method: ApiMethod,
-    path: string,
-    contextMapper: ContextMapper,
-    Handlers: HandlerConstructor<ContextDto, ContextDto>[],
-  )
+  protected ExceptionInterceptor: HandlerConstructor<ContextDto, ExceptionResponse>
+
+  constructor({ method, path, mapper, Chain, ExceptionInterceptor }: ConstructorInput)
 
   handle(...args: unknown[]): Promise<HttpContext<ContextDto, ContextDto>>
 }
@@ -341,4 +353,9 @@ export declare function mapper(req: Request): HttpContext<ContextDto, ContextDto
 export interface HttpApp {
   engine: Readonly<RequestListener>
   registerRoute(builder: RouteBuilder): HttpApp
+}
+
+export declare interface ExceptionResponse {
+  code?: string
+  message: string
 }

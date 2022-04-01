@@ -4,7 +4,6 @@ import { Middleware } from '@http-kit/app/handler/interfaces'
 import { NextFunction, Request, Response } from 'express'
 import multer from 'multer'
 import { HttpException } from '@http-kit/exception/http-exception'
-import { formatErrorResponse } from '@http-kit/app/express'
 import { InternalServerException } from '@http-kit/exception/internal-server'
 import logger from '@utils/logger'
 
@@ -26,6 +25,11 @@ const storage = multer.diskStorage({
     cb(null, file.fieldname + '-' + uniqueSuffix)
   },
 })
+
+function formatErrorResponse(e: HttpException): Record<string, string> {
+  return Object.assign({}, e.code ? { code: e.code }:undefined, { message: e.message })
+}
+
 export const multipartFormInterceptor = (options: MultipartFormOptions = {}): Middleware => {
   const {
     limitSize = 5 * 1024 ** 2,

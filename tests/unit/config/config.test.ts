@@ -7,12 +7,17 @@ describe('Config Service', () => {
   const additionalEnv = {
     ADDITIONAL_KEY: 'value',
     PRESET_KEY: 'overwritten',
-    INTEGER: '999',
+    INTEGER_AS_STRING: '999',
+    INTEGER: 999,
     DECIMAL: '999.99',
+    BOOLEAN: false,
+    BOOLEAN_AS_STRING: 'true',
     STRING_LIST: 'a , b , c',
     NUMERIC_LIST: '1,23,45',
     INVALID_DECIMAL: 'v1.0.0',
     INVALID_INTEGER: 'Infinity',
+    INVALID_BOOLEAN: '0',
+    INVALID_TYPE: { k: 'v' },
   }
 
   beforeEach(() => {
@@ -38,20 +43,20 @@ describe('Config Service', () => {
       expect(config).toStrictEqual<Expected>(expectedConfig)
     })
 
-    it('should resolve empty value when env variable does not exist and default not specified', () => {
+    it('should resolve default value when env variable does not exist', () => {
       type Expected = { additionalKey: string }
-      const dictionary = { additionalKey: { env: 'ADDITIONAL_KEY_NOT_EXIST' } }
-      const expectedConfig: Expected = { additionalKey: '' }
+      const dictionary = { additionalKey: { env: 'ADDITIONAL_KEY_NOT_EXIST', default: 'default-value' } }
+      const expectedConfig: Expected = { additionalKey: 'default-value' }
 
       const config = configService.resolve<Expected>(dictionary)
 
       expect(config).toStrictEqual<Expected>(expectedConfig)
     })
 
-    it('should resolve default value when env variable does not exist', () => {
-      type Expected = { additionalKey: string }
-      const dictionary = { additionalKey: { env: 'ADDITIONAL_KEY_NOT_EXIST', default: 'default-value' } }
-      const expectedConfig: Expected = { additionalKey: 'default-value' }
+    it('should resolve integer string value as int when output type is NUMBER and value is not decimal', () => {
+      type Expected = { additionalKey: number }
+      const dictionary = { additionalKey: { env: 'INTEGER_AS_STRING', type: DictType.NUMBER } }
+      const expectedConfig: Expected = { additionalKey: 999 }
 
       const config = configService.resolve<Expected>(dictionary)
 
@@ -72,6 +77,26 @@ describe('Config Service', () => {
       type Expected = { additionalKey: number }
       const dictionary = { additionalKey: { env: 'DECIMAL', type: DictType.NUMBER } }
       const expectedConfig: Expected = { additionalKey: 999.99 }
+
+      const config = configService.resolve<Expected>(dictionary)
+
+      expect(config).toStrictEqual<Expected>(expectedConfig)
+    })
+
+    it('should resolve boolean value as boolean', () => {
+      type Expected = { additionalKey: boolean }
+      const dictionary = { additionalKey: { env: 'BOOLEAN' } }
+      const expectedConfig: Expected = { additionalKey: false }
+
+      const config = configService.resolve<Expected>(dictionary)
+
+      expect(config).toStrictEqual<Expected>(expectedConfig)
+    })
+
+    it('should resolve boolean string value as boolean when output type is BOOLEAN and value is not boolean', () => {
+      type Expected = { additionalKey: boolean }
+      const dictionary = { additionalKey: { env: 'BOOLEAN_AS_STRING', type: DictType.BOOLEAN } }
+      const expectedConfig: Expected = { additionalKey: true }
 
       const config = configService.resolve<Expected>(dictionary)
 
@@ -150,6 +175,54 @@ describe('Config Service', () => {
       } catch (e) {
         isThrown = true
         expect(e).toBeInstanceOf(TypeError)
+      }
+
+      expect(isThrown).toBeTruthy()
+    })
+
+    it('should throw error when env variable does not exist and default not specified', () => {
+      let isThrown = false
+      try {
+        const dictionary = {
+          nonExisted: { env: 'NON_EXISTED_ENV' },
+        }
+
+        configService.resolve(dictionary)
+      } catch (e) {
+        isThrown = true
+        expect(e).toBeInstanceOf(Error)
+      }
+
+      expect(isThrown).toBeTruthy()
+    })
+
+    it('should throw error when variable type is not boolean', () => {
+      let isThrown = false
+      try {
+        const dictionary = {
+          invalidBoolean: { env: 'INVALID_BOOLEAN', type: DictType.BOOLEAN },
+        }
+
+        configService.resolve(dictionary)
+      } catch (e) {
+        isThrown = true
+        expect(e).toBeInstanceOf(Error)
+      }
+
+      expect(isThrown).toBeTruthy()
+    })
+
+    it('should throw error when variable type is not supported', () => {
+      let isThrown = false
+      try {
+        const dictionary = {
+          invalidType: { env: 'INVALID_TYPE' },
+        }
+
+        configService.resolve(dictionary)
+      } catch (e) {
+        isThrown = true
+        expect(e).toBeInstanceOf(Error)
       }
 
       expect(isThrown).toBeTruthy()
