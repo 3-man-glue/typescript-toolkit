@@ -27,6 +27,7 @@ describe('Default Exception Interceptor', () => {
       ...baseContext,
       exception,
       response: { message: 'test error' },
+      status: 999,
     }
 
     interceptor.setContext({ ...baseContext, exception })
@@ -42,6 +43,7 @@ describe('Default Exception Interceptor', () => {
       ...baseContext,
       exception,
       response: { message: 'test error', code: 'FAKE_CODE' },
+      status: 777,
     }
 
     interceptor.setContext({ ...baseContext, exception })
