@@ -193,6 +193,7 @@ describe('Route', () => {
           code: 'InternalServerException',
           message: 'Internal Server Error: unable to identify exception cause',
         },
+        status: 500,
       }
       const expectedOutput = { ...getEmptyContext(), ...expectedContext }
 
@@ -221,6 +222,7 @@ describe('Route', () => {
           code: 'MOCKED_ERROR',
           message: 'Crashed with instance of Exception',
         },
+        status: 999,
       }
       const expectedOutput = { ...getEmptyContext(), ...expectedContext }
 
@@ -250,6 +252,7 @@ describe('Route', () => {
             code: 'MOCKED_ERROR',
             message: 'Crashed with instance of Exception',
           },
+          status: 999,
         }
         const expectedOutput = { ...getEmptyContext(), ...expectedContext }
 
