@@ -1,4 +1,3 @@
-import { PubSubConfig } from '@gcp/interfaces'
 import { PubSub, Message as PubSubMessage, GetTopicMetadataResponse, IamPermissionsMap } from '@google-cloud/pubsub'
 import logger from '@utils/logger'
 import { MessageDto, MessageQueueAdapter, MessageHandler } from '@mq/interfaces'
@@ -6,8 +5,8 @@ import { MessageDto, MessageQueueAdapter, MessageHandler } from '@mq/interfaces'
 export class PubSubAdapter implements MessageQueueAdapter {
   private readonly pubsub: Readonly<PubSub>
 
-  constructor(config: PubSubConfig) {
-    this.pubsub = new PubSub({ projectId: config.projectId })
+  constructor() {
+    this.pubsub = new PubSub()
   }
 
   public getTopicMetadata(topicName: string): Promise<GetTopicMetadataResponse> {

@@ -1,13 +1,17 @@
 /// <reference types="node" />
 import { Readable } from 'stream'
 import { app } from 'firebase-admin'
-import { DictMapper } from '@config/interfaces'
+import { GetTopicMetadataResponse, IamPermissionsMap } from '@google-cloud/pubsub'
 import { MessageDto, MessageQueueAdapter, MessageHandler } from '@mq/interfaces'
 
 export declare class PubSubAdapter implements MessageQueueAdapter {
   private readonly pubsub
 
-  constructor(config: GoogleCloudConfig)
+  constructor()
+
+  getTopicMetadata(topicName: string): Promise<GetTopicMetadataResponse>
+
+  testPermissions(topicName: string, permissions: string[]): Promise<IamPermissionsMap>
 
   createTopic(topicName: string): Promise<void>
 
@@ -47,9 +51,3 @@ export declare class CloudStorage implements RemoteStorage {
 
   download(fileName: string): Readable
 }
-
-export type PubSubConfig = {
-  projectId: string
-}
-
-export const pubSubDictionary: DictMapper
