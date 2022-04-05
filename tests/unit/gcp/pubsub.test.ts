@@ -1,7 +1,6 @@
 import EventEmitter from 'events'
 import { PubSub, Message as PubSubMessage } from '@google-cloud/pubsub'
 import { PubSubAdapter } from '@gcp/pubsub'
-import { PubSubConfig } from '@gcp/interfaces'
 import { MessageDto } from '@mq/interfaces'
 import logger from '@utils/logger'
 
@@ -18,7 +17,7 @@ describe('PubSub', () => {
   let mockPubSubInstance: PubSub
 
   beforeEach(() => {
-    clientPubSub = new PubSubAdapter({ projectId: 'project-id' } as unknown as PubSubConfig)
+    clientPubSub = new PubSubAdapter()
 
     fakeSubscription = new EventEmitter()
     mockPubSubInstance = (PubSub as unknown as jest.Mock).mock.instances[0]
