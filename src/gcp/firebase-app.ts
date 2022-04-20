@@ -24,3 +24,6 @@ export class FirebaseApp {
     }
   }
 }
+
+import FirebaseAdmin = require('firebase-admin')
+export { FirebaseAdmin }
