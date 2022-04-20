@@ -51,3 +51,6 @@ export declare class CloudStorage implements RemoteStorage {
 
   download(fileName: string): Readable
 }
+
+import FirebaseAdmin = require('firebase-admin')
+export { FirebaseAdmin }
