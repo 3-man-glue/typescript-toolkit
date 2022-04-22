@@ -1,10 +1,10 @@
 import cassandra from 'cassandra-driver'
-import { Condition } from 'db/interfaces'
+import { Condition } from '@db/interfaces'
 import { PlainObject } from '@utils/common-types'
 import { QueryOptions } from '@db/engine/generate-query'
 
 export interface Engine {
-  select<T>(condition: Condition<T>, tableName: string): Promise<PlainObject[]>
+  select<T>(condition: Condition<T>, tableName: string, options?: QueryOptions): Promise<PlainObject[]>
   insert(data: PlainObject[], tableName: string): Promise<void>
   update(data: PlainObject[], condition: PlainObject, tableName: string): Promise<void>
   delete(condition: PlainObject, tableName: string): Promise<void>
