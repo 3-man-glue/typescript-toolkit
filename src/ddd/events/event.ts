@@ -30,6 +30,7 @@ implements DomainEventInterface<T, K> {
       id: this.id,
       timestamp: this.timestamp,
       action: this.action,
+      actor: this.actor,
       params: this.params,
       context: this.context,
       subject: this.subject,

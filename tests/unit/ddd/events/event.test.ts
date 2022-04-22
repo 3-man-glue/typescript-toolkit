@@ -56,6 +56,7 @@ describe('Domain event abstraction', () => {
         id: 'random-cuid',
         timestamp: Date.now(),
         action: undefined,
+        actor: undefined,
         params: {},
         context: {
           subjectState: { id: 'test-id' },
