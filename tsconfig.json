@@ -41,6 +41,7 @@
       "@event-stream/*": ["event-stream/*"],
       "@scheduler/*": ["scheduler/*"],
       "@gcp/*": ["gcp/*"],
+      "@media/*": ["media/*"],
     },
     "rootDirs": [
       "src"
