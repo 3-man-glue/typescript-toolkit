@@ -21,8 +21,8 @@
     "http-kit",
     "mq",
     "scheduler",
-    "secret",
     "media",
+    "secret",
     "utils",
     "index.js",
     "index.d.ts"
