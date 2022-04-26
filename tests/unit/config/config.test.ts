@@ -6,6 +6,7 @@ describe('Config Service', () => {
   let originalEnv: NodeJS.ProcessEnv
   const additionalEnv = {
     ADDITIONAL_KEY: 'value',
+    ADDITIONAL_KEY2: 'value2',
     PRESET_KEY: 'overwritten',
     INTEGER_AS_STRING: '999',
     INTEGER: 999,
@@ -226,6 +227,27 @@ describe('Config Service', () => {
       }
 
       expect(isThrown).toBeTruthy()
+    })
+
+    it('should resolve a nested dictionary', () => {
+      type Expected = {
+        additionalKey: string
+        additionalKey2: { additionalKey3: string }
+      }
+      const dictionary = {
+        additionalKey: { env: 'ADDITIONAL_KEY' },
+        additionalKey2: {
+          additionalKey3: { env: 'ADDITIONAL_KEY2' },
+        },
+      }
+      const expectedConfig: Expected = {
+        additionalKey: 'value',
+        additionalKey2: { additionalKey3: 'value2' },
+      }
+
+      const config = configService.resolve<Expected>(dictionary)
+
+      expect(config).toStrictEqual<Expected>(expectedConfig)
     })
   })
 })

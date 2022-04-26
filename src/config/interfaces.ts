@@ -1,3 +1,5 @@
+import { PlainObject } from '@utils/common-types'
+
 export type EnvType = string | number | boolean
 
 export enum DictType {
@@ -12,8 +14,10 @@ export interface DictMapper {
   type?: string
 }
 
+export type DictValue = DictMapper | PlainObject
+
 export interface Dictionary {
-  [key: string]: DictMapper
+  [key: string]: DictValue
 }
 
 export interface ConfigInterface {
