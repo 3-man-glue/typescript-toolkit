@@ -1,34 +1,27 @@
 import { ConfigInterface, Dictionary, EnvType, DictType, DictMapper } from '@config/interfaces'
 import { PlainObject } from '@utils/common-types'
 
+type ConfigValue = Dictionary | PlainObject
+
 export class ConfigService implements ConfigInterface {
 
   constructor(env: Record<string, unknown>) {
     process.env = { ...process.env, ...env as Record<string, string> }
   }
 
-  public resolve<T>(dict: Dictionary): T {
+  public resolve<T>(dict: ConfigValue): T {
     const config: PlainObject = {}
 
-    for (const [ key, mapper ] of Object.entries(dict)) {
-      const value = this.preprocess(mapper)
+    for(const key in dict){
+      const configValue = dict[key] as ConfigValue
 
-      if (mapper.type === DictType.NUMBER && typeof value === 'string') {
-        const parsedValue = value.indexOf('.') < 0 ? parseInt(value, 10) : parseFloat(value)
-        if (isNaN(parsedValue)) {
-          throw new TypeError(`Environment ${mapper.env} variable value is not a number`)
-        }
-        config[key] = parsedValue
-      } else if (mapper.type === DictType.ARRAY && typeof value === 'string') {
-        config[key] = value.split(',').map(v => v.trim())
-      } else if(mapper.type === DictType.BOOLEAN && typeof value === 'string') {
-        if(value !== 'true' && value !== 'false') {
-          throw new TypeError(`Environement ${mapper.env} is not boolean`)
-        }
+      if('env' in configValue) {
+        const mapper = configValue as unknown as DictMapper
+        const value = this.preprocess(mapper)
 
-        config[key] = (value === 'true')
+        config[key] = this.postprocess(mapper, value)
       } else {
-        config[key] = value
+        config[key] = this.resolve(configValue)
       }
     }
 
@@ -49,5 +42,29 @@ export class ConfigService implements ConfigInterface {
     }
 
     return value
+  }
+
+  private postprocess(mapper: DictMapper, value: unknown): unknown {
+    let processedValue
+
+    if (mapper.type === DictType.NUMBER && typeof value === 'string') {
+      const parsedValue = value.indexOf('.') < 0 ? parseInt(value, 10) : parseFloat(value)
+      if (isNaN(parsedValue)) {
+        throw new TypeError(`Environment ${mapper.env} variable value is not a number`)
+      }
+      processedValue = parsedValue
+    } else if (mapper.type === DictType.ARRAY && typeof value === 'string') {
+      processedValue = value.split(',').map(v => v.trim())
+    } else if(mapper.type === DictType.BOOLEAN && typeof value === 'string') {
+      if(value !== 'true' && value !== 'false') {
+        throw new TypeError(`Environement ${mapper.env} is not boolean`)
+      }
+
+      processedValue = (value === 'true')
+    } else {
+      processedValue = value
+    }
+
+    return processedValue
   }
 }
