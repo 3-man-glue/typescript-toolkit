@@ -1,6 +1,6 @@
 {
   "name": "@sertis-chat-commerce/ts-toolkit",
-  "version": "1.1.16",
+  "version": "1.1.17",
   "private": false,
   "contributors": [
     "Panya Batphantana <fanneioz@yahoo.co.th>",
@@ -22,6 +22,7 @@
     "mq",
     "scheduler",
     "secret",
+    "media",
     "utils",
     "index.js",
     "index.d.ts"
