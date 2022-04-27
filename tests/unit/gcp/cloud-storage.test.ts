@@ -2,7 +2,7 @@
 import { Readable, Writable } from 'stream'
 import { Bucket, Storage } from '@google-cloud/storage'
 import { CloudStorage } from '@gcp/cloud-storage'
-import { GoogleCloudConfig } from '@gcp/interfaces'
+import { GoogleStorageConfig } from '@gcp/interfaces'
 import { RemoteStorageException } from '@http-kit/exception/remote-storage'
 
 jest.mock('@utils/id-generator', () => ({ cuid: jest.fn().mockReturnValue('random-cuid') }))
@@ -31,10 +31,8 @@ describe('Cloud Storage', () => {
 
   beforeEach(() => {
     const config = {
-      storage: {
-        media: { bucketName: 'fake-bucket' },
-      },
-    } as unknown as GoogleCloudConfig
+      bucketName: 'fake-bucket',
+    } as unknown as GoogleStorageConfig
     cloudStorage = new CloudStorage(config)
 
     fakeBucket = jest.fn().mockReturnValue({ file: jest.fn() }) as unknown as Bucket

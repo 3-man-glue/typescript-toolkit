@@ -15,6 +15,7 @@ event-stream/
 gcp/
 http-kit/
 mq/
+media/
 scheduler/
 secret/
 utils/

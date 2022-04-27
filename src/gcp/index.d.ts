@@ -26,12 +26,7 @@ export interface RemoteStorage {
   upload(name: string, stream: Readable): Promise<string>
   download(fileName: string): Readable
 }
-export declare type GoogleCloudConfig = {
-  projectId: string
-  storage: {
-    media: GoogleStorageConfig
-  }
-}
+
 export declare type GoogleStorageConfig = {
   bucketName: string
 }
@@ -45,7 +40,7 @@ export declare class FirebaseApp {
 }
 
 export declare class CloudStorage implements RemoteStorage {
-  constructor(config: GoogleCloudConfig)
+  constructor(config: GoogleStorageConfig)
 
   upload(name: string, stream: Readable): Promise<string>
 
@@ -54,3 +49,5 @@ export declare class CloudStorage implements RemoteStorage {
 
 import FirebaseAdmin = require('firebase-admin')
 export { FirebaseAdmin }
+
+export const cloudStorageDictionary
