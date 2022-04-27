@@ -1,6 +1,6 @@
 import { Readable } from 'stream'
 import { Bucket, Storage } from '@google-cloud/storage'
-import { GoogleCloudConfig, RemoteStorage } from '@gcp/interfaces'
+import { GoogleStorageConfig, RemoteStorage } from '@gcp/interfaces'
 import IdGen from '@utils/id-generator'
 import { RemoteStorageException } from '@http-kit/exception/remote-storage'
 
@@ -11,9 +11,9 @@ export class CloudStorage implements RemoteStorage {
 
   readonly #delimiter: string
 
-  constructor(config: GoogleCloudConfig) {
+  constructor(config: GoogleStorageConfig) {
     this.#storage = new Storage()
-    this.#bucket = this.#storage.bucket(config.storage.media.bucketName)
+    this.#bucket = this.#storage.bucket(config.bucketName)
     this.#delimiter = '/'
   }
 
