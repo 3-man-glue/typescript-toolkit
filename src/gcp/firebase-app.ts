@@ -26,4 +26,5 @@ export class FirebaseApp {
 }
 
 import FirebaseAdmin = require('firebase-admin')
-export { FirebaseAdmin }
+import { getAuth } from 'firebase-admin/auth'
+export { FirebaseAdmin, getAuth }
