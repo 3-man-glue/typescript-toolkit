@@ -5,8 +5,11 @@ export interface RemoteStorage {
   download(fileName: string): Readable
 }
 
-export type GoogleStorageConfig = {
+export interface GoogleStorageConfig {
   bucketName: string,
+  storageOptions?: {
+    apiEndpoint?: string
+  }
 }
 
 export const cloudStorageDictionary = {
