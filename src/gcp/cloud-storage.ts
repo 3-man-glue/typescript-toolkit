@@ -12,7 +12,7 @@ export class CloudStorage implements RemoteStorage {
   readonly #delimiter: string
 
   constructor(config: GoogleStorageConfig) {
-    this.#storage = new Storage()
+    this.#storage = new Storage(config.storageOptions)
     this.#bucket = this.#storage.bucket(config.bucketName)
     this.#delimiter = '/'
   }
