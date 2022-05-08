@@ -29,7 +29,6 @@ export class CloudStorage implements RemoteStorage {
       stream.pipe(googleStream)
 
       stream.on('end', () => {
-        stream.unpipe()
         resolve(fileName)
       })
 
