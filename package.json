@@ -22,8 +22,8 @@
     "mq",
     "scheduler",
     "media",
-    "secret",
     "utils",
+    "secret",
     "index.js",
     "index.d.ts"
   ],
