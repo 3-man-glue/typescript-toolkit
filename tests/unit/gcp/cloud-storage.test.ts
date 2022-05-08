@@ -50,12 +50,10 @@ describe('Cloud Storage', () => {
       const stream = new Readable()
       stream._read = jest.fn()
       const pipeSpy = jest.spyOn(stream, 'pipe')
-      const unpipeSpy = jest.spyOn(stream, 'unpipe')
 
       cloudStorage.upload('fake-file-name', stream)
         .then(fileName => {
           expect(pipeSpy).toBeCalledWith(mockGoogleStream)
-          expect(unpipeSpy).toBeCalled()
           expect(fileName).toBe('fake-file-name/random-cuid')
           done()
         })
