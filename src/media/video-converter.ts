@@ -1,5 +1,6 @@
 import path from 'path'
 import os from 'os'
+import { path as ffmpegPath } from '@ffmpeg-installer/ffmpeg'
 import FFMPeg from 'fluent-ffmpeg'
 import fs from 'fs'
 import { Service } from 'typedi'
@@ -7,6 +8,7 @@ import { Readable } from 'stream'
 import { MediaException } from '@http-kit/exception/media'
 import IdGen from '@utils/id-generator'
 import { VideoConfig } from '@media/interfaces'
+FFMPeg.setFfmpegPath(ffmpegPath)
 
 @Service()
 export class VideoConverter {

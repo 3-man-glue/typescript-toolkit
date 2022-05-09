@@ -12,7 +12,14 @@ const mockFFMPeg = {
 }
 
 jest.mock('@utils/id-generator', () => ({ cuid: jest.fn().mockReturnValue('random-cuid') }))
-jest.mock('fluent-ffmpeg', () => jest.fn(() => mockFFMPeg))
+jest.mock('fluent-ffmpeg', () => {
+  const ffmpeg = jest.fn(() => mockFFMPeg)
+  // eslint-disable-next-line
+  // @ts-ignore
+  ffmpeg.setFfmpegPath = jest.fn()
+
+  return ffmpeg
+})
 
 describe('Video Converter', () => {
   let videoConverter: VideoConverter
