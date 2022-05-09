@@ -42,10 +42,10 @@ describe('Video Converter', () => {
       jest.spyOn(os, 'tmpdir').mockReturnValue('fake-dir')
       jest.spyOn(path, 'format').mockReturnValue('fake-path')
       const mockReadFileSync = jest.spyOn(fs, 'readFileSync').mockReturnValue('fake-buffer')
-      const stream = new Readable()
+      const videoPath = '/path'
       let thumbnail: any
 
-      videoConverter.generateThumbnail(stream)
+      videoConverter.generateThumbnail(videoPath)
         .then(result => {
           thumbnail = result
         })
@@ -66,7 +66,7 @@ describe('Video Converter', () => {
 
     it('should throw an error when it cannot read generated thumbnail file', () => {
       const expectedError = new Error('Cannot read file')
-      const stream = new Readable()
+      const videoPath = '/path'
       let error: Error
       jest.spyOn(os, 'tmpdir').mockReturnValue('fake-dir')
       jest.spyOn(path, 'format').mockReturnValue('fake-path')
@@ -74,7 +74,7 @@ describe('Video Converter', () => {
         throw expectedError
       })
 
-      videoConverter.generateThumbnail(stream)
+      videoConverter.generateThumbnail(videoPath)
         .catch(e => {
           error = e
         })
@@ -88,10 +88,10 @@ describe('Video Converter', () => {
     it('should throw an error when snapshot throws an error', () => {
       const mockReadFileSync = jest.spyOn(fs, 'readFileSync')
       const expectedError = new Error('Cannot read file')
-      const stream = new Readable()
+      const videoPath = '/path'
       let error: Error
 
-      videoConverter.generateThumbnail(stream)
+      videoConverter.generateThumbnail(videoPath)
         .catch(e => {
           error = e
         })
