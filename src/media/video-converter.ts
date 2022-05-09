@@ -18,14 +18,14 @@ export class VideoConverter {
     this.#config = videoConfig
   }
 
-  public generateThumbnail(steam: Readable): Promise<Readable> {
+  public generateThumbnail(videoPath: string): Promise<Readable> {
     const outputPath = {
       dir: path.join(os.tmpdir(), 'thumbnail'),
       name: IdGen.cuid(),
       ext: '.png',
     }
 
-    const snapshot = FFMPeg(steam)
+    const snapshot = FFMPeg(videoPath)
       .screenshot({
         folder: outputPath.dir,
         filename: outputPath.name,
