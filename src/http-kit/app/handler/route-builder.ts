@@ -17,6 +17,10 @@ export function Get(api: Api): RouteBuilderInterface {
   return createBaseBuilder(api).setMethod('get')
 }
 
+export function Delete(api: Api): RouteBuilderInterface {
+  return createBaseBuilder(api).setMethod('delete')
+}
+
 export function Post(api: Api): RouteBuilderInterface {
   return createBaseBuilder(api).setMethod('post')
 }
