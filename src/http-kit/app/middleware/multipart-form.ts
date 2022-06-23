@@ -6,6 +6,7 @@ import multer from 'multer'
 import { HttpException } from '@http-kit/exception/http-exception'
 import { InternalServerException } from '@http-kit/exception/internal-server'
 import logger from '@utils/logger'
+import fs from 'fs'
 
 export type FilterFileFunc = (req: Request, file: Express.Multer.File, cb: CallableFunction) => void
 interface MultipartFormOptions {
@@ -17,7 +18,9 @@ interface MultipartFormOptions {
 const storage = multer.diskStorage({
   // @ts-ignore
   destination: function (req: Express.Request, file: Express.Multer.File, cb: CallableFunction) {
-    cb(null, 'data/multipart')
+    const path = 'data/multipart'
+    fs.mkdirSync(path, { recursive: true })
+    cb(null, path)
   },
   // @ts-ignore
   filename: function (req: Express.Request, file: Express.Multer.File, cb: CallableFunction) {
