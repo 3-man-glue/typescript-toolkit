@@ -1,6 +1,7 @@
 import { DBException } from '@http-kit/exception/db'
-import { QueryOptions  } from '@db/engine/generate-query'
-import { Condition } from '@db/interfaces'
+import { QueryOptions } from '@db/engine/generate-query'
+import { getSelectQueryConditions, getSelectQueryOrders } from '@db/engine/firestore/generate-query'
+import { Condition, FirestoreConditionPattern, OrderPattern } from '@db/interfaces'
 import { Engine as EngineInterface } from '@db/engine/interfaces'
 import { PlainObject } from '@utils/common-types'
 import { NotImplementedException } from '@http-kit/exception/not-implemented'
@@ -20,17 +21,30 @@ export class FirestoreEngine implements EngineInterface {
       }
     }
 
-    async select<T>(_condition: Condition<T>, tableName: string, _options?: QueryOptions): Promise<PlainObject[]> {
-      const result: PlainObject[] = []
-      const snapshot = await this.firestore
-        .collection(tableName)
-        .get()
+    async select<T>(condition: Condition<T>, tableName: string, options?: QueryOptions): Promise<PlainObject[]> {
+      let query = this.firestore.collection(tableName)
+      const conditionParams = getSelectQueryConditions(condition)
+      const oderParams = getSelectQueryOrders(condition)
 
-      snapshot.forEach((doc) => {
-        result.push(doc.data())
-      })
+      if (conditionParams.length > 0) {
+        conditionParams.forEach((param: FirestoreConditionPattern) => {
+          query = query.where(param.key, param.operation, param.val) as firestore.CollectionReference
+        })
+      }
 
-      return result ?? []
+      if (oderParams.length > 0) {
+        oderParams.forEach((param: OrderPattern) => {
+          query = query.orderBy(param.key, param.val) as firestore.CollectionReference
+        })
+      }
+
+      if (options?.limit) {
+        query = query.limit(options?.limit) as firestore.CollectionReference
+      }
+
+      const snapshot = await query.get()
+
+      return snapshot.docs.map((snapshot) => (snapshot.data()))
     }
 
     public async insert(data: PlainObject[], tableName: string): Promise<void> {

@@ -1,4 +1,7 @@
-import { getInsertQueries, getSelectQuery } from '@db/engine/generate-query'
+import {
+  getInsertQueries,
+  getSelectQuery
+} from '@db/engine/generate-query'
 import { Operation } from '@db/interfaces'
 
 describe('GetInsertQuery', () => {

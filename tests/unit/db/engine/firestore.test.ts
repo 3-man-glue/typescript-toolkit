@@ -22,19 +22,24 @@ describe('FirestoreEngine', () => {
   let firestoreMock: firestore.Firestore
   let collectionMock: firestore.CollectionReference
   let docMock: Promise<firestore.DocumentReference>
-  let snapMock: Promise<firestore.QuerySnapshot>
-
   beforeEach(() => {
     const mockApp = ({} as unknown) as app.App
     firestoreMock = {
       collection: jest.fn(),
     } as unknown as firestore.Firestore
+    const snapMock = {
+      docs: [ {
+        data: jest.fn(() => { return { test: 'test' } }),
+      } ],
+    } as unknown as  Promise<firestore.QuerySnapshot>
     collectionMock = {
       add: jest.fn(),
-      get: jest.fn(),
+      orderBy: jest.fn(),
+      limit: jest.fn(),
+      get: jest.fn(() => { return snapMock }),
+      where: jest.fn(),
     } as unknown as firestore.CollectionReference
     docMock = ({} as unknown) as Promise<firestore.DocumentReference>
-    snapMock = [ { data: jest.fn(() => { return { test: 'test' } }) } ] as unknown as  Promise<firestore.QuerySnapshot>
 
     jest.spyOn(firebaseAdmin, 'initializeApp').mockReturnValue(mockApp)
     jest.spyOn(firestore, 'getFirestore').mockReturnValue(firestoreMock)
@@ -75,13 +80,58 @@ describe('FirestoreEngine', () => {
       const expextResult = [ { test: 'test' } ]
 
       jest.spyOn(firestore.getFirestore(), 'collection').mockReturnValue(collectionMock)
-      jest.spyOn(collectionMock, 'get').mockReturnValue(snapMock)
+      jest.spyOn(collectionMock, 'where').mockReturnValue(collectionMock)
+      jest.spyOn(collectionMock, 'orderBy').mockReturnValue(collectionMock)
 
       const firestoreEngine = new FirestoreEngine()
-      const output = await firestoreEngine.select({}, 'users_test', {})
+      const output = await firestoreEngine.select({
+        status: {
+          [ '==' ]: 1,
+          order: 'asc',
+        },
+      }, 'users_test', {})
 
       expect(firestore.getFirestore().collection).toHaveBeenCalledTimes(1)
       expect(firestore.getFirestore().collection).toHaveBeenCalledWith('users_test')
+
+      const collection = firestore.getFirestore().collection('users_test')
+
+      expect(collection.where).toHaveBeenCalledTimes(1)
+      expect(collection.where).toHaveBeenCalledWith('status', '==', 1)
+      expect(collection.orderBy).toHaveBeenCalledTimes(1)
+      expect(collection.orderBy).toHaveBeenCalledWith('status', 'asc')
+      expect(output).toStrictEqual(expextResult)
+    })
+
+    it('should return document data with limit',async () => {
+      const expextResult = [ { test: 'test' } ]
+
+      jest.spyOn(firestore.getFirestore(), 'collection').mockReturnValue(collectionMock)
+      jest.spyOn(collectionMock, 'where').mockReturnValue(collectionMock)
+      jest.spyOn(collectionMock, 'orderBy').mockReturnValue(collectionMock)
+      jest.spyOn(collectionMock, 'limit').mockReturnValue(collectionMock)
+
+      const firestoreEngine = new FirestoreEngine()
+      const output = await firestoreEngine.select({
+        status: {
+          [ '==' ]: 1,
+          order: 'asc',
+        },
+      }, 'users_test', {
+        limit: 1,
+      })
+
+      expect(firestore.getFirestore().collection).toHaveBeenCalledTimes(1)
+      expect(firestore.getFirestore().collection).toHaveBeenCalledWith('users_test')
+
+      const collection = firestore.getFirestore().collection('users_test')
+
+      expect(collection.where).toHaveBeenCalledTimes(1)
+      expect(collection.where).toHaveBeenCalledWith('status', '==', 1)
+      expect(collection.orderBy).toHaveBeenCalledTimes(1)
+      expect(collection.orderBy).toHaveBeenCalledWith('status', 'asc')
+      expect(collection.limit).toHaveBeenCalledTimes(1)
+      expect(collection.limit).toHaveBeenCalledWith(1)
       expect(output).toStrictEqual(expextResult)
     })
   })
