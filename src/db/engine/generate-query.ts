@@ -9,11 +9,11 @@ export type QueryOptions = {
   limit?: number
 }
 
-const CONSTANTS_KEY = {
+export const CONSTANTS_KEY = {
   ORDER: 'order',
 }
 
-const isNotOrderKey = (key: string): boolean => key !== CONSTANTS_KEY.ORDER
+export const isNotOrderKey = (key: string): boolean => key !== CONSTANTS_KEY.ORDER
 const isEmptyObject = (payload: PlainObject) => !Object.keys(payload).length
 
 type OperationStrings = keyof typeof Operation
