@@ -121,3 +121,5 @@ export type OrderPattern = {
   key: string,
   val: Order
 }
+
+export type FirestorePayload = { documentId?: string } & PlainObject

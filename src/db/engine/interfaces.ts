@@ -6,7 +6,7 @@ import { QueryOptions } from '@db/engine/generate-query'
 export interface Engine {
   select<T>(condition: Condition<T>, tableName: string, options?: QueryOptions): Promise<PlainObject[]>
   insert(data: PlainObject[], tableName: string): Promise<void>
-  update(data: PlainObject[], condition: PlainObject, tableName: string): Promise<void>
+  update<T>(data: PlainObject[], condition: Condition<T>[], tableName: string): Promise<void>
   delete(condition: PlainObject, tableName: string): Promise<void>
 }
 

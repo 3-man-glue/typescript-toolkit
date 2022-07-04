@@ -106,7 +106,7 @@ export class CassandraEngine implements EngineInterface {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public update(_data: PlainObject[], _condition: PlainObject, _tableName: string): Promise<void> {
+  public update<T>(_data: PlainObject[], _condition: Condition<T>[], _tableName: string): Promise<void> {
     throw new NotImplementedException('update method not implemented for Cassandra Adaptor')
   }
 
