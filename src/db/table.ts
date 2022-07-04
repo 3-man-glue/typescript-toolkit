@@ -30,7 +30,7 @@ export abstract class Table<T extends DBState> implements DataFactory<T>, Query<
   public async update(recordState: T[], condition: Condition<T>): Promise<void> {
     const recordDto = recordState.map(record => this.plainObjectFactory(record))
 
-    await this.engine.update(recordDto, condition, this.name)
+    await this.engine.update(recordDto, [ condition ], this.name)
   }
 
   public async delete(condition: Condition<T>): Promise<void> {

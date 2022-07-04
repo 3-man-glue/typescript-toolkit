@@ -1,7 +1,9 @@
 import {
   getSelectQueryConditions,
-  getSelectQueryOrders
+  getSelectQueryOrders,
+  getDocumentIds
 } from '@db/engine/firestore/generate-query'
+import { DBException } from '@http-kit/exception/db'
 
 describe('getSelectQueryConditions', () => {
   it('should return empty condition', () => {
@@ -62,5 +64,22 @@ describe('getSelectQueryOrders', () => {
     const expectedOrder = [ { key: 'status', val: 'asc' } ]
     const orders = getSelectQueryOrders(condition)
     expect(orders).toStrictEqual(expectedOrder)
+  })
+})
+
+describe('getDocumentIds', () => {
+  it('should return list of document id', () => {
+    const orders = getDocumentIds({ documentId: { ['==']: '1' } })
+    expect(orders).toStrictEqual([ '1' ])
+  })
+
+  it('should return list of document id where in', () => {
+    const orders = getDocumentIds({ documentId: { 'in': [ '1', '2' ] } })
+    expect(orders).toStrictEqual([ '1', '2' ])
+  })
+
+  it('should throw error when document id not exist', () => {
+    const expectedError = new DBException('Document id not provide')
+    expect(() => getDocumentIds([ { test: { ['==']: '1' } } ] )).toThrowError(expectedError)
   })
 })

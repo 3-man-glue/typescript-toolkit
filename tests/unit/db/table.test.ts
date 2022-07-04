@@ -154,7 +154,7 @@ describe('Table Abstract', () => {
 
       await tableUnderTest.update(recordState, { attrA: { order: 'asc' } })
 
-      expect(mockEngine.update).toBeCalledWith(recordDto, { attrA: { order: 'asc' } }, 'ConcreteTable')
+      expect(mockEngine.update).toBeCalledWith(recordDto, [ { attrA: { order: 'asc' } } ], 'ConcreteTable')
     })
 
     it('should throw an error when engine cannot update the given records', async () => {
