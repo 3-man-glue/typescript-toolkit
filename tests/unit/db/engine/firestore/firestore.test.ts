@@ -4,7 +4,6 @@ import { DBException } from '@http-kit/exception/db'
 import firebaseAdmin from 'firebase-admin/app'
 import firestore from 'firebase-admin/firestore'
 import { app } from 'firebase-admin'
-import { NotImplementedException } from '@http-kit/exception/not-implemented'
 
 jest.mock('firebase-admin/app', () => {
   return {
@@ -37,6 +36,10 @@ describe('FirestoreEngine', () => {
         data: jest.fn(() => { return { test: 'test' } }),
       } ],
     } as unknown as  Promise<firestore.QuerySnapshot>
+    const documentSnapMock = {
+      id: 'data_1',
+      data: jest.fn(() => { return { test: 'test' } }),
+    } as unknown as  Promise<firestore.DocumentSnapshot>
     collectionMock = {
       add: jest.fn(),
       orderBy: jest.fn(),
@@ -47,11 +50,13 @@ describe('FirestoreEngine', () => {
     } as unknown as firestore.CollectionReference
     docMock = {
       update: jest.fn(),
+      get: jest.fn(() => { return documentSnapMock }),
     } as unknown as firestore.DocumentReference
     batchMock = {
       set: jest.fn(),
       commit: jest.fn(),
       update: jest.fn(),
+      delete: jest.fn(),
     } as unknown as firestore.WriteBatch
     batchReultMock = ({ add: jest.fn() } as unknown) as Promise<firestore.WriteResult[]>
     writeResultMock = ({} as unknown) as Promise<firestore.WriteResult>
@@ -299,6 +304,20 @@ describe('FirestoreEngine', () => {
       expect(batchMock.commit).toHaveBeenCalledWith()
     })
 
+    it('should throw error when have no document id', async () => {
+      let isThrown = false
+
+      try {
+        const firestoreEngine = new FirestoreEngine()
+        await firestoreEngine.update([ { name: 'user-1' } ], [], 'users_test')
+      } catch (error) {
+        isThrown = true
+        expect(error).toBeInstanceOf(DBException)
+      }
+
+      expect(isThrown).toBeTruthy()
+    })
+
     it('should throw error when got error', async () => {
       let isThrown = false
       const mockError = new Error()
@@ -356,14 +375,60 @@ describe('FirestoreEngine', () => {
   })
 
   describe('delete', () => {
-    it('should throw Not Implemented Exception when delete method is called', async () => {
+    beforeEach(() => {
+      jest.spyOn(firestore.getFirestore(), 'batch').mockReturnValue(batchMock)
+      jest.spyOn(firestore.getFirestore(), 'collection').mockReturnValue(collectionMock)
+      jest.spyOn(collectionMock, 'doc').mockReturnValue(docMock)
+      jest.spyOn(batchMock, 'delete').mockReturnValue(batchMock)
+      jest.spyOn(batchMock, 'commit').mockReturnValue(batchReultMock)
+    })
+
+    it('should delete on reference document', async () => {
       const firestoreEngine = new FirestoreEngine()
+      await firestoreEngine.delete(
+        { documentId: { '==': 'doc-1' } },
+        'users_test'
+      )
+
+      expect(firestore.getFirestore().batch).toHaveBeenCalledTimes(1)
+      expect(firestore.getFirestore().collection).toHaveBeenCalledTimes(1)
+      expect(firestore.getFirestore().collection).toHaveBeenCalledWith('users_test')
+      expect(collectionMock.doc).toHaveBeenCalledTimes(1)
+      expect(collectionMock.doc).toHaveBeenCalledWith('doc-1')
+      expect(batchMock.delete).toHaveBeenCalledTimes(1)
+      expect(batchMock.commit).toHaveBeenCalledTimes(1)
+    })
+
+    it('should delete multiple document', async () => {
+      const firestoreEngine = new FirestoreEngine()
+      await firestoreEngine.delete(
+        { documentId: { 'in': [ 'doc-1', 'doc-2' ] } },
+        'users_test'
+      )
+
+      expect(firestore.getFirestore().batch).toHaveBeenCalledTimes(1)
+      expect(firestore.getFirestore().collection).toHaveBeenCalledTimes(2)
+      expect(firestore.getFirestore().collection).toHaveBeenCalledWith('users_test')
+      expect(collectionMock.doc).toHaveBeenCalledTimes(2)
+      expect(collectionMock.doc).toHaveBeenCalledWith('doc-1')
+      expect(collectionMock.doc).toHaveBeenCalledWith('doc-2')
+      expect(batchMock.delete).toHaveBeenCalledTimes(2)
+      expect(batchMock.commit).toHaveBeenCalledTimes(1)
+    })
+
+    it('should throw error when got error', async () => {
       let isThrown = false
+      const mockError = new Error()
+      jest.spyOn(firestore.getFirestore(), 'collection').mockImplementation(() => {
+        throw mockError
+      })
+
       try {
-        await firestoreEngine.delete({}, 'table')
-      } catch (e) {
+        const firestoreEngine = new FirestoreEngine()
+        await firestoreEngine.delete({ documentId: { '==': 'doc-1' } }, 'users_test')
+      } catch (error) {
         isThrown = true
-        expect(e).toBeInstanceOf(NotImplementedException)
+        expect(error).toBeInstanceOf(DBException)
       }
 
       expect(isThrown).toBeTruthy()

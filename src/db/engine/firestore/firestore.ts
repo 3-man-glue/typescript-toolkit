@@ -9,7 +9,6 @@ import {
 } from '@db/interfaces'
 import { Engine as EngineInterface } from '@db/engine/interfaces'
 import { PlainObject } from '@utils/common-types'
-import { NotImplementedException } from '@http-kit/exception/not-implemented'
 import { app, firestore } from 'firebase-admin'
 import { getFirestore } from 'firebase-admin/firestore'
 import { initializeApp } from 'firebase-admin/app'
@@ -104,8 +103,19 @@ export class FirestoreEngine implements EngineInterface {
       }
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public delete(_condition: PlainObject, _tableName: string): Promise<void> {
-      throw new NotImplementedException('delete method not implemented for Firestore Adaptor')
+    public async delete<T>(condition: Condition<T>, tableName: string): Promise<void> {
+      try {
+        const batch = this.firestore.batch()
+        const documentIds = getDocumentIds(condition)
+
+        documentIds.forEach((documentId) => {
+          const ref = this.firestore.collection(tableName)
+          batch.delete(ref.doc(documentId))
+        })
+
+        await batch.commit()
+      } catch (error) {
+        throw new DBException(error.message).withCause(error).withInput({ condition, tableName })
+      }
     }
 }
