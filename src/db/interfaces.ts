@@ -123,3 +123,10 @@ export type OrderPattern = {
 }
 
 export type FirestorePayload = { documentId?: string } & PlainObject
+
+export type PostgresConfig = {
+  host: string
+  user: string
+  password: string
+  database: string
+}
