@@ -16,7 +16,7 @@ export const CONSTANTS_KEY = {
 export const isNotOrderKey = (key: string): boolean => key !== CONSTANTS_KEY.ORDER
 const isEmptyObject = (payload: PlainObject) => !Object.keys(payload).length
 
-type OperationStrings = keyof typeof Operation
+export type OperationStrings = keyof typeof Operation
 
 export const getInsertQueries = (data: PlainObject[], tableName: string): ReturnedQuery[] => {
   if (!data.length || data.every(isEmptyObject)) {
