@@ -4,6 +4,7 @@ import { PostgresConfig, Condition } from '@db/interfaces'
 import { Engine as EngineInterface } from '@db/engine/interfaces'
 import { PlainObject } from '@utils/common-types'
 import { NotImplementedException } from '@http-kit/exception/not-implemented'
+import { getSelectQuery } from '@db/engine/postgres/generate-query'
 import { QueryOptions } from '@db/engine/generate-query'
 
 export class PostgresEngine implements EngineInterface {
@@ -30,8 +31,21 @@ export class PostgresEngine implements EngineInterface {
     }
   }
 
-  public select<T>(_condition: Condition<T>, _tableName: string, _options?: QueryOptions): Promise<PlainObject[]> {
-    throw new NotImplementedException('select method not implemented for Postgres Adaptor')
+  public async select<T>(condition: Condition<T>, tableName: string, options?: QueryOptions): Promise<PlainObject[]> {
+    try {
+      const { query, params } = getSelectQuery(condition, tableName, options)
+      const result = await this.client.query(query, params)
+
+      return result?.rows ?? []
+    } catch (error) {
+      throw new DBException(error.message)
+        .withCause(error)
+        .withInput({
+          condition,
+          tableName,
+          options,
+        })
+    }
   }
 
   public insert(_data: PlainObject[], _tableName: string): Promise<void> {
