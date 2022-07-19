@@ -14,7 +14,7 @@ export const CONSTANTS_KEY = {
 }
 
 export const isNotOrderKey = (key: string): boolean => key !== CONSTANTS_KEY.ORDER
-const isEmptyObject = (payload: PlainObject) => !Object.keys(payload).length
+export const isEmptyObject = (payload: PlainObject) => !Object.keys(payload).length
 
 export type OperationStrings = keyof typeof Operation
 
