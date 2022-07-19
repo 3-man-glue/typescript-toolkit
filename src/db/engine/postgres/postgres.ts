@@ -4,7 +4,7 @@ import { PostgresConfig, Condition } from '@db/interfaces'
 import { Engine as EngineInterface } from '@db/engine/interfaces'
 import { PlainObject } from '@utils/common-types'
 import { NotImplementedException } from '@http-kit/exception/not-implemented'
-import { getSelectQuery } from '@db/engine/postgres/generate-query'
+import { getSelectQuery, getInsertQueries, getUpdateQueries } from '@db/engine/postgres/generate-query'
 import { QueryOptions } from '@db/engine/generate-query'
 
 export class PostgresEngine implements EngineInterface {
@@ -48,12 +48,38 @@ export class PostgresEngine implements EngineInterface {
     }
   }
 
-  public insert(_data: PlainObject[], _tableName: string): Promise<void> {
-    throw new NotImplementedException('insert method not implemented for Postgres Adaptor')
+  public async insert(data: PlainObject[], tableName: string): Promise<void> {
+    try {
+      const queries = getInsertQueries(data, tableName)
+      await this.client.query(queries.query, queries.params)
+    } catch (error) {
+      throw new DBException(error.message)
+        .withCause(error)
+        .withInput({
+          data,
+          tableName,
+        })
+    }
   }
 
-  public update<T>(_data: PlainObject[], _condition: Condition<T>, _tableName: string): Promise<void> {
-    throw new NotImplementedException('update method not implemented for Postgres Adaptor')
+  public async update<T>(data: PlainObject[], condition: Condition<T>[], tableName: string): Promise<void> {
+
+    try {
+      const queries = getUpdateQueries(data, condition, tableName)
+      await Promise.all(
+        queries.map(query =>
+          this.client.query(query.query, query.params)
+        )
+      )
+    } catch (error) {
+      throw new DBException(error.message)
+        .withCause(error)
+        .withInput({
+          data,
+          condition,
+          tableName,
+        })
+    }
   }
 
   public delete(_condition: PlainObject, _tableName: string): Promise<void> {
