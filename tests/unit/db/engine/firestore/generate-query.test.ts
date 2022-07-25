@@ -11,6 +11,11 @@ describe('getSelectQueryConditions', () => {
     expect(conditions).toStrictEqual([])
   })
 
+  it('should return empty condition when condition is empty', () => {
+    const conditions = getSelectQueryConditions({ status: {} })
+    expect(conditions).toStrictEqual([])
+  })
+
   it('should return empty condition when set order only', () => {
     const condition = { status: { order: 'asc' } }
     const conditions = getSelectQueryConditions(condition)
@@ -51,6 +56,11 @@ describe('getSelectQueryOrders', () => {
   it('should return empty when no condition', () => {
     const orders = getSelectQueryOrders({})
     expect(orders).toStrictEqual([])
+  })
+
+  it('should return empty when condition is empty', () => {
+    const conditions = getSelectQueryConditions({ status: {} })
+    expect(conditions).toStrictEqual([])
   })
 
   it('should return empty when order not provide', () => {
