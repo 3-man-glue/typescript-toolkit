@@ -71,9 +71,9 @@ export class AxiosHttpClient implements HttpClient {
     }
   }
 
-  async delete(url: string): Promise<ResponseHttp> {
+  async delete(url: string, payload?: PlainObject): Promise<ResponseHttp> {
     try {
-      const { data, headers, status } = await this.client.delete(url, this.getConfig())
+      const { data, headers, status } = await this.client.delete(url, { ...this.getConfig(), data: payload })
 
       return { data, headers, status }
     } catch (error) {
