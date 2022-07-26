@@ -9,14 +9,14 @@ export type QueryOptions = {
   limit?: number
 }
 
-const CONSTANTS_KEY = {
+export const CONSTANTS_KEY = {
   ORDER: 'order',
 }
 
-const isNotOrderKey = (key: string): boolean => key !== CONSTANTS_KEY.ORDER
-const isEmptyObject = (payload: PlainObject) => !Object.keys(payload).length
+export const isNotOrderKey = (key: string): boolean => key !== CONSTANTS_KEY.ORDER
+export const isEmptyObject = (payload: PlainObject) => !Object.keys(payload).length
 
-type OperationStrings = keyof typeof Operation
+export type OperationStrings = keyof typeof Operation
 
 export const getInsertQueries = (data: PlainObject[], tableName: string): ReturnedQuery[] => {
   if (!data.length || data.every(isEmptyObject)) {

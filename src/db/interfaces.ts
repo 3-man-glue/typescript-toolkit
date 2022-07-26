@@ -11,6 +11,16 @@ export enum Operation {
   IN = 'IN',
 }
 
+export enum FirestoreOperation {
+  EQ = '==',
+  GT = '>',
+  GTE = '>=',
+  LT = '<',
+  LTE = '<=',
+  NE = '!=',
+  IN = 'in',
+}
+
 export type Condition<T> = {
   [K in keyof T]?: QueryPattern | OperationPattern
 }
@@ -21,7 +31,7 @@ export type QueryPattern = {
 }
 
 export type OperationPattern = {
-  [K in Operation]?: unknown
+  [K in Operation | FirestoreOperation]?: unknown
 }
 
 export interface DataFactory<T extends DBState> {
@@ -97,4 +107,26 @@ export const cassandraDictionary = {
     env: 'DATABASE_CASSANDRA_CONTACT_POINTS',
     type: 'array',
   },
+}
+
+export type FirestoreQueryParam = FirestoreConditionPattern[]
+
+export type FirestoreConditionPattern = {
+  key: string,
+  operation: FirestoreOperation,
+  val: string | number | string[] | number[]
+}
+
+export type OrderPattern = {
+  key: string,
+  val: Order
+}
+
+export type FirestorePayload = { documentId?: string } & PlainObject
+
+export type PostgresConfig = {
+  host: string
+  user: string
+  password: string
+  database: string
 }
