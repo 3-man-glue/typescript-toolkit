@@ -1,4 +1,8 @@
-import { getInsertQueries, getSelectQuery } from '@db/engine/generate-query'
+import {
+  getInsertQueries,
+  getSelectQuery,
+  getUpdateCounterQuery
+} from '@db/engine/generate-query'
 import { Operation } from '@db/interfaces'
 
 describe('GetInsertQuery', () => {
@@ -57,6 +61,12 @@ describe('GetSelectQuery', () => {
     expect(query).toBe(expectedQuery)
   })
 
+  it('should return empty string with condition is empty', () => {
+    const expectedQuery = 'SELECT * FROM broadcast'
+    const { query } = getSelectQuery({ status: {} }, tableName)
+    expect(query).toBe(expectedQuery)
+  })
+
   it('should return valid query string with condition', () => {
     const condition = { status: { [Operation.EQ]: 1 } }
     const expectedQuery = 'SELECT * FROM broadcast WHERE status = ?'
@@ -105,6 +115,13 @@ describe('GetSelectQuery', () => {
       const expectedQuery = 'SELECT a, b, c FROM broadcast ALLOW FILTERING LIMIT 20'
       const { query } = getSelectQuery({ }, tableName, options)
       expect(query).toBe(expectedQuery)
+    })
+  })
+
+  describe('GetUpdateCounterQuery', () => {
+    it('should return base query', () => {
+      const { query } = getUpdateCounterQuery({ status: 1 }, 1)
+      expect(query).toBe('UPDATE counter SET value = value + ? WHERE status = ?')
     })
   })
 })

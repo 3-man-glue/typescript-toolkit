@@ -6,7 +6,7 @@ module.exports = {
   coveragePathIgnorePatterns: ['interfaces.ts', 'logger.ts', '<rootDir>/src/http-kit/exception/'],
   coverageThreshold: {
     global: {
-      branches: 95,
+      branches: 90,
       functions: 95,
       lines: 95,
       statements: 95,
@@ -33,4 +33,5 @@ module.exports = {
   },
   roots: ['<rootDir>/tests/'],
 }
+
 

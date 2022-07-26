@@ -20,9 +20,28 @@ describe('Actor', () => {
       expect(instance.externalId).toBeUndefined()
     })
 
-    it('should throw when construct mandatory field with empty string', () => {
-      expect(() => new Actor('', 'Actor user 1')).toThrow(IdentityException)
-      expect(() => new Actor('user-1', '')).toThrow(IdentityException)
+    it('should throw when construct first mandatory field with empty string', () => {
+      let isThrow = false
+
+      try {
+        new Actor('', 'Actor user 1')
+      } catch (error) {
+        isThrow = true
+        expect(error).toBeInstanceOf(IdentityException)
+      }
+      expect(isThrow).toBeTruthy()
+    })
+
+    it('should throw when construct second mandatory field with empty string', () => {
+      let isThrow = false
+
+      try {
+        new Actor('user-1', '')
+      } catch (error) {
+        expect(error).toBeInstanceOf(IdentityException)
+        isThrow = true
+      }
+      expect(isThrow).toBeTruthy()
     })
   })
 

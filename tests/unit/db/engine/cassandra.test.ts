@@ -333,7 +333,7 @@ describe('CassandraEngine', () => {
     it('should throw Not Implemented Exception when update method is called', async () => {
       let isThrown = false
       try {
-        await cassandraEngine.update([], {}, 'table')
+        await cassandraEngine.update([], [ {} ], 'table')
       } catch (e) {
         isThrown = true
         expect(e).toBeInstanceOf(NotImplementedException)
