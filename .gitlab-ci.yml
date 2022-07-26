@@ -9,7 +9,6 @@ Unit Test:
   script:
     - yarn install
     - yarn run test
-  coverage: '/All files\s*\|\s*(\d*.\d*|\d*)\s*\|\s*(\d*.\d*|\d*)\s*\|\s*(\d*.\d*|\d*)\s*\|\s*(\d*.\d*|\d*)\s*\|/'
   artifacts:
     when: always
     reports:
