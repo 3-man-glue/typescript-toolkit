@@ -291,6 +291,9 @@ export declare const buildRequestValidatorBySchema: (
 
 export declare function Get(api: Api): RouteBuilder
 export declare function Post(api: Api): RouteBuilder
+export declare function Patch(api: Api): RouteBuilder
+export declare function Put(api: Api): RouteBuilder
+export declare function Delete(api: Api): RouteBuilder
 
 export declare type ConstructorInput = {
   method: ApiMethod,
