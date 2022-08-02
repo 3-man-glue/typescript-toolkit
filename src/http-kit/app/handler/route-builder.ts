@@ -25,6 +25,14 @@ export function Post(api: Api): RouteBuilderInterface {
   return createBaseBuilder(api).setMethod('post')
 }
 
+export function Patch(api: Api): RouteBuilderInterface {
+  return createBaseBuilder(api).setMethod('patch')
+}
+
+export function Put(api: Api): RouteBuilderInterface {
+  return createBaseBuilder(api).setMethod('put')
+}
+
 function createBaseBuilder(api: Api): RouteBuilderInterface {
   const { domain = '', version = '', path: routePath } = api
 
