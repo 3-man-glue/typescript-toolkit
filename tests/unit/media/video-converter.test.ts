@@ -3,7 +3,6 @@ import EventEmitter from 'events'
 import fs from 'fs'
 import os from 'os'
 import path from 'path'
-import Container from 'typedi'
 import { Readable } from 'stream'
 import { VideoConverter } from '@media/video-converter'
 
@@ -32,7 +31,6 @@ describe('Video Converter', () => {
   })
 
   afterEach(() => {
-    Container.reset()
     jest.resetModules()
     jest.clearAllMocks()
   })
@@ -43,7 +41,7 @@ describe('Video Converter', () => {
       jest.spyOn(path, 'format').mockReturnValue('fake-path')
       const mockReadFileSync = jest.spyOn(fs, 'readFileSync').mockReturnValue('fake-buffer')
       const videoPath = '/path'
-      let thumbnail: any
+      let thumbnail: Readable
 
       videoConverter.generateThumbnail(videoPath)
         .then(result => {

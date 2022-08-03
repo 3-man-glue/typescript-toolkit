@@ -1,5 +1,4 @@
 import { ObjectSchema } from 'joi'
-import 'reflect-metadata'
 import { Logger as WinstonLogger } from 'winston'
 export declare type Logger = WinstonLogger
 
