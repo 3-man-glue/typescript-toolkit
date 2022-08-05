@@ -10,6 +10,7 @@ import {
 import { ContextDto, HttpContext } from '@http-kit/context/interfaces'
 import { InternalServerException } from '@http-kit/exception/internal-server'
 import { HttpException } from '@http-kit/exception/http-exception'
+import logger from '@utils/logger'
 
 type ConstructorInput = {
   method: ApiMethod,
@@ -50,9 +51,16 @@ export class Route implements RouteInterface {
     try {
       this.Handlers.slice(1).forEach(Handler => rootHandler.chain(Handler))
       await rootHandler.invoke()
+      logger.info(
+        `${rootHandler.context.status} - ${this.method.toUpperCase()} ${this.path}`, { context: rootHandler.context }
+      )
 
       return rootHandler.context
     } catch (e) {
+      logger.error(
+        `${rootHandler.context.status} - ${this.method.toUpperCase()} ${this.path}`, { context: rootHandler.context }
+      )
+
       return await this.handleException(rootHandler.context, e)
     }
   }
