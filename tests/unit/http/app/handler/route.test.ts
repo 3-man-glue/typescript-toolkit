@@ -9,12 +9,13 @@ import { HandlerConstructor, ExceptionResponse } from '@http-kit/app/handler/int
 import { HttpException } from '@http-kit/exception/http-exception'
 import { ExceptionInterceptor } from '@http-kit/app/handler/exception'
 
-jest.mock('@utils/logger', () => ({ error: jest.fn() }))
+jest.mock('@utils/logger', () => ({ info: jest.fn(), error: jest.fn() }))
 
 describe('Route', () => {
   class IndependentHandlerA extends Handler<ContextDto, ContextDto> {
     protected handle(): void {
       this.context.metadata[ 'mutatingKey' ] = 'Value from handler A'
+      this.context.status = 200
     }
   }
 
@@ -22,10 +23,12 @@ describe('Route', () => {
   class DependentHandlerB extends Handler<ContextDto, ContextDto> {
     protected handle(): void {
       this.context.metadata[ 'mutatingKey' ] = 'Value from handler B'
+      this.context.status = 200
     }
   }
 
-  class Exception extends HttpException {}
+  class Exception extends HttpException {
+  }
 
   class CrashWithErrorHandler extends Handler<ContextDto, ContextDto> {
     protected handle(): void {
@@ -40,7 +43,8 @@ describe('Route', () => {
   }
 
   @Service()
-  class InjectedExceptionInterceptor extends ExceptionInterceptor {}
+  class InjectedExceptionInterceptor extends ExceptionInterceptor {
+  }
 
   afterEach(() => {
     Container.reset()
@@ -66,7 +70,7 @@ describe('Route', () => {
     it('should be able to handle input with single independent handler', async () => {
       const spyMapper = jest.fn().mockReturnValue(getEmptyContext())
       const resultFromHandler = { metadata: { mutatingKey: 'Value from handler A' } }
-      const expectedOutput = { ...getEmptyContext(), ...resultFromHandler }
+      const expectedOutput = { ...getEmptyContext(), status: 200, ...resultFromHandler }
 
       const route = new Route({
         method: 'put',
@@ -127,7 +131,7 @@ describe('Route', () => {
     it('should be able to handle input with single independent handler', async () => {
       const spyMapper = jest.fn().mockReturnValue(getEmptyContext())
       const resultFromHandler = { metadata: { mutatingKey: 'Value from handler B' } }
-      const expectedOutput = { ...getEmptyContext(), ...resultFromHandler }
+      const expectedOutput = { ...getEmptyContext(), ...resultFromHandler, status: 200 }
 
       const route = new Route({
         method: 'put',
@@ -146,7 +150,7 @@ describe('Route', () => {
     it('should be able to handle input with multiple handler and independent as root handler', async () => {
       const spyMapper = jest.fn().mockReturnValue(getEmptyContext())
       const resultLastHandler = { metadata: { mutatingKey: 'Value from handler B' } }
-      const expectedOutput = { ...getEmptyContext(), ...resultLastHandler }
+      const expectedOutput = { ...getEmptyContext(), ...resultLastHandler, status: 200 }
 
       const route = new Route({
         method: 'put',
@@ -165,7 +169,7 @@ describe('Route', () => {
     it('should be able to handle input with multiple handler and dependent as root handler', async () => {
       const spyMapper = jest.fn().mockReturnValue(getEmptyContext())
       const resultFromLastHandler = { metadata: { mutatingKey: 'Value from handler A' } }
-      const expectedOutput = { ...getEmptyContext(), ...resultFromLastHandler }
+      const expectedOutput = { ...getEmptyContext(), ...resultFromLastHandler, status: 200 }
 
       const route = new Route({
         method: 'put',
