@@ -10,7 +10,8 @@ import {
 import { ContextDto, HttpContext } from '@http-kit/context/interfaces'
 import { InternalServerException } from '@http-kit/exception/internal-server'
 import { HttpException } from '@http-kit/exception/http-exception'
-import logger from '@utils/logger'
+import logger, { LoggingOptions } from '@utils/logger'
+import Timeout = NodeJS.Timeout
 
 type ConstructorInput = {
   method: ApiMethod,
@@ -18,6 +19,7 @@ type ConstructorInput = {
   mapper: ContextMapper,
   Chain: HandlerConstructor<ContextDto, ContextDto>[],
   ExceptionInterceptor: HandlerConstructor<ContextDto, ExceptionResponse>
+  loggingOptions?: LoggingOptions
 }
 
 export class Route implements RouteInterface {
@@ -31,12 +33,21 @@ export class Route implements RouteInterface {
 
   protected ExceptionInterceptor: HandlerConstructor<ContextDto, ExceptionResponse>
 
-  constructor({ method, path, mapper, Chain, ExceptionInterceptor }: ConstructorInput) {
+  protected loggingOptions: LoggingOptions
+
+  protected logTimeout!: Timeout
+
+  constructor({ method, path, mapper, Chain, ExceptionInterceptor, loggingOptions }: ConstructorInput) {
     this.method = method
     this.path = path
     this.contextMapper = mapper
     this.Handlers = Chain
     this.ExceptionInterceptor = ExceptionInterceptor
+    this.loggingOptions = loggingOptions ?? { enable: false }
+
+    if (this.loggingOptions && this.loggingOptions.duration && this.loggingOptions.duration >= 100) {
+      this.logTimeout = setTimeout(() => this.disableLogging(), this.loggingOptions.duration)
+    }
   }
 
   public async handle(...args: unknown[]): Promise<HttpContext<ContextDto, ContextDto>> {
@@ -51,15 +62,11 @@ export class Route implements RouteInterface {
     try {
       this.Handlers.slice(1).forEach(Handler => rootHandler.chain(Handler))
       await rootHandler.invoke()
-      logger.info(
-        `${rootHandler.context.status} - ${this.method.toUpperCase()} ${this.path}`, { context: rootHandler.context }
-      )
+      this.log('info', rootHandler.context)
 
       return rootHandler.context
     } catch (e) {
-      logger.error(
-        `${rootHandler.context.status} - ${this.method.toUpperCase()} ${this.path}`, { context: rootHandler.context }
-      )
+      this.log('error', rootHandler.context)
 
       return await this.handleException(rootHandler.context, e)
     }
@@ -77,5 +84,16 @@ export class Route implements RouteInterface {
     await interceptor.invoke()
 
     return interceptor.context
+  }
+
+  private log(level: 'info' | 'error', context: HttpContext<ContextDto, ContextDto>): void {
+    if (this.loggingOptions && this.loggingOptions.enable) {
+      logger[level](`${context.status} - ${this.method.toUpperCase()} ${this.path}`, { context } )
+    }
+  }
+
+  private disableLogging(): void {
+    this.loggingOptions.enable = false
+    clearTimeout(this.logTimeout)
   }
 }
