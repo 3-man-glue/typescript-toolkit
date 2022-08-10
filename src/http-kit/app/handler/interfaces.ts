@@ -2,6 +2,7 @@
 import { ContextDto, HttpContext } from '@http-kit/context/interfaces'
 import { ExpressHandler } from '@http-kit/app/express'
 import { PlainObject } from '@utils/common-types'
+import { LoggingOptions } from '@utils/logger'
 
 export type ApiMethod = 'get' | 'post' | 'put' | 'patch' | 'delete'
 
@@ -57,6 +58,8 @@ export interface RouteBuilder {
   setPath(path: string): RouteBuilder
 
   setChain(...HandlerChain: HandlerConstructor<ContextDto, ContextDto>[]): RouteBuilder
+
+  setLoggingOptions(options: LoggingOptions): RouteBuilder
 
   build(): RouteInterface
 

@@ -8,6 +8,7 @@ import { getEmptyContext } from '@http-kit/context/context'
 import { HandlerConstructor, ExceptionResponse } from '@http-kit/app/handler/interfaces'
 import { HttpException } from '@http-kit/exception/http-exception'
 import { ExceptionInterceptor } from '@http-kit/app/handler/exception'
+import logger from '@utils/logger'
 
 jest.mock('@utils/logger', () => ({ info: jest.fn(), error: jest.fn() }))
 
@@ -128,7 +129,7 @@ describe('Route', () => {
       expect(isThrown).toBeTruthy()
     })
 
-    it('should be able to handle input with single independent handler', async () => {
+    it('should be able to handle input with single dependent handler', async () => {
       const spyMapper = jest.fn().mockReturnValue(getEmptyContext())
       const resultFromHandler = { metadata: { mutatingKey: 'Value from handler B' } }
       const expectedOutput = { ...getEmptyContext(), ...resultFromHandler, status: 200 }
@@ -273,5 +274,74 @@ describe('Route', () => {
         expect(spyMapper).toHaveBeenCalledTimes(1)
         expect(spyMapper).toHaveBeenCalledWith('arg1', 'arg2')
       })
+
+    it('should log the info when logging is enabled and handler does not throw the exception', async () => {
+      const spyMapper = jest.fn().mockReturnValue(getEmptyContext())
+      const resultFromHandler = { metadata: { mutatingKey: 'Value from handler A' } }
+      const expectedOutput = { ...getEmptyContext(), status: 200, ...resultFromHandler }
+
+      const route = new Route({
+        method: 'put',
+        path: '/path/to/something',
+        mapper: spyMapper,
+        Chain: [ IndependentHandlerA ],
+        ExceptionInterceptor: jest.fn(),
+        loggingOptions: { enable: true },
+      })
+      const output = await route.handle('arg1', 'arg2')
+
+      expect(output).toStrictEqual(expectedOutput)
+      expect(spyMapper).toHaveBeenCalledTimes(1)
+      expect(spyMapper).toHaveBeenCalledWith('arg1', 'arg2')
+      expect(logger.info).toHaveBeenCalledTimes(1)
+    })
+
+    it('should not log the info when logging is disabled and handler does not throw the exception', async () => {
+      const spyMapper = jest.fn().mockReturnValue(getEmptyContext())
+      const resultFromHandler = { metadata: { mutatingKey: 'Value from handler A' } }
+      const expectedOutput = { ...getEmptyContext(), status: 200, ...resultFromHandler }
+
+      const route = new Route({
+        method: 'put',
+        path: '/path/to/something',
+        mapper: spyMapper,
+        Chain: [ IndependentHandlerA ],
+        ExceptionInterceptor: jest.fn(),
+        loggingOptions: { enable: false },
+      })
+      const output = await route.handle('arg1', 'arg2')
+
+      expect(output).toStrictEqual(expectedOutput)
+      expect(spyMapper).toHaveBeenCalledTimes(1)
+      expect(spyMapper).toHaveBeenCalledWith('arg1', 'arg2')
+      expect(logger.info).not.toHaveBeenCalled()
+    })
+
+    it('should log within the configured timer when logging is enabled with at least 100ms duration', async () => {
+      const timer = jest.useFakeTimers()
+      const spyMapper = jest.fn().mockReturnValue(getEmptyContext())
+
+      const route = new Route({
+        method: 'put',
+        path: '/path/to/something',
+        mapper: spyMapper,
+        Chain: [ IndependentHandlerA ],
+        ExceptionInterceptor: jest.fn(),
+        loggingOptions: { enable: true, duration: 100 },
+      })
+      await route.handle('arg1', 'arg2')
+      timer.advanceTimersByTime(99)
+      await route.handle('arg3', 'arg4')
+      timer.advanceTimersByTime(1)
+      await route.handle('arg5', 'arg6')
+
+      expect(spyMapper).toHaveBeenCalledTimes(3)
+      expect(spyMapper).toHaveBeenNthCalledWith(1, 'arg1', 'arg2')
+      expect(spyMapper).toHaveBeenNthCalledWith(2, 'arg3', 'arg4')
+      expect(spyMapper).toHaveBeenNthCalledWith(3, 'arg5', 'arg6')
+      expect(logger.info).toHaveBeenCalledTimes(2)
+
+      jest.useRealTimers()
+    })
   })
 })

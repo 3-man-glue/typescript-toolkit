@@ -4,7 +4,7 @@ import { HttpClient, ResponseHttp } from '@http-kit/client/interfaces'
 import { ContextDto, HttpContext } from '@http-kit/context/interfaces'
 import { HttpException as HttpExceptionInterface } from '@http-kit/exception/http-exception'
 import { Identity, IdentityObject, PlainObject } from '@utils/common-types'
-import { Logger } from '@utils/logger'
+import { Logger, LoggingOptions } from '@utils/logger'
 import { Express, NextFunction, Request, Response } from 'express'
 import { RequestListener } from 'http'
 import { ObjectSchema } from 'joi'
@@ -244,6 +244,7 @@ export interface RouteInterface {
   contextMapper: ContextMapper
   handle(...args: unknown[]): Promise<HttpContext<ContextDto, ContextDto>>
 }
+
 export interface RouteBuilder {
   setContextMapper(mapper: ContextMapper): RouteBuilder
   setMethod(method: ApiMethod): RouteBuilder
@@ -251,10 +252,12 @@ export interface RouteBuilder {
   setCustomExceptionInterceptor(interceptor: HandlerConstructor<ContextDto, ExceptionResponse>): RouteBuilder
   setPath(path: string): RouteBuilder
   setChain(...HandlerChain: HandlerConstructor<ContextDto, ContextDto>[]): RouteBuilder
+  setLoggingOptions(options: LoggingOptions): RouteBuilder
   build(): Route
   middlewares: Middleware[]
   ExceptionInterceptor: HandlerConstructor<ContextDto, ExceptionResponse>
 }
+
 export declare type DataValidator = {
   params: PlainObject
   body: PlainObject
