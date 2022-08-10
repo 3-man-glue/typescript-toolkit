@@ -1,5 +1,5 @@
 import ecsFormat from '@elastic/ecs-winston-format'
-import { createLogger, transports, format, Logger as WinstonLogger } from 'winston'
+import { createLogger, format, Logger as WinstonLogger, transports } from 'winston'
 import { join } from 'path'
 
 const logFileName = (name: string): string => {
@@ -28,3 +28,8 @@ export default createLogger({
 })
 
 export type Logger = WinstonLogger
+
+export interface LoggingOptions {
+  enable: boolean
+  duration?: number
+}

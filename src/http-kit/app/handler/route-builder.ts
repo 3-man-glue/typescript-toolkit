@@ -12,6 +12,7 @@ import { ContextDto } from '@http-kit/context/interfaces'
 import { InternalServerException } from '@http-kit/exception/internal-server'
 import { Route } from '@http-kit/app/handler/route'
 import { ExceptionInterceptor } from '@http-kit/app/handler/exception'
+import { LoggingOptions } from '@utils/logger'
 
 export function Get(api: Api): RouteBuilderInterface {
   return createBaseBuilder(api).setMethod('get')
@@ -51,6 +52,8 @@ class RouteBuilder implements RouteBuilderInterface {
   protected mapper!: ContextMapper
 
   #ExceptionInterceptor: HandlerConstructor<ContextDto, ExceptionResponse> = ExceptionInterceptor
+
+  #loggingOptions!: LoggingOptions
 
   public setChain(...HandlerChain: HandlerConstructor<ContextDto, ContextDto>[]): RouteBuilder {
     this.Chain = HandlerChain
@@ -96,6 +99,12 @@ class RouteBuilder implements RouteBuilderInterface {
     return this
   }
 
+  public setLoggingOptions(options: LoggingOptions): RouteBuilder {
+    this.#loggingOptions = options
+
+    return this
+  }
+
   public build(): Route {
     const { method, path, mapper, Chain } = this
     if (!(method && path && mapper && Chain && Chain.length)) {
@@ -108,6 +117,7 @@ class RouteBuilder implements RouteBuilderInterface {
       mapper,
       Chain,
       ExceptionInterceptor: this.#ExceptionInterceptor,
+      loggingOptions: this.#loggingOptions,
     })
   }
 }

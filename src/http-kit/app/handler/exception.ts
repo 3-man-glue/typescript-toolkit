@@ -16,6 +16,6 @@ export class ExceptionInterceptor extends Handler<ContextDto, ExceptionResponse>
     )
     this.context.status = exception.status
 
-    logger.error(exception.message, { e: exception })
+    logger.error(exception.message, { e: exception, stack: exception.stack })
   }
 }
