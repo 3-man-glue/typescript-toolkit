@@ -1,9 +1,7 @@
-import { Service } from 'typedi'
 import { initializeApp, getApps } from 'firebase-admin/app'
 import { InternalServerException } from '@http-kit/exception/internal-server'
 import { app } from 'firebase-admin'
 
-@Service()
 export class FirebaseApp {
   public app: app.App
 
