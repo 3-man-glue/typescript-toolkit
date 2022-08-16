@@ -1,6 +1,4 @@
-import 'reflect-metadata'
 import Joi from 'joi'
-import Container from 'typedi'
 import { Request } from 'express'
 import { buildRequestValidatorBySchema } from '@http-kit/app/handler/request-validator'
 import { JoiValidator } from '@http-kit/app/validator/joi'
@@ -18,7 +16,7 @@ describe('Request Validator', () => {
     const body = { attrA: 'testing-a' }
     const context = mapper({ body } as unknown as Request)
     const ValidatorConstructor = buildRequestValidatorBySchema(schema)
-    const validator = new ValidatorConstructor(Container.get(JoiValidator))
+    const validator = new ValidatorConstructor(new JoiValidator())
     validator.setContext(context)
 
     await expect(validator.invoke()).resolves.not.toThrow()
@@ -33,7 +31,7 @@ describe('Request Validator', () => {
     const body = { others: 'others' }
     const context = mapper({ body } as unknown as Request)
     const ValidatorConstructor = buildRequestValidatorBySchema(schema)
-    const validator = new ValidatorConstructor(Container.get(JoiValidator))
+    const validator = new ValidatorConstructor(new JoiValidator())
     let isThrown = false
     validator.setContext(context)
 

@@ -34,12 +34,15 @@ export abstract class Handler<T, K> implements HandlerInterface<T, K> {
   }
 
   protected async next(): Promise<void> {
-    for (const NextHandler of this.NextHandlers) {
-      const nextHandler = Container.has(NextHandler) ? Container.get(NextHandler) : new NextHandler()
-      await nextHandler.setContext(this.context).invoke()
-      this.setContext(nextHandler.context)
+    try {
+      for (const NextHandler of this.NextHandlers) {
+        const nextHandler = Container.has(NextHandler) ? Container.get(NextHandler) : new NextHandler()
+        await nextHandler.setContext(this.context).invoke()
+        this.setContext(nextHandler.context)
+      }
+    } finally {
+      this.NextHandlers.length = 0
     }
-    this.NextHandlers.length = 0
   }
 
   protected abstract handle(): void | Promise<void>
