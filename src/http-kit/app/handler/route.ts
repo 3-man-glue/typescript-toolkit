@@ -66,8 +66,6 @@ export class Route implements RouteInterface {
 
       return rootHandler.context
     } catch (e) {
-      this.log('error', rootHandler.context)
-
       return await this.handleException(rootHandler.context, e)
     }
   }
@@ -82,6 +80,7 @@ export class Route implements RouteInterface {
       exception: e instanceof HttpException ? e : new InternalServerException().withCause(e),
     })
     await interceptor.invoke()
+    this.log('error', interceptor.context)
 
     return interceptor.context
   }
