@@ -24,6 +24,7 @@ describe('FirestoreEngine', () => {
   let batchMock: firestore.WriteBatch
   let batchReultMock: Promise<firestore.WriteResult[]>
   let writeResultMock: Promise<firestore.WriteResult>
+  let documentSnapMock: Promise<firestore.DocumentSnapshot>
   beforeEach(() => {
     const mockApp = ({} as unknown) as app.App
     firestoreMock = {
@@ -36,7 +37,8 @@ describe('FirestoreEngine', () => {
         data: jest.fn(() => { return { test: 'test' } }),
       } ],
     } as unknown as  Promise<firestore.QuerySnapshot>
-    const documentSnapMock = {
+    documentSnapMock = {
+      exists: true,
       id: 'data_1',
       data: jest.fn(() => { return { test: 'test' } }),
     } as unknown as  Promise<firestore.DocumentSnapshot>
@@ -243,6 +245,57 @@ describe('FirestoreEngine', () => {
       try {
         const firestoreEngine = new FirestoreEngine()
         await firestoreEngine.insert([ { documentId: 'doc-1', name: 'user-1' } ], 'users_test')
+      } catch (error) {
+        isThrown = true
+        expect(error).toBeInstanceOf(DBException)
+      }
+
+      expect(isThrown).toBeTruthy()
+    })
+  })
+
+  describe('getById', () => {
+    beforeEach(() => {
+      jest.spyOn(firestore.getFirestore(), 'batch').mockReturnValue(batchMock)
+      jest.spyOn(firestore.getFirestore(), 'collection').mockReturnValue(collectionMock)
+      jest.spyOn(collectionMock, 'doc').mockReturnValue(docMock)
+      jest.spyOn(batchMock, 'update').mockReturnValue(batchMock)
+      jest.spyOn(batchMock, 'commit').mockReturnValue(batchReultMock)
+    })
+    it('should return data by id', async () => {
+      const firestoreEngine = new FirestoreEngine()
+      const response = await firestoreEngine.getById('1', 'users')
+
+      expect(response).toStrictEqual({
+        '_id': 'data_1',
+        'test': 'test',
+      })
+      expect(collectionMock.doc).toHaveBeenCalledTimes(1)
+      expect(collectionMock.doc).toHaveBeenCalledWith('1')
+    })
+
+    it('should return undefined when not found', async () => {
+      documentSnapMock = {
+        exists: false,
+      } as unknown as  Promise<firestore.DocumentSnapshot>
+      const firestoreEngine = new FirestoreEngine()
+      const response = await firestoreEngine.getById('not-found', 'users')
+
+      expect(response).toBeUndefined()
+      expect(collectionMock.doc).toHaveBeenCalledTimes(1)
+      expect(collectionMock.doc).toHaveBeenCalledWith('not-found')
+    })
+
+    it('should throw error when have no document id', async () => {
+      let isThrown = false
+      const mockError = new Error()
+      jest.spyOn(firestore.getFirestore(), 'collection').mockImplementation(() => {
+        throw mockError
+      })
+
+      try {
+        const firestoreEngine = new FirestoreEngine()
+        await await firestoreEngine.getById('1', 'users')
       } catch (error) {
         isThrown = true
         expect(error).toBeInstanceOf(DBException)

@@ -10,6 +10,10 @@ export interface Engine {
   delete(condition: PlainObject, tableName: string): Promise<void>
 }
 
+export interface FirestoreEngineInterface extends Engine {
+  getById(id: string, tableName: string): Promise<PlainObject | undefined>
+}
+
 export interface CassandraInterface {
   updateCounter(subject: string, subjectId: string, changingValue: number): Promise<void>
   concurrentSelect<T>(conditions: Condition<T>[], tableName: string, options?: QueryOptions): Promise<PlainObject[]>
