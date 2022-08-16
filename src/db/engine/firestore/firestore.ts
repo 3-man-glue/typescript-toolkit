@@ -7,13 +7,13 @@ import {
   OrderPattern,
   FirestorePayload
 } from '@db/interfaces'
-import { Engine as EngineInterface } from '@db/engine/interfaces'
+import { FirestoreEngineInterface } from '@db/engine/interfaces'
 import { PlainObject } from '@utils/common-types'
 import { app, firestore } from 'firebase-admin'
 import { getFirestore } from 'firebase-admin/firestore'
 import { initializeApp } from 'firebase-admin/app'
 
-export class FirestoreEngine implements EngineInterface {
+export class FirestoreEngine implements FirestoreEngineInterface {
     private readonly firestore: firestore.Firestore
 
     constructor() {
@@ -22,6 +22,20 @@ export class FirestoreEngine implements EngineInterface {
         this.firestore = getFirestore(app) as firestore.Firestore
       } catch (error) {
         throw new DBException(error.message).withCause(error)
+      }
+    }
+
+    public async getById(id: string, tableName: string): Promise<PlainObject | undefined> {
+      try {
+        const snapshot = await this.firestore.collection(tableName).doc(id).get()
+
+        if (!snapshot.exists) {
+          return undefined
+        }
+
+        return Object.assign({ _id: snapshot.id }, snapshot.data())
+      } catch (error) {
+        throw new DBException(error.message).withCause(error).withInput({ id })
       }
     }
 
