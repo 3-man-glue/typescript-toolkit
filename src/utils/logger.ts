@@ -10,7 +10,7 @@ const logFileName = (name: string): string => {
 }
 
 export default createLogger({
-  level: process.env['APP_ENV'] === 'development' ? 'debug' : 'info',
+  level: process.env['DEBUG'] || process.env['APP_ENV'] === 'development' ? 'debug' : 'info',
   transports:
     [ 'local', 'test', 'integration' ].includes(process.env['APP_ENV'] ?? 'local')
       ? [
