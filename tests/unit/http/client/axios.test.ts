@@ -20,9 +20,21 @@ describe('Http Client', () => {
     expect(axios.create).toHaveBeenLastCalledWith({ baseURL, timeout, headers })
   })
 
+  it('should create client with options', () => {
+    new AxiosHttpClient(baseURL, timeout, headers, { httpAgent: 'agent', httpsAgent: 'agents' })
+    expect(axios.create).toHaveBeenLastCalledWith({
+      baseURL,
+      timeout,
+      headers,
+      httpAgent: 'agent',
+      httpsAgent: 'agents',
+    })
+  })
+
   describe('GET', () => {
     it('should call get with added headers given call setHeaders', async () => {
-      axios.get = jest.fn()
+      axios.get = jest
+        .fn()
         .mockResolvedValue({ data: { id: 1 }, headers: { authorization: 'xxx', test: 1 }, status: 200 })
       const expectedConfig = { params: { status: 1 }, headers: { authorization: 'xxx', test: 1 } }
       const expectedResponse = { data: { id: 1 }, headers: { authorization: 'xxx', test: 1 }, status: 200 }
@@ -76,7 +88,6 @@ describe('Http Client', () => {
 
       await expect(axiosClient.get('/users', { status: 1 })).rejects.toThrowError('ECONNREFUSED')
     })
-
   })
 
   describe('POST', () => {
@@ -121,7 +132,6 @@ describe('Http Client', () => {
 
       await expect(axiosClient.post('/users', { id: 2 })).rejects.toThrowError('ECONNREFUSED')
     })
-
   })
 
   describe('PUT', () => {
@@ -153,11 +163,9 @@ describe('Http Client', () => {
 
       await expect(axiosClient.put('/users', { id: 2 })).rejects.toThrowError('ECONNREFUSED')
     })
-
   })
 
   describe('DELETE', () => {
-
     it('should call axios delete', async () => {
       axios.delete = jest.fn().mockResolvedValue({ data: { id: 1 }, headers: { authorization: 'xxx' }, status: 200 })
       const expectedConfig = { headers: { authorization: 'xxx' } }
@@ -238,6 +246,5 @@ describe('Http Client', () => {
 
       await expect(axiosClient.patch('/users', { id: 2 })).rejects.toThrowError('ECONNREFUSED')
     })
-
   })
 })
