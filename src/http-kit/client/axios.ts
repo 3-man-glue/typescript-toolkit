@@ -7,17 +7,23 @@ const ECONNREFUSED_CODE = 'ECONNREFUSED'
 const ECONNABORTED_CODE = 'ECONNABORTED'
 const INTERNAL_EXCEPTION_CODES = [ ECONNREFUSED_CODE, ECONNABORTED_CODE ]
 
+type HttpOptions = {
+  httpAgent?: unknown,
+  httpsAgent?: unknown
+}
+
 export class AxiosHttpClient implements HttpClient {
   private readonly client: Readonly<AxiosInstance>
 
   private headers: PlainObject
 
-  constructor(baseURL: string, timeout: number, headers: PlainObject) {
+  constructor(baseURL: string, timeout: number, headers: PlainObject, options?: HttpOptions) {
     this.headers = headers
     this.client = axios.create({
       baseURL,
       timeout,
       headers,
+      ...(options ? options : {}),
     })
   }
 
