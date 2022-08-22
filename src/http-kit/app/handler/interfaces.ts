@@ -10,10 +10,10 @@ export interface HandlerInterface<T, K> {
   context: HttpContext<T, K>
 
   invoke(): void | Promise<void>
-
   chain<P, Q>(Handler: HandlerConstructor<P, Q>): this
-
   setContext<P, Q>(context: HttpContext<P, Q>): this
+  chainMultiple(Handlers: HandlerConstructor<ContextDto, ContextDto>[]): this
+  reset(): this
 }
 
 export interface Api {

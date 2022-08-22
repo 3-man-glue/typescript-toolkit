@@ -39,12 +39,15 @@ describe('HttpException Abstraction', () => {
         cause: {
           message: 'error-cause',
           name: 'Error',
+          stack: 'test-stack',
         },
       }
-      const expectedString = '{"status":999,"message":"error-message","cause":{"message":"error-cause","name":"Error"}}'
+      const expectedString = '{"status":999,"message":"error-message",'
+        + '"cause":{"message":"error-cause","name":"Error","stack":"test-stack"}}'
+      const givenCause = new Error('error-cause')
+      givenCause.stack = 'test-stack'
 
-      const exceptionUnderTest = new ConcreteException(999, 'error-message')
-        .withCause(new Error('error-cause'))
+      const exceptionUnderTest = new ConcreteException(999, 'error-message').withCause(givenCause)
 
       expect(exceptionUnderTest.toJSON()).toEqual(expectedJson)
       expect(exceptionUnderTest.toString()).toBe(expectedString)
@@ -57,12 +60,15 @@ describe('HttpException Abstraction', () => {
         cause: {
           message: 'error-cause',
           name: 'Error',
+          stack: 'test-stack',
         },
       }
-      const expectedString = '{"status":999,"message":"error-message","cause":{"message":"error-cause","name":"Error"}}'
+      const expectedString = '{"status":999,"message":"error-message",'
+        + '"cause":{"message":"error-cause","name":"Error","stack":"test-stack"}}'
+      const givenError = new ConcreteException(999, 'error-cause')
+      givenError.stack = 'test-stack'
 
-      const exceptionUnderTest = new ConcreteException(999, 'error-message')
-        .withCause(new ConcreteException(999, 'error-cause'))
+      const exceptionUnderTest = new ConcreteException(999, 'error-message').withCause(givenError)
 
       expect(exceptionUnderTest.toJSON()).toEqual(expectedJson)
       expect(exceptionUnderTest.toString()).toBe(expectedString)
@@ -75,13 +81,15 @@ describe('HttpException Abstraction', () => {
         cause: {
           message: 'error-cause',
           name: 'ConcreteException',
+          stack: 'test-stack',
         },
       }
-      // eslint-disable-next-line max-len
-      const expectedString = '{"status":999,"message":"error-message","cause":{"message":"error-cause","name":"ConcreteException"}}'
+      const expectedString = '{"status":999,"message":"error-message",'
+        + '"cause":{"message":"error-cause","name":"ConcreteException","stack":"test-stack"}}'
+      const givenError = new ConcreteException(999, 'error-cause', 'ConcreteException')
+      givenError.stack = 'test-stack'
 
-      const exceptionUnderTest = new ConcreteException(999, 'error-message')
-        .withCause(new ConcreteException(999, 'error-cause', 'ConcreteException'))
+      const exceptionUnderTest = new ConcreteException(999, 'error-message') .withCause(givenError)
 
       expect(exceptionUnderTest.toJSON()).toEqual(expectedJson)
       expect(exceptionUnderTest.toString()).toBe(expectedString)

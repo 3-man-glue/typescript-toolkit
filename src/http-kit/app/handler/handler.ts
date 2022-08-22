@@ -44,4 +44,16 @@ export abstract class Handler<T, K> implements HandlerInterface<T, K> {
   }
 
   protected abstract handle(): void | Promise<void>
+
+  public reset(): this {
+    this.NextHandlers.length = 0
+
+    return this
+  }
+
+  public chainMultiple(Handlers: HandlerConstructor<ContextDto, ContextDto>[]): this {
+    this.NextHandlers = this.NextHandlers.concat(Handlers)
+
+    return this
+  }
 }
