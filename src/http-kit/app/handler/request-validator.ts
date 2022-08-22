@@ -31,7 +31,7 @@ export const buildRequestValidatorBySchema = (
   schemaValidator: JoiSchemaValidator,
 ): HandlerConstructor<ContextDto, ContextDto> => {
   @Service({ transient: true })
-  class RequestSchemaValidator extends RequestValidator<ContextDto, ContextDto> {
+  class RequestSchemaValidator extends RequestValidator {
     protected schema = schemaValidator
 
     protected readonly validator: JoiValidator

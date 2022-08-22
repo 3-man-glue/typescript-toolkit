@@ -213,9 +213,9 @@ export declare abstract class Handler<T, K> implements Handler<T, K> {
 
   setContext<P, Q>(context: HttpContext<P, Q>): this
 
-  protected next(): Promise<void>
+  chainMultiple(Handlers: HandlerConstructor<ContextDto, ContextDto>[]): this
 
-  protected abstract handle(): void | Promise<void>
+  reset(): this
 }
 
 export declare type ApiMethod = 'get' | 'post' | 'put' | 'patch' | 'delete'
@@ -224,6 +224,8 @@ export interface Handler<T, K> {
   invoke(): void | Promise<void>
   chain<P, Q>(Handler: HandlerConstructor<P, Q>): this
   setContext<P, Q>(context: HttpContext<P, Q>): this
+  chainMultiple(Handlers: HandlerConstructor<ContextDto, ContextDto>[]): this
+  reset(): this
 }
 export interface Api {
   path: string

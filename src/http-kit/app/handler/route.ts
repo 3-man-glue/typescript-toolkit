@@ -57,10 +57,9 @@ export class Route implements RouteInterface {
       throw new InternalServerException('Route was built without Handler class')
     }
     const rootHandler = Container.has(RootHandler) ? Container.get(RootHandler): new RootHandler()
-    rootHandler.setContext(baseContext)
 
     try {
-      this.Handlers.slice(1).forEach(Handler => rootHandler.chain(Handler))
+      rootHandler.setContext(baseContext).reset().chainMultiple(this.Handlers.slice(1))
       await rootHandler.invoke()
       this.log('info', rootHandler.context)
 

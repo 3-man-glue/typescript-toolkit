@@ -28,7 +28,7 @@ export abstract class HttpException extends Error implements HttpExceptionInterf
       code: this.code,
       input: this.input,
       cause: this.cause
-        ? { message: this.cause.message, name: this.cause.name }
+        ? { message: this.cause.message, name: this.cause.name, stack: this.cause.stack }
         : undefined,
     }
   }
