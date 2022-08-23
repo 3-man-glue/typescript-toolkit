@@ -7,19 +7,6 @@ data/
 .env
 liquibase/libs
 
-cache/
-config/
-db/
-ddd/
-event-stream/
-gcp/
-http-kit/
-mq/
-media/
-scheduler/
-secret/
-utils/
-
 /index.js
 /index.js.map
 /index.d.ts
