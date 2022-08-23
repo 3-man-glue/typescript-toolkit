@@ -50,6 +50,8 @@ describe('Route', () => {
   afterEach(() => {
     Container.reset()
     jest.clearAllMocks()
+    jest.resetAllMocks()
+    jest.resetModules()
   })
 
   it('should be defined properly', () => {
@@ -189,14 +191,14 @@ describe('Route', () => {
     it('should be able to handle error when handler throw the Error class', async () => {
       const spyMapper = jest.fn().mockReturnValue(getEmptyContext())
       const expectedContext = {
-        exception: new InternalServerException('Internal Server Error: unable to identify exception cause')
+        exception: new InternalServerException('InternalServerError: Crashed with instance of Error')
           .withCause(new Error('Crashed with instance of Error')),
         metadata: {
           mutatingKey: 'Value from handler A',
         },
         response: {
           code: 'InternalServerException',
-          message: 'Internal Server Error: unable to identify exception cause',
+          message: 'InternalServerError: Crashed with instance of Error',
         },
         status: 500,
       }

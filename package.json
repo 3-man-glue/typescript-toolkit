@@ -1,6 +1,6 @@
 {
   "name": "@sertis-chat-commerce/ts-toolkit",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "private": false,
   "contributors": [
     "Panya Batphantana <fanneioz@yahoo.co.th>",
@@ -86,7 +86,7 @@
     "db:local": "docker-compose --env-file .env up -d",
     "prebuild": "rm -Rf $(cd src && ls -d *) app.* index.*",
     "build": "ttsc",
-    "prepare": "yarn run build",
+    "prepublishOnly": "yarn run build",
     "migration:setup": "sh ./liquibase-cassandra-setup.sh",
     "migration:up:local": "yarn run migration:setup && docker-compose -f docker-compose.liquibase.yml up update && docker-compose -f docker-compose.liquibase.yml rm -fsv",
     "migration:down:local": "yarn run migration:setup && docker-compose -f docker-compose.liquibase.yml up rollback && docker-compose -f docker-compose.liquibase.yml rm -fsv",
