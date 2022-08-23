@@ -14,10 +14,10 @@ import logger, { LoggingOptions } from '@utils/logger'
 import Timeout = NodeJS.Timeout
 
 type ConstructorInput = {
-  method: ApiMethod,
-  path: string,
-  mapper: ContextMapper,
-  Chain: HandlerConstructor<ContextDto, ContextDto>[],
+  method: ApiMethod
+  path: string
+  mapper: ContextMapper
+  Chain: HandlerConstructor<ContextDto, ContextDto>[]
   ExceptionInterceptor: HandlerConstructor<ContextDto, ExceptionResponse>
   loggingOptions?: LoggingOptions
 }
@@ -56,7 +56,7 @@ export class Route implements RouteInterface {
     if (!RootHandler || !this.ExceptionInterceptor) {
       throw new InternalServerException('Route was built without Handler class')
     }
-    const rootHandler = Container.has(RootHandler) ? Container.get(RootHandler): new RootHandler()
+    const rootHandler = Container.has(RootHandler) ? Container.get(RootHandler) : new RootHandler()
 
     try {
       rootHandler.setContext(baseContext).reset().chainMultiple(this.Handlers.slice(1))
@@ -69,14 +69,18 @@ export class Route implements RouteInterface {
     }
   }
 
-  private async handleException(context: HttpContext<ContextDto, ContextDto>, e: Error):
-    Promise<HttpContext<ContextDto, ExceptionResponse>> {
+  private async handleException(
+    context: HttpContext<ContextDto, ContextDto>,
+    e: Error,
+  ): Promise<HttpContext<ContextDto, ExceptionResponse>> {
     const interceptor = Container.has(this.ExceptionInterceptor)
       ? Container.get(this.ExceptionInterceptor)
       : new this.ExceptionInterceptor()
+
     interceptor.setContext({
       ...context,
-      exception: e instanceof HttpException ? e : new InternalServerException().withCause(e),
+      exception:
+        e instanceof HttpException ? e : new InternalServerException(`InternalServerError: ${e.message}`).withCause(e),
     })
     await interceptor.invoke()
     this.log('error', interceptor.context)
@@ -86,7 +90,7 @@ export class Route implements RouteInterface {
 
   private log(level: 'info' | 'error', context: HttpContext<ContextDto, ContextDto>): void {
     if (this.loggingOptions && this.loggingOptions.enable) {
-      logger[level](`${context.status} - ${this.method.toUpperCase()} ${this.path}`, { context } )
+      logger[level](`${context.status} - ${this.method.toUpperCase()} ${this.path}`, { context })
     }
   }
 
