@@ -30,7 +30,6 @@
       }
     ],
     "paths": {
-      "*": ["*", "./*"],
       "@http-kit/*": ["http-kit/*"],
       "@db/*": ["db/*"],
       "@logger/*": ["logger/*"],
