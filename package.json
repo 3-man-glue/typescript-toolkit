@@ -86,7 +86,7 @@
     "db:local": "docker-compose --env-file .env up -d",
     "prebuild": "rm -Rf $(cd src && ls -d *) app.* index.*",
     "build": "ttsc",
-    "prepare": "yarn run build",
+    "prepublishOnly": "yarn run build",
     "migration:setup": "sh ./liquibase-cassandra-setup.sh",
     "migration:up:local": "yarn run migration:setup && docker-compose -f docker-compose.liquibase.yml up update && docker-compose -f docker-compose.liquibase.yml rm -fsv",
     "migration:down:local": "yarn run migration:setup && docker-compose -f docker-compose.liquibase.yml up rollback && docker-compose -f docker-compose.liquibase.yml rm -fsv",
