@@ -106,8 +106,9 @@ describe('HttpException Abstraction', () => {
           object: { key: 'value' },
         },
       }
-      // eslint-disable-next-line max-len
-      const expectedString = '{"status":999,"message":"error-message","input":{"string":"value","number":9999,"boolean":true,"object":{"key":"value"}}}'
+
+      const expectedString = '{"status":999,"message":"error-message",'
+      +'"input":{"string":"value","number":9999,"boolean":true,"object":{"key":"value"}}}'
 
       const exceptionUnderTest = new ConcreteException(999, 'error-message')
         .withInput({ string: 'value', number: 9999, boolean: true, object: { key: 'value' } })
@@ -115,5 +116,58 @@ describe('HttpException Abstraction', () => {
       expect(exceptionUnderTest.toJSON()).toEqual(expectedJson)
       expect(exceptionUnderTest.toString()).toBe(expectedString)
     })
+
+    it('Should return just-valid definition and delete object circular when construct cause with circular', () => {
+      const circular = { name: {}, message: {},
+        stack: {
+          ca: { caa: {} },
+          cb: { cba: {} },
+          cc: { cca: {} },
+          cd: { cda: {} },
+          ce: 'value2',
+          cf: 'value3',
+        },
+      }
+      circular.name = {
+        aa: {
+          aaa: 'value1',
+        },
+      }
+      circular.message = circular
+      circular.stack.ca.caa = circular.stack.ca
+      circular.stack.cb.cba = circular.stack.cb
+      circular.stack.cc.cca = circular.stack
+      circular.stack.cd.cda = circular.stack.ca.caa
+      const expectedCircular = {
+        message: {
+          name: { aa: { aaa: 'value1' } },
+          stack: {
+            ca: {},
+            cb: {},
+            cc: {},
+            cd: {},
+            ce: 'value2',
+            cf: 'value3',
+          },
+        },
+      }
+      const expectedJson = {
+        status: 999,
+        message: 'error-message',
+        cause: expectedCircular,
+      }
+
+      const expectedString = '{"status":999,"message":"error-message","cause":{'
+      +'"message":{"name":{"aa":{"aaa":"value1"}},'
+      +'"stack":{"ca":{},"cb":{},"cc":{},"cd":{},"ce":"value2","cf":"value3"}}}}'
+
+      const exceptionUnderTest = new ConcreteException(999, 'error-message')
+        .withCause(circular as unknown as Error)
+
+      expect(exceptionUnderTest.toJSON()).toEqual(expectedJson)
+      expect(exceptionUnderTest.toString()).toBe(expectedString)
+
+    })
+
   })
 })
