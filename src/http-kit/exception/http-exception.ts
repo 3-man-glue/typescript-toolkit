@@ -28,13 +28,15 @@ export abstract class HttpException extends Error implements HttpExceptionInterf
       code: this.code,
       input: this.input,
       cause: this.cause
-        ? { message: this.cause.message, name: this.cause.name, stack: this.cause.stack }
+        ? JSON.parse(JSON.stringify(
+          { message: this.cause.message, name: this.cause.name, stack: this.cause.stack }, this.removeCircular()
+        ))
         : undefined,
     }
   }
 
   public toString(): string {
-    return JSON.stringify(this.toJSON())
+    return JSON.stringify(this.toJSON(), this.removeCircular())
   }
 
   public withInput(value: PlainObject): this {
@@ -47,5 +49,21 @@ export abstract class HttpException extends Error implements HttpExceptionInterf
     this.cause = e
 
     return this
+  }
+
+  private removeCircular = ()
+  : (key: string, value: string | PlainObject) => unknown => {
+    const seen = new WeakSet()
+
+    return (_key: string, value: string | PlainObject) => {
+      if (typeof value === 'object' && value !== null) {
+        if (seen.has(value)) {
+          return
+        }
+        seen.add(value)
+      }
+
+      return value
+    }
   }
 }

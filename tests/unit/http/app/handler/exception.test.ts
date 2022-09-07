@@ -62,4 +62,25 @@ describe('Default Exception Interceptor', () => {
     expect(interceptor.context).toMatchObject(expectedContext)
     expect(logger.error).not.toBeCalled()
   })
+
+  it('should handle when exception cause is circular', async () => {
+    const error = { message: {}, name: 2 }
+    error.message = [ { c: 1, d: error } , { c: 1, d: error } ]
+    const exception = new TestException(500, 'test circular').withCause(error as unknown as Error)
+    const expectedContext = {
+      ...baseContext,
+      exception,
+      response: { message: 'test circular' },
+      status: 500,
+    }
+    const expectedCircular = '{"status":500,"message":"test circular",'
+    +'"cause":{"message":[{"c":1,"d":{"name":2}},{"c":1}],"name":2}}'
+
+    interceptor.setContext({ ...baseContext, exception })
+    await interceptor.invoke()
+
+    expect(interceptor.context).toStrictEqual(expectedContext)
+    expect(logger.error).toHaveBeenCalledTimes(1)
+    expect(JSON.stringify(interceptor.context.exception)).toStrictEqual(expectedCircular)
+  })
 })
