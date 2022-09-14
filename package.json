@@ -1,6 +1,6 @@
 {
   "name": "@sertis-chat-commerce/ts-toolkit",
-  "version": "1.2.5",
+  "version": "1.2.5a",
   "private": false,
   "contributors": [
     "Panya Batphantana <fanneioz@yahoo.co.th>",
@@ -38,6 +38,7 @@
     "cassandra-driver": "^4.6.3",
     "cuid": "^2.1.8",
     "dotenv": "^10.0.0",
+    "elastic-apm-node": "^3.38.0",
     "express": "^4.17.1",
     "firebase-admin": "^10.3.0",
     "fluent-ffmpeg": "^2.1.2",
