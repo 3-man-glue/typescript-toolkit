@@ -1,9 +1,9 @@
-import { ConfigService } from '@config/config'
-import { Engine, ReturnedQuery } from '@db/engine/interfaces'
-import { PlainObject } from '@utils/common-types'
+import { ConfigService } from '../../config/config'
+import { Engine, ReturnedQuery } from '../../db/engine/interfaces'
+import { PlainObject } from '../../utils/common-types'
 import cassandra from 'cassandra-driver'
-import { DictMapper } from '@config/interfaces'
-import { QueryOptions } from '@db/engine/generate-query'
+import { DictMapper } from '../../config/interfaces'
+import { QueryOptions } from '../../db/engine/generate-query'
 
 export interface Engine {
   updateCounter(subject: string, subjectId: string, changingValue: number): Promise<void>

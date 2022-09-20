@@ -1,5 +1,5 @@
 import redis, { ClientOpts } from 'redis'
-import { DictMapper } from '@config/interfaces'
+import { DictMapper } from './config/interfaces'
 export class Redis {
   constructor(options: RedisOption)
 

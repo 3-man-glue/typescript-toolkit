@@ -1,7 +1,7 @@
 import { MessageHandler, MessageHandlerConstructor } from '@mq/client/interfaces'
-import { LoaderFunction, MessageDto, Subscriber, SubscriberConstructor } from '@mq/interfaces'
-import { PlainObject } from '@utils/common-types'
-import { Logger } from '@utils/logger'
+import { LoaderFunction, MessageDto, Subscriber, SubscriberConstructor } from '../../mq/interfaces'
+import { PlainObject } from '../../utils/common-types'
+import { Logger } from '../../utils/logger'
 
 export declare type SubscriberConstructor = new (...args: any[]) => Subscriber
 export interface Subscriber {
