@@ -6,7 +6,7 @@
     "allowJs": false,
     "sourceMap": true,
     "sourceRoot": "src",
-    "outDir": "",
+    "outDir": "./",
     "removeComments": true,
     "strict": true,
     "strictNullChecks": true,

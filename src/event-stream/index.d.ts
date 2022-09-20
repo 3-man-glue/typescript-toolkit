@@ -1,8 +1,8 @@
 /* eslint-disable camelcase */
-import { DictMapper } from '@config/interfaces'
-import { EventState } from '@event-stream/repos/interfaces'
-import { Engine } from '@db/engine/interfaces'
-import { PlainObject } from '@utils/common-types'
+import { DictMapper } from '../../config/interfaces'
+import { EventState } from '../../event-stream/repos/interfaces'
+import { Engine } from '../../db/engine/interfaces'
+import { PlainObject } from '../../utils/common-types'
 
 export const eventStreamDictionary: DictMapper
 

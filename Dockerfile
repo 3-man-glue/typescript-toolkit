@@ -1,16 +1,16 @@
-FROM node:14-slim as dependencies
+FROM node:18-slim as dependencies
 
 COPY package.json yarn.lock*  ./
 
 RUN  yarn install --prod && yarn cache clean --force
 
-FROM node:14-slim as build
+FROM node:18-slim as build
 
 COPY . .
 
 RUN yarn install && yarn run build
 
-FROM node:14-slim
+FROM node:18-slim
 
 WORKDIR /opt/node_app
 

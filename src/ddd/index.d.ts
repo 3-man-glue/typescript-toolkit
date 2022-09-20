@@ -1,8 +1,8 @@
-import { EventStreamConfig } from '@config/interfaces'
-import { Entity } from '@ddd/entity'
-import { EntityInterface, EventEmitter as EventEmitterInterface } from '@ddd/interfaces'
-import { MessageQueueAdapter } from '@mq/interfaces'
-import { Dimension as DimensionInterface, Identity, PlainObject } from '@utils/common-types'
+import { EventStreamConfig } from '../../config/interfaces'
+import { Entity } from '../../ddd/entity'
+import { EntityInterface, EventEmitter as EventEmitterInterface } from '../../ddd/interfaces'
+import { MessageQueueAdapter } from '../../mq/interfaces'
+import { Dimension as DimensionInterface, Identity, PlainObject } from '../../utils/common-types'
 export class Dimension implements DimensionInterface {
   height: number
 
