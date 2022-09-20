@@ -10,7 +10,7 @@ import {
   PubSubConfig,
   EventStreamConfig,
   VideoConfig
-} from '@config/interfaces'
+} from './config/interfaces.ts'
 
 export declare class ConfigService implements ConfigInterface {
   readonly gateway: Readonly<GatewayConfig>

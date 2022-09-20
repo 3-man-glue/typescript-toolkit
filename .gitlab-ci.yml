@@ -5,7 +5,7 @@ include:
 
 Unit Test:
   stage: test
-  image: node:14-alpine
+  image: node:18-alpine
   script:
     - yarn install
     - yarn run test
@@ -26,7 +26,7 @@ Unit Test:
 
 Static Test:
   stage: test
-  image: node:14-alpine
+  image: node:18-alpine
   script:
     - yarn install --dev
     - yarn run lint
@@ -40,7 +40,7 @@ Static Test:
 
 Build package:
   stage: build
-  image: node:14-alpine
+  image: node:18-alpine
   script:
     - yarn install
     - yarn build
@@ -69,7 +69,7 @@ Build package:
 
 Deploy npm:
   stage: deploy
-  image: node:14-alpine
+  image: node:18-alpine
   script:
     - |
       if [[ ! -f .npmrc ]]; then

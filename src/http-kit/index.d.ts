@@ -1,14 +1,14 @@
 /* eslint-disable camelcase */
 /// <reference types="node" />
-import { HttpClient, ResponseHttp } from '@http-kit/client/interfaces'
-import { ContextDto, HttpContext } from '@http-kit/context/interfaces'
-import { HttpException as HttpExceptionInterface } from '@http-kit/exception/http-exception'
-import { Identity, IdentityObject, PlainObject } from '@utils/common-types'
-import { Logger, LoggingOptions } from '@utils/logger'
+import { HttpClient, ResponseHttp } from '../../http-kit/client/interfaces'
+import { ContextDto, HttpContext } from '../../http-kit/context/interfaces'
+import { HttpException as HttpExceptionInterface } from '../../http-kit/exception/http-exception'
+import { Identity, IdentityObject, PlainObject } from '../../utils/common-types'
+import { Logger, LoggingOptions } from '../../utils/logger'
 import { Express, NextFunction, Request, Response } from 'express'
 import { RequestListener } from 'http'
 import { ObjectSchema } from 'joi'
-import { ExceptionResponse } from '@http-kit/app/handler/interfaces'
+import { ExceptionResponse } from '../../http-kit/app/handler/interfaces'
 
 export declare class HttpServer {
   static create(application: RequestListener, logger: Logger): HttpServer
