@@ -15,3 +15,16 @@ liquibase/libs
 /app.js.map
 /app.d.ts
 /junit.xml
+
+/cache
+/config
+/db
+/ddd
+/event-stream
+/gcp
+/http-kit
+/media
+/mq
+/scheduler
+/secret
+/utils

@@ -2,7 +2,7 @@
 import { Readable } from 'stream'
 import { app } from 'firebase-admin'
 import { GetTopicMetadataResponse, IamPermissionsMap } from '@google-cloud/pubsub'
-import { MessageDto, MessageQueueAdapter, MessageHandler } from '@mq/interfaces'
+import { MessageDto, MessageQueueAdapter, MessageHandler } from '../../mq/interfaces'
 
 export declare class PubSubAdapter implements MessageQueueAdapter {
   private readonly pubsub
