@@ -89,6 +89,7 @@ Deploy npm:
         echo "--tag alpha"
         ;;
       esac
+    - yarn install
     - npm publish --access public $tagOption
   when: manual
   allow_failure: false
