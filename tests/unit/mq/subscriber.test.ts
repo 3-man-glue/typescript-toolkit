@@ -36,7 +36,8 @@ describe('BaseSubscriber Abstraction', () => {
 
   describe('subscribe()', () => {
     it('should resolve instance of message handlers and subscribe via message queue', () => {
-      const subscriber = new TestSubscriber()
+      const mockClient = {} as MessageQueueAdapter
+      const subscriber = new TestSubscriber(mockClient)
 
       subscriber.subscribe()
 
