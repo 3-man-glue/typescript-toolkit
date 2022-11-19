@@ -37,6 +37,7 @@
     "@google-cloud/pubsub": "^2.16.1",
     "@google-cloud/secret-manager": "^3.10.0",
     "@google-cloud/storage": "^5.18.2",
+    "@google-cloud/firestore": "^6.4.1",
     "axios": "^0.21.1",
     "cassandra-driver": "^4.6.3",
     "cuid": "^2.1.8",
