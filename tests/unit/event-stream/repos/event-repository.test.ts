@@ -14,7 +14,7 @@ describe('Event Repository', () => {
     } as unknown as Engine
     eventRepo = new EventRepository(mockEngine)
 
-    jest.useFakeTimers()
+    jest.useFakeTimers('legacy')
   })
 
   afterEach(() => {

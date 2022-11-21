@@ -4,28 +4,23 @@ import { getSelectQueryConditions, getSelectQueryOrders, getDocumentIds } from '
 import {
   Condition,
   FirestoreConditionPattern,
-  OrderPattern,
-  FirestorePayload
+  OrderPattern
 } from '@db/interfaces'
-import { FirestoreEngineInterface } from '@db/engine/interfaces'
-import { PlainObject } from '@utils/common-types'
-import { app, firestore } from 'firebase-admin'
-import { getFirestore } from 'firebase-admin/firestore'
-import { initializeApp } from 'firebase-admin/app'
+import { FirestoreDataObject, FirestoreEngineInterface } from '@db/engine/interfaces'
+import { Firestore, Query } from '@google-cloud/firestore'
 
 export class FirestoreEngine implements FirestoreEngineInterface {
-    private readonly firestore: firestore.Firestore
+    public readonly firestore: Firestore
 
-    constructor() {
+    constructor(gcpProjectId: string) {
       try {
-        const app = initializeApp() as app.App
-        this.firestore = getFirestore(app) as firestore.Firestore
+        this.firestore = new Firestore({ projectId: gcpProjectId })
       } catch (error) {
         throw new DBException(error.message).withCause(error)
       }
     }
 
-    public async getById(id: string, tableName: string): Promise<PlainObject | undefined> {
+    public async getById(id: string, tableName: string): Promise<FirestoreDataObject | undefined> {
       try {
         const snapshot = await this.firestore.collection(tableName).doc(id).get()
 
@@ -39,26 +34,30 @@ export class FirestoreEngine implements FirestoreEngineInterface {
       }
     }
 
-    async select<T>(condition: Condition<T>, tableName: string, options?: QueryOptions): Promise<PlainObject[]> {
+    async select<T>(
+      condition: Condition<T>,
+      tableName: string,
+      options?: QueryOptions
+    ): Promise<FirestoreDataObject[]> {
       try {
-        let query = this.firestore.collection(tableName)
+        let query: Query = this.firestore.collection(tableName)
         const conditionParams = getSelectQueryConditions(condition)
         const oderParams = getSelectQueryOrders(condition)
 
         if (conditionParams.length > 0) {
           conditionParams.forEach((param: FirestoreConditionPattern) => {
-            query = query.where(param.key, param.operation, param.val) as firestore.CollectionReference
+            query = query.where(param.key, param.operation, param.val)
           })
         }
 
         if (oderParams.length > 0) {
           oderParams.forEach((param: OrderPattern) => {
-            query = query.orderBy(param.key, param.val) as firestore.CollectionReference
+            query = query.orderBy(param.key, param.val)
           })
         }
 
         if (options?.limit) {
-          query = query.limit(options?.limit) as firestore.CollectionReference
+          query = query.limit(options?.limit)
         }
 
         const snapshot = await query.get()
@@ -69,20 +68,11 @@ export class FirestoreEngine implements FirestoreEngineInterface {
       }
     }
 
-    public async insert(data: PlainObject[], tableName: string): Promise<void> {
+    public async insert(data: FirestoreDataObject[], tableName: string): Promise<void> {
       try {
         const batch = this.firestore.batch()
-
-        data.forEach((docData) => {
-          const { documentId, ...rest } = docData as FirestorePayload
-          const ref = this.firestore.collection(tableName)
-
-          if (documentId) {
-            batch.set(ref.doc(documentId), rest)
-          } else {
-            batch.set(ref.doc(), rest)
-          }
-        })
+        const collection = this.firestore.collection(tableName)
+        data.forEach(({ _id, ...data }) => batch.set(_id ? collection.doc(_id) : collection.doc(), data))
 
         await batch.commit()
       } catch (error) {
@@ -90,16 +80,16 @@ export class FirestoreEngine implements FirestoreEngineInterface {
       }
     }
 
-    public async update<T>(data: PlainObject[], condition: Condition<T>[], tableName: string): Promise<void> {
+    public async update<T>(data: FirestoreDataObject[], condition: Condition<T>[], tableName: string): Promise<void> {
       try {
         const batch = this.firestore.batch()
+        const collection = this.firestore.collection(tableName)
 
         data.forEach((payload, key) => {
           const documentIds = getDocumentIds(condition[key] ?? [])
 
           documentIds.forEach((documentId) => {
-            const ref = this.firestore.collection(tableName)
-            batch.update(ref.doc(documentId), payload)
+            batch.update(collection.doc(documentId), payload)
           })
         })
 
@@ -109,7 +99,11 @@ export class FirestoreEngine implements FirestoreEngineInterface {
       }
     }
 
-    public async updateById(data: PlainObject, documentId: string, tableName: string): Promise<void> {
+    public async updateById(
+      data: Omit<FirestoreDataObject, '_id'>,
+      documentId: string,
+      tableName: string
+    ): Promise<void> {
       try {
         await this.firestore.collection(tableName).doc(documentId).update(data)
       } catch (error) {
@@ -121,15 +115,20 @@ export class FirestoreEngine implements FirestoreEngineInterface {
       try {
         const batch = this.firestore.batch()
         const documentIds = getDocumentIds(condition)
-
-        documentIds.forEach((documentId) => {
-          const ref = this.firestore.collection(tableName)
-          batch.delete(ref.doc(documentId))
-        })
+        const collection = this.firestore.collection(tableName)
+        documentIds.forEach((documentId) => batch.delete(collection.doc(documentId)))
 
         await batch.commit()
       } catch (error) {
         throw new DBException(error.message).withCause(error).withInput({ condition, tableName })
+      }
+    }
+
+    public async deleteById(id: string, tableName:string): Promise<void> {
+      try {
+        await this.firestore.collection(tableName).doc(id).delete({ exists: false })
+      } catch (error) {
+        throw new DBException(error.message).withCause(error).withInput({ id, tableName })
       }
     }
 }
