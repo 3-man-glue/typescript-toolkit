@@ -3,18 +3,24 @@ import { Condition } from '@db/interfaces'
 import { PlainObject } from '@utils/common-types'
 import { QueryOptions } from '@db/engine/generate-query'
 
-export interface Engine {
-  select<T>(condition: Condition<T>, tableName: string, options?: QueryOptions): Promise<PlainObject[]>
-  insert(data: PlainObject[], tableName: string): Promise<void>
-  update<T>(data: PlainObject[], condition: Condition<T>[], tableName: string): Promise<void>
-  delete(condition: PlainObject, tableName: string): Promise<void>
+export interface Engine<T = PlainObject> {
+  select<K>(condition: Condition<K>, tableName: string, options?: QueryOptions): Promise<T[]>
+  insert(data: T[], tableName: string): Promise<void>
+  update<K>(data: T[], condition: Condition<K>[], tableName: string): Promise<void>
+  delete<K>(condition: Condition<K>, tableName: string): Promise<void>
 }
 
-export interface FirestoreEngineInterface extends Engine {
-  getById(id: string, tableName: string): Promise<PlainObject | undefined>
+export interface FirestoreDataObject extends PlainObject {
+  _id?: string
 }
 
-export interface CassandraInterface {
+export interface FirestoreEngineInterface extends Engine<FirestoreDataObject> {
+  getById(id: string, tableName: string): Promise<FirestoreDataObject | undefined>
+  updateById(data: Omit<FirestoreDataObject, '_id'>, id: string, tableName: string): Promise<void>
+  deleteById(id: string, tableName: string): Promise<void>
+}
+
+export interface CassandraInterface extends Engine {
   updateCounter(subject: string, subjectId: string, changingValue: number): Promise<void>
   concurrentSelect<T>(conditions: Condition<T>[], tableName: string, options?: QueryOptions): Promise<PlainObject[]>
   raw(query: string, params?: unknown[]): Promise<void>
