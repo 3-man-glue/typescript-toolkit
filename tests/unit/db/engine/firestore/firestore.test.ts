@@ -545,7 +545,7 @@ describe('FirestoreEngine', () => {
       jest.spyOn(collection, 'doc').mockReturnValue(docRef)
     })
 
-    it('should delete by id disregarding the data pre-existence', async () => {
+    it('should delete by id properly', async () => {
       jest.spyOn(docRef, 'delete').mockResolvedValue({} as unknown as WriteResult)
 
       await firestoreEngine.deleteById('doc-id', 'test-table')
@@ -555,7 +555,6 @@ describe('FirestoreEngine', () => {
       expect(collection.doc).toHaveBeenCalledTimes(1)
       expect(collection.doc).toHaveBeenCalledWith('doc-id')
       expect(docRef.delete).toHaveBeenCalledTimes(1)
-      expect(docRef.delete).toHaveBeenCalledWith({ exists: false })
     })
 
     it('should throw error when failed to delete', async () => {
@@ -579,7 +578,6 @@ describe('FirestoreEngine', () => {
       expect(collection.doc).toHaveBeenCalledTimes(1)
       expect(collection.doc).toHaveBeenCalledWith('doc-id')
       expect(docRef.delete).toHaveBeenCalledTimes(1)
-      expect(docRef.delete).toHaveBeenCalledWith({ exists: false })
     })
   })
 })
