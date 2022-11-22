@@ -126,7 +126,7 @@ export class FirestoreEngine implements FirestoreEngineInterface {
 
     public async deleteById(id: string, tableName:string): Promise<void> {
       try {
-        await this.firestore.collection(tableName).doc(id).delete({ exists: false })
+        await this.firestore.collection(tableName).doc(id).delete()
       } catch (error) {
         throw new DBException(error.message).withCause(error).withInput({ id, tableName })
       }
