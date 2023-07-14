@@ -1,14 +1,16 @@
-import axios, { AxiosInstance } from 'axios'
-import { PlainObject } from '@utils/common-types'
 import { HttpClient, ResponseHttp } from '@http-kit/client/interfaces'
 import { InternalServerException } from '@http-kit/exception/internal-server'
+import { PlainObject } from '@utils/common-types'
+import axios, { AxiosInstance } from 'axios'
 
 const ECONNREFUSED_CODE = 'ECONNREFUSED'
 const ECONNABORTED_CODE = 'ECONNABORTED'
 const INTERNAL_EXCEPTION_CODES = [ ECONNREFUSED_CODE, ECONNABORTED_CODE ]
 
+type MethodOption = { headers: PlainObject }
+
 type HttpOptions = {
-  httpAgent?: unknown,
+  httpAgent?: unknown
   httpsAgent?: unknown
 }
 
@@ -40,8 +42,12 @@ export class AxiosHttpClient implements HttpClient {
     }
   }
 
-  async get(url: string, query?: PlainObject): Promise<ResponseHttp> {
+  async get(url: string, query?: PlainObject, option?: MethodOption): Promise<ResponseHttp> {
     try {
+      if (option?.headers) {
+        this.setHeaders(option.headers)
+      }
+
       const params = query || {}
       const { data, headers, status } = await this.client.get(url, this.getConfig(params))
 
@@ -49,19 +55,23 @@ export class AxiosHttpClient implements HttpClient {
     } catch (error) {
       throw INTERNAL_EXCEPTION_CODES.includes(error.code)
         ? new InternalServerException(error.message).withCause(error)
-        :error
+        : error
     }
   }
 
-  async post(url: string, data: PlainObject): Promise<ResponseHttp> {
+  async post(url: string, data: PlainObject, option?: MethodOption): Promise<ResponseHttp> {
     try {
+      if (option?.headers) {
+        this.setHeaders(option.headers)
+      }
+
       const { data: dataResponse, headers, status } = await this.client.post(url, data, this.getConfig())
 
       return { data: dataResponse, headers, status }
     } catch (error) {
       throw INTERNAL_EXCEPTION_CODES.includes(error.code)
         ? new InternalServerException(error.message).withCause(error)
-        :error
+        : error
     }
   }
 
@@ -73,7 +83,7 @@ export class AxiosHttpClient implements HttpClient {
     } catch (error) {
       throw INTERNAL_EXCEPTION_CODES.includes(error.code)
         ? new InternalServerException(error.message).withCause(error)
-        :error
+        : error
     }
   }
 
@@ -85,7 +95,7 @@ export class AxiosHttpClient implements HttpClient {
     } catch (error) {
       throw INTERNAL_EXCEPTION_CODES.includes(error.code)
         ? new InternalServerException(error.message).withCause(error)
-        :error
+        : error
     }
   }
 
@@ -97,7 +107,7 @@ export class AxiosHttpClient implements HttpClient {
     } catch (error) {
       throw INTERNAL_EXCEPTION_CODES.includes(error.code)
         ? new InternalServerException(error.message).withCause(error)
-        :error
+        : error
     }
   }
 }
