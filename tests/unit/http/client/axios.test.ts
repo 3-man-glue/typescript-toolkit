@@ -60,6 +60,19 @@ describe('Http Client', () => {
       expect(response).toStrictEqual(expectedResponse)
     })
 
+    it('should call axios get given option headers', async () => {
+      axios.get = jest.fn().mockResolvedValue({ data: { id: 1 }, headers: { authorization: 'xxx' }, status: 200 })
+      const expectedConfig = { params: { status: 1 }, headers: { authorization: 'xxx', 'x-api-key': 'key' } }
+      const expectedResponse = { data: { id: 1 }, headers: { authorization: 'xxx' }, status: 200 }
+
+      const axiosClient = new AxiosHttpClient(baseURL, timeout, headers)
+      const response = await axiosClient.get('/users', { status: 1 }, { headers: { 'x-api-key': 'key' } })
+
+      expect(axios.get).toHaveBeenCalledWith('/users', expectedConfig)
+      expect(axios.get).toHaveBeenCalledTimes(1)
+      expect(response).toStrictEqual(expectedResponse)
+    })
+
     it('should call axios get given no query', async () => {
       axios.get = jest.fn().mockResolvedValue({ data: { id: 1 }, headers: { authorization: 'xxx' }, status: 200 })
       const expectedConfig = { headers, params: {} }
@@ -111,6 +124,19 @@ describe('Http Client', () => {
 
       const axiosClient = new AxiosHttpClient(baseURL, timeout, headers)
       const response = await axiosClient.post('/users', { id: 2 })
+
+      expect(axios.post).toHaveBeenCalledWith('/users', { id: 2 }, expectedConfig)
+      expect(axios.post).toHaveBeenCalledTimes(1)
+      expect(response).toStrictEqual(expectedResponse)
+    })
+
+    it('should call axios post with option headers', async () => {
+      axios.post = jest.fn().mockResolvedValue({ data: { id: 1 }, headers: { authorization: 'xxx' }, status: 200 })
+      const expectedResponse = { data: { id: 1 }, headers: { authorization: 'xxx' }, status: 200 }
+      const expectedConfig = { headers: { authorization: 'xxx', 'x-api-key': 'key' } }
+
+      const axiosClient = new AxiosHttpClient(baseURL, timeout, headers)
+      const response = await axiosClient.post('/users', { id: 2 }, { headers: { 'x-api-key': 'key' } })
 
       expect(axios.post).toHaveBeenCalledWith('/users', { id: 2 }, expectedConfig)
       expect(axios.post).toHaveBeenCalledTimes(1)
