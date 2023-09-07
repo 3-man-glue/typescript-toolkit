@@ -15,9 +15,9 @@ export abstract class RequestValidator<T = ContextDto, K = ContextDto> extends H
   public handle(): void {
     const data = {
       body: this.context.request as PlainObject,
-      query: this.context.metadata[ 'reqQuery' ] as PlainObject,
-      params: this.context.metadata[ 'reqParams' ] as PlainObject,
-      headers: this.context.metadata[ 'reqHeaders' ] as PlainObject,
+      query: this.context.metadata['reqQuery'] as PlainObject,
+      params: this.context.metadata['reqParams'] as PlainObject,
+      headers: this.context.metadata['reqHeaders'] as PlainObject,
     }
     try {
       this.validator.validate(data, this.schema)
