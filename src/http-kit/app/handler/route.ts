@@ -61,7 +61,7 @@ export class Route implements RouteInterface {
     try {
       rootHandler.setContext(baseContext).reset().chainMultiple(this.Handlers.slice(1))
       await rootHandler.invoke()
-      this.log('info', rootHandler.context)
+      this.log('info', { ...rootHandler.context })
 
       return rootHandler.context
     } catch (e) {
