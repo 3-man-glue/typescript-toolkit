@@ -1,6 +1,7 @@
 {
   "name": "@sertis-chat-commerce/ts-toolkit",
-  "version": "1.2.8c",
+  "version": "1.2.8b",
+  "private": false,
   "contributors": [
     "Panya Batphantana <fanneioz@yahoo.co.th>",
     "Jinkawin Phongpawarit <jinkawin.pho@hotmail.com>",
@@ -33,10 +34,10 @@
     "@elastic/ecs-winston-format": "^1.3.0",
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@firebase/app-types": "^0.7.0",
-    "@google-cloud/firestore": "^6.4.1",
     "@google-cloud/pubsub": "^2.16.1",
     "@google-cloud/secret-manager": "^3.10.0",
     "@google-cloud/storage": "^5.18.2",
+    "@google-cloud/firestore": "^6.4.1",
     "axios": "^0.21.1",
     "cassandra-driver": "^4.6.3",
     "cuid": "^2.1.8",
@@ -105,6 +106,6 @@
     "*.config.js"
   ],
   "volta": {
-    "node": "18.17.1"
+    "node": "18.9.0"
   }
 }
