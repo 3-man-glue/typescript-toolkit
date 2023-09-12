@@ -1,5 +1,4 @@
 /* eslint-disable no-return-await */
-import { Container } from 'typedi'
 import {
   ApiMethod,
   ContextMapper,
@@ -8,9 +7,10 @@ import {
   RouteInterface
 } from '@http-kit/app/handler/interfaces'
 import { ContextDto, HttpContext } from '@http-kit/context/interfaces'
-import { InternalServerException } from '@http-kit/exception/internal-server'
 import { HttpException } from '@http-kit/exception/http-exception'
+import { InternalServerException } from '@http-kit/exception/internal-server'
 import logger, { LoggingOptions } from '@utils/logger'
+import { Container } from 'typedi'
 import Timeout = NodeJS.Timeout
 
 type ConstructorInput = {
@@ -56,7 +56,10 @@ export class Route implements RouteInterface {
     if (!RootHandler || !this.ExceptionInterceptor) {
       throw new InternalServerException('Route was built without Handler class')
     }
-    const rootHandler = Container.has(RootHandler) ? Container.get(RootHandler) : new RootHandler()
+    const containerId = JSON.stringify(baseContext)
+    const rootHandler = Container.of(containerId).has(RootHandler)
+      ? Container.of(containerId).get(RootHandler)
+      : new RootHandler()
 
     try {
       rootHandler.setContext(baseContext).reset().chainMultiple(this.Handlers.slice(1))
@@ -66,6 +69,8 @@ export class Route implements RouteInterface {
       return rootHandler.context
     } catch (e) {
       return await this.handleException(rootHandler.context, e)
+    } finally {
+      Container.reset(containerId)
     }
   }
 
