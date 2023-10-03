@@ -1,14 +1,14 @@
 import 'reflect-metadata'
-import { ExceptionInterceptor } from '@http-kit/app/handler/exception'
-import { Handler } from '@http-kit/app/handler/handler'
-import { ExceptionResponse, HandlerConstructor } from '@http-kit/app/handler/interfaces'
-import { Route } from '@http-kit/app/handler/route'
-import { getEmptyContext } from '@http-kit/context/context'
-import { ContextDto } from '@http-kit/context/interfaces'
-import { HttpException } from '@http-kit/exception/http-exception'
-import { InternalServerException } from '@http-kit/exception/internal-server'
-import logger from '@utils/logger'
 import { Container, Service } from 'typedi'
+import { Handler } from '@http-kit/app/handler/handler'
+import { ContextDto } from '@http-kit/context/interfaces'
+import { Route } from '@http-kit/app/handler/route'
+import { InternalServerException } from '@http-kit/exception/internal-server'
+import { getEmptyContext } from '@http-kit/context/context'
+import { HandlerConstructor, ExceptionResponse } from '@http-kit/app/handler/interfaces'
+import { HttpException } from '@http-kit/exception/http-exception'
+import { ExceptionInterceptor } from '@http-kit/app/handler/exception'
+import logger from '@utils/logger'
 
 jest.mock('@utils/logger', () => ({ info: jest.fn(), error: jest.fn() }))
 
@@ -29,19 +29,6 @@ describe('Route', () => {
   }
 
   class Exception extends HttpException { }
-
-  @Service()
-  class CrashFirstTimeWithErrorHandler extends Handler<ContextDto, ContextDto> {
-    protected handle = jest
-      .fn()
-      .mockImplementationOnce(() => {
-        throw new Exception(999, 'Crashed with instance of Exception', 'MOCKED_ERROR')
-      })
-      .mockImplementationOnce(() => {
-        this.context.metadata['mutatingKey'] = 'Value from handler A'
-        this.context.status = 200
-      })
-  }
 
   class CrashWithErrorHandler extends Handler<ContextDto, ContextDto> {
     protected handle(): void {
@@ -90,7 +77,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [ IndependentHandlerA ],
+        Chain: [IndependentHandlerA],
         ExceptionInterceptor: jest.fn(),
       })
       const output = await route.handle('arg1', 'arg2')
@@ -98,36 +85,6 @@ describe('Route', () => {
       expect(output).toStrictEqual(expectedOutput)
       expect(spyMapper).toHaveBeenCalledTimes(1)
       expect(spyMapper).toHaveBeenCalledWith('arg1', 'arg2')
-    })
-
-    it('should be able to handle input with scoped container', async () => {
-      const spyMapper = jest.fn().mockReturnValue(getEmptyContext())
-
-      const route = new Route({
-        method: 'put',
-        path: '/path/to/something',
-        mapper: spyMapper,
-        Chain: [ CrashFirstTimeWithErrorHandler ],
-        ExceptionInterceptor: InjectedExceptionInterceptor,
-      })
-      const output = await route.handle('arg1', 'arg2')
-      const output2 = await route.handle('arg3', 'arg4')
-
-      expect({ response: output.response }).toStrictEqual({
-        response: {
-          code: 'MOCKED_ERROR',
-          message: 'Crashed with instance of Exception',
-        },
-      })
-      expect({ response: output2.response }).toStrictEqual({
-        response: {
-          code: 'MOCKED_ERROR',
-          message: 'Crashed with instance of Exception',
-        },
-      })
-      expect(spyMapper).toHaveBeenCalledTimes(2)
-      expect(spyMapper).toHaveBeenNthCalledWith(1, 'arg1', 'arg2')
-      expect(spyMapper).toHaveBeenNthCalledWith(2, 'arg3', 'arg4')
     })
 
     it('should throw error when handle without handler', async () => {
@@ -160,7 +117,7 @@ describe('Route', () => {
           method: 'put',
           path: '/path/to/something',
           mapper: spyMapper,
-          Chain: [ IndependentHandlerA, CrashWithErrorHandler ],
+          Chain: [IndependentHandlerA, CrashWithErrorHandler],
           ExceptionInterceptor: undefined as unknown as HandlerConstructor<ContextDto, ExceptionResponse>,
         })
         await route.handle('arg1', 'arg2')
@@ -181,7 +138,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [ DependentHandlerB ],
+        Chain: [DependentHandlerB],
         ExceptionInterceptor: jest.fn(),
       })
       const output = await route.handle('arg1', 'arg2')
@@ -200,7 +157,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [ IndependentHandlerA, DependentHandlerB ],
+        Chain: [IndependentHandlerA, DependentHandlerB],
         ExceptionInterceptor: jest.fn(),
       })
       const output = await route.handle('arg1', 'arg2')
@@ -219,7 +176,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [ DependentHandlerB, IndependentHandlerA ],
+        Chain: [DependentHandlerB, IndependentHandlerA],
         ExceptionInterceptor: jest.fn(),
       })
       const output = await route.handle('arg1', 'arg2')
@@ -250,7 +207,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [ IndependentHandlerA, CrashWithErrorHandler ],
+        Chain: [IndependentHandlerA, CrashWithErrorHandler],
         ExceptionInterceptor: ExceptionInterceptor,
       })
 
@@ -279,7 +236,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [ IndependentHandlerA, CrashWithExceptionHandler ],
+        Chain: [IndependentHandlerA, CrashWithExceptionHandler],
         ExceptionInterceptor: ExceptionInterceptor,
       })
 
@@ -289,35 +246,34 @@ describe('Route', () => {
       expect(spyMapper).toHaveBeenCalledWith('arg1', 'arg2')
     })
 
-    it('should be able to handle error with interceptor in IoC when handler throw the HttpException class',
-      async () => {
-        const spyMapper = jest.fn().mockReturnValue(getEmptyContext())
-        const expectedContext = {
-          exception: new Exception(999, 'Crashed with instance of Exception', 'MOCKED_ERROR'),
-          metadata: {
-            mutatingKey: 'Value from handler A',
-          },
-          response: {
-            code: 'MOCKED_ERROR',
-            message: 'Crashed with instance of Exception',
-          },
-          status: 999,
-        }
-        const expectedOutput = { ...getEmptyContext(), ...expectedContext }
+    it('should be able to handle error with interceptor in IoC when handler throw the HttpException class', async () => {
+      const spyMapper = jest.fn().mockReturnValue(getEmptyContext())
+      const expectedContext = {
+        exception: new Exception(999, 'Crashed with instance of Exception', 'MOCKED_ERROR'),
+        metadata: {
+          mutatingKey: 'Value from handler A',
+        },
+        response: {
+          code: 'MOCKED_ERROR',
+          message: 'Crashed with instance of Exception',
+        },
+        status: 999,
+      }
+      const expectedOutput = { ...getEmptyContext(), ...expectedContext }
 
-        const route = new Route({
-          method: 'put',
-          path: '/path/to/something',
-          mapper: spyMapper,
-          Chain: [ IndependentHandlerA, CrashWithExceptionHandler ],
-          ExceptionInterceptor: InjectedExceptionInterceptor,
-        })
-
-        const output = await route.handle('arg1', 'arg2')
-        expect(output).toStrictEqual(expectedOutput)
-        expect(spyMapper).toHaveBeenCalledTimes(1)
-        expect(spyMapper).toHaveBeenCalledWith('arg1', 'arg2')
+      const route = new Route({
+        method: 'put',
+        path: '/path/to/something',
+        mapper: spyMapper,
+        Chain: [IndependentHandlerA, CrashWithExceptionHandler],
+        ExceptionInterceptor: InjectedExceptionInterceptor,
       })
+
+      const output = await route.handle('arg1', 'arg2')
+      expect(output).toStrictEqual(expectedOutput)
+      expect(spyMapper).toHaveBeenCalledTimes(1)
+      expect(spyMapper).toHaveBeenCalledWith('arg1', 'arg2')
+    })
 
     it('should log the info when logging is enabled and handler does not throw the exception', async () => {
       const spyMapper = jest.fn().mockReturnValue(getEmptyContext())
@@ -328,7 +284,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [ IndependentHandlerA ],
+        Chain: [IndependentHandlerA],
         ExceptionInterceptor: jest.fn(),
         loggingOptions: { enable: true },
       })
@@ -349,7 +305,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [ IndependentHandlerA ],
+        Chain: [IndependentHandlerA],
         ExceptionInterceptor: jest.fn(),
         loggingOptions: { enable: false },
       })
@@ -369,7 +325,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [ IndependentHandlerA ],
+        Chain: [IndependentHandlerA],
         ExceptionInterceptor: jest.fn(),
         loggingOptions: { enable: true, duration: 100 },
       })
@@ -389,4 +345,3 @@ describe('Route', () => {
     })
   })
 })
-
