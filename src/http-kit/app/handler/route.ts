@@ -4,7 +4,7 @@ import {
   ContextMapper,
   ExceptionResponse,
   HandlerConstructor,
-  RouteInterface,
+  RouteInterface
 } from '@http-kit/app/handler/interfaces'
 import { ContextDto, HttpContext } from '@http-kit/context/interfaces'
 import { HttpException } from '@http-kit/exception/http-exception'

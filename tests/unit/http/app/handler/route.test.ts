@@ -1,14 +1,15 @@
+// eslint-disabled-next-line
 import 'reflect-metadata'
-import { Container, Service } from 'typedi'
-import { Handler } from '@http-kit/app/handler/handler'
-import { ContextDto } from '@http-kit/context/interfaces'
-import { Route } from '@http-kit/app/handler/route'
-import { InternalServerException } from '@http-kit/exception/internal-server'
-import { getEmptyContext } from '@http-kit/context/context'
-import { HandlerConstructor, ExceptionResponse } from '@http-kit/app/handler/interfaces'
-import { HttpException } from '@http-kit/exception/http-exception'
 import { ExceptionInterceptor } from '@http-kit/app/handler/exception'
+import { Handler } from '@http-kit/app/handler/handler'
+import { ExceptionResponse, HandlerConstructor } from '@http-kit/app/handler/interfaces'
+import { Route } from '@http-kit/app/handler/route'
+import { getEmptyContext } from '@http-kit/context/context'
+import { ContextDto } from '@http-kit/context/interfaces'
+import { HttpException } from '@http-kit/exception/http-exception'
+import { InternalServerException } from '@http-kit/exception/internal-server'
 import logger from '@utils/logger'
+import { Container, Service } from 'typedi'
 
 jest.mock('@utils/logger', () => ({ info: jest.fn(), error: jest.fn() }))
 
@@ -28,7 +29,7 @@ describe('Route', () => {
     }
   }
 
-  class Exception extends HttpException { }
+  class Exception extends HttpException {}
 
   class CrashWithErrorHandler extends Handler<ContextDto, ContextDto> {
     protected handle(): void {
@@ -43,7 +44,7 @@ describe('Route', () => {
   }
 
   @Service()
-  class InjectedExceptionInterceptor extends ExceptionInterceptor { }
+  class InjectedExceptionInterceptor extends ExceptionInterceptor {}
 
   afterEach(() => {
     Container.reset()
@@ -77,7 +78,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [IndependentHandlerA],
+        Chain: [ IndependentHandlerA ],
         ExceptionInterceptor: jest.fn(),
       })
       const output = await route.handle('arg1', 'arg2')
@@ -117,8 +118,8 @@ describe('Route', () => {
           method: 'put',
           path: '/path/to/something',
           mapper: spyMapper,
-          Chain: [IndependentHandlerA, CrashWithErrorHandler],
-          ExceptionInterceptor: undefined as unknown as HandlerConstructor<ContextDto, ExceptionResponse>,
+          Chain: [ IndependentHandlerA, CrashWithErrorHandler ],
+          ExceptionInterceptor: (undefined as unknown) as HandlerConstructor<ContextDto, ExceptionResponse>,
         })
         await route.handle('arg1', 'arg2')
       } catch (error) {
@@ -138,7 +139,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [DependentHandlerB],
+        Chain: [ DependentHandlerB ],
         ExceptionInterceptor: jest.fn(),
       })
       const output = await route.handle('arg1', 'arg2')
@@ -157,7 +158,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [IndependentHandlerA, DependentHandlerB],
+        Chain: [ IndependentHandlerA, DependentHandlerB ],
         ExceptionInterceptor: jest.fn(),
       })
       const output = await route.handle('arg1', 'arg2')
@@ -176,7 +177,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [DependentHandlerB, IndependentHandlerA],
+        Chain: [ DependentHandlerB, IndependentHandlerA ],
         ExceptionInterceptor: jest.fn(),
       })
       const output = await route.handle('arg1', 'arg2')
@@ -207,7 +208,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [IndependentHandlerA, CrashWithErrorHandler],
+        Chain: [ IndependentHandlerA, CrashWithErrorHandler ],
         ExceptionInterceptor: ExceptionInterceptor,
       })
 
@@ -236,7 +237,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [IndependentHandlerA, CrashWithExceptionHandler],
+        Chain: [ IndependentHandlerA, CrashWithExceptionHandler ],
         ExceptionInterceptor: ExceptionInterceptor,
       })
 
@@ -246,7 +247,7 @@ describe('Route', () => {
       expect(spyMapper).toHaveBeenCalledWith('arg1', 'arg2')
     })
 
-    it('should be able to handle error with interceptor in IoC when handler throw the HttpException class', async () => {
+    it('should be able to handle error in IoC when handler throw the HttpException class', async () => {
       const spyMapper = jest.fn().mockReturnValue(getEmptyContext())
       const expectedContext = {
         exception: new Exception(999, 'Crashed with instance of Exception', 'MOCKED_ERROR'),
@@ -265,7 +266,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [IndependentHandlerA, CrashWithExceptionHandler],
+        Chain: [ IndependentHandlerA, CrashWithExceptionHandler ],
         ExceptionInterceptor: InjectedExceptionInterceptor,
       })
 
@@ -284,7 +285,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [IndependentHandlerA],
+        Chain: [ IndependentHandlerA ],
         ExceptionInterceptor: jest.fn(),
         loggingOptions: { enable: true },
       })
@@ -305,7 +306,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [IndependentHandlerA],
+        Chain: [ IndependentHandlerA ],
         ExceptionInterceptor: jest.fn(),
         loggingOptions: { enable: false },
       })
@@ -325,7 +326,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [IndependentHandlerA],
+        Chain: [ IndependentHandlerA ],
         ExceptionInterceptor: jest.fn(),
         loggingOptions: { enable: true, duration: 100 },
       })
