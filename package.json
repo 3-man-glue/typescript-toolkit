@@ -1,7 +1,6 @@
 {
   "name": "@sertis-chat-commerce/ts-toolkit",
-  "version": "1.2.8d",
-  "private": false,
+  "version": "1.2.9",
   "contributors": [
     "Panya Batphantana <fanneioz@yahoo.co.th>",
     "Jinkawin Phongpawarit <jinkawin.pho@hotmail.com>",
