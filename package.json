@@ -14,8 +14,8 @@
   "repository": "git@gitlab.com:sertiscorp/dev/7-11-chat/backend/ts-http-toolkit.git",
   "license": "MIT",
   "files": [
-    "ddd",
     "cache",
+    "ddd",
     "config",
     "db",
     "event-stream",
