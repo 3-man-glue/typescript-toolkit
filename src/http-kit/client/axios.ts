@@ -33,21 +33,25 @@ export class AxiosHttpClient implements HttpClient {
     return this
   }
 
-  private getConfig(params?: PlainObject) {
+  private getConfig(): Partial<HttpClientOption> {
     return {
       headers: this.headers,
-      params,
     }
   }
 
   async get(url: string, query?: PlainObject, option?: HttpClientOption): Promise<ResponseHttp> {
     try {
+      const config = this.getConfig()
+
       if (option?.headers) {
-        this.setHeaders(option.headers)
+        config.headers = { ...config.headers, ...option.headers }
       }
 
-      const params = query || {}
-      const { data, headers, status } = await this.client.get(url, this.getConfig(params))
+      if (query) {
+        config.params = { ...config.params, ...query }
+      }
+
+      const { data, headers, status } = await this.client.get(url, config)
 
       return { data, headers, status }
     } catch (error) {
@@ -59,11 +63,13 @@ export class AxiosHttpClient implements HttpClient {
 
   async post(url: string, data: PlainObject, option?: HttpClientOption): Promise<ResponseHttp> {
     try {
+      const config = this.getConfig()
+
       if (option?.headers) {
-        this.setHeaders(option.headers)
+        config.headers = { ...config.headers, ...option.headers }
       }
 
-      const { data: dataResponse, headers, status } = await this.client.post(url, data, this.getConfig())
+      const { data: dataResponse, headers, status } = await this.client.post(url, data, config)
 
       return { data: dataResponse, headers, status }
     } catch (error) {
@@ -73,9 +79,15 @@ export class AxiosHttpClient implements HttpClient {
     }
   }
 
-  async put(url: string, data: PlainObject): Promise<ResponseHttp> {
+  async put(url: string, data: PlainObject, option?: HttpClientOption): Promise<ResponseHttp> {
     try {
-      const { data: dataResponse, headers, status } = await this.client.put(url, data, this.getConfig())
+      const config = this.getConfig()
+
+      if (option?.headers) {
+        config.headers = { ...config.headers, ...option.headers }
+      }
+
+      const { data: dataResponse, headers, status } = await this.client.put(url, data, config)
 
       return { data: dataResponse, headers, status }
     } catch (error) {
@@ -85,9 +97,15 @@ export class AxiosHttpClient implements HttpClient {
     }
   }
 
-  async delete(url: string, payload?: PlainObject): Promise<ResponseHttp> {
+  async delete(url: string, payload?: PlainObject, option?: HttpClientOption): Promise<ResponseHttp> {
     try {
-      const { data, headers, status } = await this.client.delete(url, { ...this.getConfig(), data: payload })
+      const config = this.getConfig()
+
+      if (option?.headers) {
+        config.headers = { ...config.headers, ...option.headers }
+      }
+
+      const { data, headers, status } = await this.client.delete(url, { ...config, data: payload })
 
       return { data, headers, status }
     } catch (error) {
@@ -97,9 +115,15 @@ export class AxiosHttpClient implements HttpClient {
     }
   }
 
-  async patch(url: string, data: PlainObject): Promise<ResponseHttp> {
+  async patch(url: string, data: PlainObject, option?: HttpClientOption): Promise<ResponseHttp> {
     try {
-      const { data: dataResponse, headers, status } = await this.client.patch(url, data, this.getConfig())
+      const config = this.getConfig()
+
+      if (option?.headers) {
+        config.headers = { ...config.headers, ...option.headers }
+      }
+
+      const { data: dataResponse, headers, status } = await this.client.patch(url, data, config)
 
       return { data: dataResponse, headers, status }
     } catch (error) {
