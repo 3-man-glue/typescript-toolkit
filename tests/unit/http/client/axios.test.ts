@@ -75,7 +75,7 @@ describe('Http Client', () => {
 
     it('should call axios get given no query', async () => {
       axios.get = jest.fn().mockResolvedValue({ data: { id: 1 }, headers: { authorization: 'xxx' }, status: 200 })
-      const expectedConfig = { headers, params: {} }
+      const expectedConfig = { headers }
       const expectedResponse = { data: { id: 1 }, headers: { authorization: 'xxx' }, status: 200 }
 
       const axiosClient = new AxiosHttpClient(baseURL, timeout, headers)
