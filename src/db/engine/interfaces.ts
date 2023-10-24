@@ -2,6 +2,7 @@ import cassandra from 'cassandra-driver'
 import { Condition } from '@db/interfaces'
 import { PlainObject } from '@utils/common-types'
 import { QueryOptions } from '@db/engine/generate-query'
+import { Firestore } from '@google-cloud/firestore'
 
 export interface Engine<T = PlainObject> {
   select<K>(condition: Condition<K>, tableName: string, options?: QueryOptions): Promise<T[]>
@@ -15,6 +16,7 @@ export interface FirestoreDataObject extends PlainObject {
 }
 
 export interface FirestoreEngineInterface extends Engine<FirestoreDataObject> {
+  firestore: Firestore
   getById(id: string, tableName: string): Promise<FirestoreDataObject | undefined>
   updateById(data: Omit<FirestoreDataObject, '_id'>, id: string, tableName: string): Promise<void>
   deleteById(id: string, tableName: string): Promise<void>
