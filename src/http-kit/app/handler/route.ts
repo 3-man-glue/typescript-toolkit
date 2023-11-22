@@ -6,6 +6,7 @@ import {
   HandlerConstructor,
   RouteInterface
 } from '@http-kit/app/handler/interfaces'
+import apm from 'elastic-apm-node'
 import { ContextDto, HttpContext } from '@http-kit/context/interfaces'
 import { HttpException } from '@http-kit/exception/http-exception'
 import { InternalServerException } from '@http-kit/exception/internal-server'
@@ -83,6 +84,11 @@ export class Route implements RouteInterface {
         e instanceof HttpException ? e : new InternalServerException(`InternalServerError: ${e.message}`).withCause(e),
     })
     await interceptor.invoke()
+
+    if (apm) {
+      apm.captureError(interceptor.context.exception as Error)
+    }
+
     this.log('error', interceptor.context)
 
     return interceptor.context
