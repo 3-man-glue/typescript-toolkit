@@ -85,7 +85,7 @@ export class Route implements RouteInterface {
     })
     await interceptor.invoke()
 
-    if (apm) {
+    if (apm?.isStarted()) {
       apm.captureError(interceptor.context.exception as Error)
     }
 
