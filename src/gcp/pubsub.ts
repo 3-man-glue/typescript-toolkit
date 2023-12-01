@@ -43,10 +43,10 @@ export class PubSubAdapter implements MessageQueueAdapter {
         const data = this.formatMessage<T>(message)
         const results = await Promise.allSettled(handlers.map((handler) => handler.handle(data)))
 
-        const rejected = results.find((result) => result.status === 'rejected')
+        const rejected = results.find((result) => result.status === 'rejected') as PromiseRejectedResult
 
         if (rejected) {
-          logger.error(`Unable to handle the message: ${subject}`, { exception: rejected, data })
+          logger.error(`Unable to handle the message: ${subject}`, { exception: rejected.reason, data })
           message.nack()
           return
         }
