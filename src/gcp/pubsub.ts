@@ -14,34 +14,42 @@ export class PubSubAdapter implements MessageQueueAdapter {
   }
 
   public async testPermissions(topicName: string, permissions: string[]): Promise<IamPermissionsMap> {
-    const [ permission ] = await this.pubsub.topic(topicName).iam.testPermissions(permissions)
+    const [permission] = await this.pubsub.topic(topicName).iam.testPermissions(permissions)
 
     return permission
   }
 
   public async createTopic(topicName: string): Promise<void> {
-    const [ topics ] = await this.pubsub.getTopics()
+    const [topics] = await this.pubsub.getTopics()
     let isCreated = false
 
-    topics.forEach(retrievedTopic => {
+    topics.forEach((retrievedTopic) => {
       const name = retrievedTopic.name.split('/')
-      if(name[name.length-1] === topicName){
+      if (name[name.length - 1] === topicName) {
         isCreated = true
       }
     })
 
-    if(!isCreated) {
+    if (!isCreated) {
       await this.pubsub.createTopic(topicName)
     }
   }
 
-  public subscribe<T extends MessageDto>(subject: string, handler: MessageHandler<T>): void {
+  public subscribe<T extends MessageDto>(subject: string, handlers: MessageHandler<T>[]): void {
     const subscription = this.pubsub.subscription(subject)
 
     subscription.on('message', async (message: PubSubMessage) => {
       try {
         const data = this.formatMessage<T>(message)
-        await handler.handle(data)
+        const results = await Promise.allSettled(handlers.map((handler) => handler.handle(data)))
+
+        const rejected = results.find((result) => result.status === 'rejected') as PromiseRejectedResult
+
+        if (rejected) {
+          logger.error(`Unable to handle the message: ${subject}`, { exception: rejected.reason, data })
+          message.nack()
+          return
+        }
 
         message.ack()
       } catch (error) {

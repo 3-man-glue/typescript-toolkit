@@ -1,6 +1,6 @@
 {
   "name": "@sertis-chat-commerce/ts-toolkit",
-  "version": "1.2.14",
+  "version": "1.2.15",
   "contributors": [
     "Panya Batphantana <fanneioz@yahoo.co.th>",
     "Jinkawin Phongpawarit <jinkawin.pho@hotmail.com>",
@@ -97,7 +97,7 @@
     "migration:down:local": "yarn run migration:setup && docker-compose -f docker-compose.liquibase.yml up rollback && docker-compose -f docker-compose.liquibase.yml rm -fsv",
     "migration:history": "yarn run migration:setup && docker-compose -f docker-compose.liquibase.yml up history && docker-compose -f docker-compose.liquibase.yml rm -fsv",
     "start": "node app.js",
-    "lint": "eslint --config .eslintrc.json --ext ts,.d.ts src tests",
+    "lint": "eslint --config .eslintrc.json --ext ts,.d.ts src tests --fix",
     "test": "NODE_OPTIONS=--no-experimental-fetch jest --collectCoverage"
   },
   "eslintIgnore": [
