@@ -35,13 +35,13 @@ export class PubSubAdapter implements MessageQueueAdapter {
     }
   }
 
-  public subscribe<T extends MessageDto>(subject: string, handler: MessageHandler<T>): void {
+  public subscribe<T extends MessageDto>(subject: string, handlers: MessageHandler<T>[]): void {
     const subscription = this.pubsub.subscription(subject)
 
     subscription.on('message', async (message: PubSubMessage) => {
       try {
         const data = this.formatMessage<T>(message)
-        await handler.handle(data)
+        await Promise.all(handlers.map(handler => handler.handle(data)))
 
         message.ack()
       } catch (error) {

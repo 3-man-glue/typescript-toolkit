@@ -8,7 +8,7 @@ export interface Subscriber {
 
 export interface MessageQueueAdapter {
   createTopic(topic: string): Promise<void>
-  subscribe<T extends MessageDto>(subject: string, handler: MessageHandler<T>): void
+  subscribe<T extends MessageDto>(subject: string, handler: MessageHandler<T>[]): void
   publish(topic: string, data: PlainObject): Promise<void>
 }
 

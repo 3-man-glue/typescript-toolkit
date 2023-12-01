@@ -13,9 +13,11 @@ export abstract class BaseSubscriber<T extends MessageDto> implements Subscriber
   }
 
   public subscribe(): void {
-    this.handlers.forEach((Handler: MessageHandlerConstructor<T>) => {
-      const handler = Container.has(Handler) ? Container.get(Handler) : new Handler()
-      this.client.subscribe<T>(this.subject, handler)
-    })
+    this.client.subscribe<T>(
+      this.subject,
+      this.handlers.map((Handler: MessageHandlerConstructor<T>) => {
+        return Container.has(Handler) ? Container.get(Handler) : new Handler()
+      }),
+    )
   }
 }
