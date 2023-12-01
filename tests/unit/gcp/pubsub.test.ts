@@ -148,7 +148,7 @@ describe('PubSub', () => {
     it('should subscribe given subscriptionName and messageHandler', () => {
       const fakeHandler = { handle: jest.fn() }
 
-      clientPubSub.subscribe<MockMessageDto>('subscription-name', fakeHandler)
+      clientPubSub.subscribe<MockMessageDto>('subscription-name', [ fakeHandler ])
       fakeSubscription.emit('message', fakeMessage)
 
       expect(mockPubSubInstance.subscription).toHaveBeenCalledTimes(1)
@@ -168,7 +168,7 @@ describe('PubSub', () => {
         handle: jest.fn().mockRejectedValue(expectedError),
       }
 
-      clientPubSub.subscribe<MockMessageDto>('subscription-name', fakeHandler)
+      clientPubSub.subscribe<MockMessageDto>('subscription-name', [ fakeHandler ])
       fakeSubscription.emit('message', fakeMessage)
 
       expect(mockPubSubInstance.subscription).toHaveBeenCalledTimes(1)
@@ -186,7 +186,7 @@ describe('PubSub', () => {
       const fakeHandler = { handle: jest.fn() }
       const expectedError = new Error('subscription-error')
 
-      clientPubSub.subscribe<MockMessageDto>('subscription-name', fakeHandler)
+      clientPubSub.subscribe<MockMessageDto>('subscription-name', [ fakeHandler ])
       fakeSubscription.emit('error', expectedError)
 
       expect(logger.error).toHaveBeenCalledTimes(1)
