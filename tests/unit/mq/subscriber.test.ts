@@ -18,14 +18,14 @@ class DependentHandler implements MessageHandler<TestType> {
   }
 }
 
-const mockMQ = { subscribe: jest.fn() } as unknown as MessageQueueAdapter
+const mockMQ = ({ subscribe: jest.fn() } as unknown) as MessageQueueAdapter
 
 class TestSubscriber extends BaseSubscriber<TestType> {
   client = mockMQ
 
   subject = 'TestSubject'
 
-  handlers = [ IndependentHandler, DependentHandler ]
+  handlers = [IndependentHandler, DependentHandler]
 }
 
 describe('BaseSubscriber Abstraction', () => {
@@ -41,8 +41,8 @@ describe('BaseSubscriber Abstraction', () => {
 
       subscriber.subscribe()
 
-      expect(mockMQ.subscribe).toHaveBeenCalledTimes(2)
-      expect(mockMQ.subscribe).toHaveBeenCalledWith('TestSubject', {})
+      expect(mockMQ.subscribe).toHaveBeenCalledTimes(1)
+      expect(mockMQ.subscribe).toHaveBeenCalledWith('TestSubject', [{}, {}])
     })
   })
 })
