@@ -25,7 +25,7 @@ class TestSubscriber extends BaseSubscriber<TestType> {
 
   subject = 'TestSubject'
 
-  handlers = [IndependentHandler, DependentHandler]
+  handlers = [ IndependentHandler, DependentHandler ]
 }
 
 describe('BaseSubscriber Abstraction', () => {
@@ -42,7 +42,7 @@ describe('BaseSubscriber Abstraction', () => {
       subscriber.subscribe()
 
       expect(mockMQ.subscribe).toHaveBeenCalledTimes(1)
-      expect(mockMQ.subscribe).toHaveBeenCalledWith('TestSubject', [{}, {}])
+      expect(mockMQ.subscribe).toHaveBeenCalledWith('TestSubject', [ {}, {} ])
     })
   })
 })

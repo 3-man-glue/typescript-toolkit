@@ -97,7 +97,7 @@
     "migration:down:local": "yarn run migration:setup && docker-compose -f docker-compose.liquibase.yml up rollback && docker-compose -f docker-compose.liquibase.yml rm -fsv",
     "migration:history": "yarn run migration:setup && docker-compose -f docker-compose.liquibase.yml up history && docker-compose -f docker-compose.liquibase.yml rm -fsv",
     "start": "node app.js",
-    "lint": "eslint --config .eslintrc.json --ext ts,.d.ts src tests",
+    "lint": "eslint --config .eslintrc.json --ext ts,.d.ts src tests --fix",
     "test": "NODE_OPTIONS=--no-experimental-fetch jest --collectCoverage"
   },
   "eslintIgnore": [
