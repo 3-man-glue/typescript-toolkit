@@ -21,15 +21,24 @@ describe('Route', () => {
     }
   }
 
-  @Service()
+  @Service({ transient: true })
   class DependentHandlerB extends Handler<ContextDto, ContextDto> {
+    static type = 'controller'
     protected handle(): void {
       this.context.metadata['mutatingKey'] = 'Value from handler B'
       this.context.status = 200
     }
   }
 
-  class Exception extends HttpException {}
+  @Service({ transient: true })
+  class DependentHandlerC extends Handler<ContextDto, ContextDto> {
+    protected handle(): void {
+      this.context.metadata['mutatingKey'] = 'Value from handler B'
+      this.context.status = 200
+    }
+  }
+
+  class Exception extends HttpException { }
 
   class CrashWithErrorHandler extends Handler<ContextDto, ContextDto> {
     protected handle(): void {
@@ -43,8 +52,9 @@ describe('Route', () => {
     }
   }
 
+
   @Service()
-  class InjectedExceptionInterceptor extends ExceptionInterceptor {}
+  class InjectedExceptionInterceptor extends ExceptionInterceptor { }
 
   afterEach(() => {
     Container.reset()
@@ -78,7 +88,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [ IndependentHandlerA ],
+        Chain: [IndependentHandlerA],
         ExceptionInterceptor: jest.fn(),
       })
       const output = await route.handle('arg1', 'arg2')
@@ -118,7 +128,7 @@ describe('Route', () => {
           method: 'put',
           path: '/path/to/something',
           mapper: spyMapper,
-          Chain: [ IndependentHandlerA, CrashWithErrorHandler ],
+          Chain: [IndependentHandlerA, CrashWithErrorHandler],
           ExceptionInterceptor: (undefined as unknown) as HandlerConstructor<ContextDto, ExceptionResponse>,
         })
         await route.handle('arg1', 'arg2')
@@ -139,11 +149,33 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [ DependentHandlerB ],
+        Chain: [DependentHandlerB],
         ExceptionInterceptor: jest.fn(),
       })
       const output = await route.handle('arg1', 'arg2')
 
+      expect(output).toStrictEqual(expectedOutput)
+      expect(spyMapper).toHaveBeenCalledTimes(1)
+      expect(spyMapper).toHaveBeenCalledWith('arg1', 'arg2')
+    })
+
+    it('should be able to handle input when multiple handler and some are type controller', async () => {
+      const spyMapper = jest.fn().mockReturnValue(getEmptyContext())
+      const resultFromHandler = { metadata: { mutatingKey: 'Value from handler B' } }
+      const expectedOutput = { ...getEmptyContext(), ...resultFromHandler, status: 200 }
+
+      const route = new Route({
+        method: 'put',
+        path: '/path/to/something',
+        mapper: spyMapper,
+        Chain: [DependentHandlerB, DependentHandlerC],
+        ExceptionInterceptor: jest.fn(),
+      })
+
+      const output = await route.handle('arg1', 'arg2')
+
+      expect(Container.has(DependentHandlerC)).toBeTruthy()
+      expect(Container.has(DependentHandlerB)).toBeFalsy()
       expect(output).toStrictEqual(expectedOutput)
       expect(spyMapper).toHaveBeenCalledTimes(1)
       expect(spyMapper).toHaveBeenCalledWith('arg1', 'arg2')
@@ -158,10 +190,12 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [ IndependentHandlerA, DependentHandlerB ],
+        Chain: [IndependentHandlerA, DependentHandlerB],
         ExceptionInterceptor: jest.fn(),
       })
+      console.log('before IndependentHandlerA:', Container.has(IndependentHandlerA))
       const output = await route.handle('arg1', 'arg2')
+      console.log('after IndependentHandlerA:', Container.has(IndependentHandlerA))
 
       expect(output).toStrictEqual(expectedOutput)
       expect(spyMapper).toHaveBeenCalledTimes(1)
@@ -177,7 +211,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [ DependentHandlerB, IndependentHandlerA ],
+        Chain: [DependentHandlerB, IndependentHandlerA],
         ExceptionInterceptor: jest.fn(),
       })
       const output = await route.handle('arg1', 'arg2')
@@ -208,7 +242,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [ IndependentHandlerA, CrashWithErrorHandler ],
+        Chain: [IndependentHandlerA, CrashWithErrorHandler],
         ExceptionInterceptor: ExceptionInterceptor,
       })
 
@@ -237,7 +271,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [ IndependentHandlerA, CrashWithExceptionHandler ],
+        Chain: [IndependentHandlerA, CrashWithExceptionHandler],
         ExceptionInterceptor: ExceptionInterceptor,
       })
 
@@ -266,7 +300,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [ IndependentHandlerA, CrashWithExceptionHandler ],
+        Chain: [IndependentHandlerA, CrashWithExceptionHandler],
         ExceptionInterceptor: InjectedExceptionInterceptor,
       })
 
@@ -285,7 +319,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [ IndependentHandlerA ],
+        Chain: [IndependentHandlerA],
         ExceptionInterceptor: jest.fn(),
         loggingOptions: { enable: true },
       })
@@ -306,7 +340,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [ IndependentHandlerA ],
+        Chain: [IndependentHandlerA],
         ExceptionInterceptor: jest.fn(),
         loggingOptions: { enable: false },
       })
@@ -326,7 +360,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [ IndependentHandlerA ],
+        Chain: [IndependentHandlerA],
         ExceptionInterceptor: jest.fn(),
         loggingOptions: { enable: true, duration: 100 },
       })
