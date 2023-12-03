@@ -193,9 +193,7 @@ describe('Route', () => {
         Chain: [IndependentHandlerA, DependentHandlerB],
         ExceptionInterceptor: jest.fn(),
       })
-      console.log('before IndependentHandlerA:', Container.has(IndependentHandlerA))
       const output = await route.handle('arg1', 'arg2')
-      console.log('after IndependentHandlerA:', Container.has(IndependentHandlerA))
 
       expect(output).toStrictEqual(expectedOutput)
       expect(spyMapper).toHaveBeenCalledTimes(1)
