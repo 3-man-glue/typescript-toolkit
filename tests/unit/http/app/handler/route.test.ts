@@ -30,14 +30,6 @@ describe('Route', () => {
     }
   }
 
-  @Service({ transient: true })
-  class DependentHandlerC extends Handler<ContextDto, ContextDto> {
-    protected handle(): void {
-      this.context.metadata['mutatingKey'] = 'Value from handler B'
-      this.context.status = 200
-    }
-  }
-
   class Exception extends HttpException { }
 
   class CrashWithErrorHandler extends Handler<ContextDto, ContextDto> {
@@ -154,28 +146,6 @@ describe('Route', () => {
       })
       const output = await route.handle('arg1', 'arg2')
 
-      expect(output).toStrictEqual(expectedOutput)
-      expect(spyMapper).toHaveBeenCalledTimes(1)
-      expect(spyMapper).toHaveBeenCalledWith('arg1', 'arg2')
-    })
-
-    it('should be able to handle input when multiple handler and some are type controller', async () => {
-      const spyMapper = jest.fn().mockReturnValue(getEmptyContext())
-      const resultFromHandler = { metadata: { mutatingKey: 'Value from handler B' } }
-      const expectedOutput = { ...getEmptyContext(), ...resultFromHandler, status: 200 }
-
-      const route = new Route({
-        method: 'put',
-        path: '/path/to/something',
-        mapper: spyMapper,
-        Chain: [DependentHandlerB, DependentHandlerC],
-        ExceptionInterceptor: jest.fn(),
-      })
-
-      const output = await route.handle('arg1', 'arg2')
-
-      expect(Container.has(DependentHandlerC)).toBeTruthy()
-      expect(Container.has(DependentHandlerB)).toBeFalsy()
       expect(output).toStrictEqual(expectedOutput)
       expect(spyMapper).toHaveBeenCalledTimes(1)
       expect(spyMapper).toHaveBeenCalledWith('arg1', 'arg2')

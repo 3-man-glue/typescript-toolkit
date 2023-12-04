@@ -67,12 +67,6 @@ export class Route implements RouteInterface {
       return rootHandler.context
     } catch (e) {
       return await this.handleException(rootHandler.context, e)
-    } finally {
-      this.Handlers.forEach((handler) => {
-        if (((handler as unknown) as Record<string, unknown>)['type'] === 'controller') {
-          Container.remove(handler)
-        }
-      })
     }
   }
 
