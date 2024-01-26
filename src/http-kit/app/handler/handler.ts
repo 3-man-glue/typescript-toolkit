@@ -2,12 +2,12 @@ import { Container } from 'typedi'
 import { HandlerInterface, HandlerConstructor } from './interfaces'
 import { ContextDto, HttpContext } from '@http-kit/context/interfaces'
 
-export abstract class Handler<T, K> implements HandlerInterface<T, K> {
+export abstract class Handler<T extends ContextDto, K extends ContextDto> implements HandlerInterface<T, K> {
   context!: HttpContext<T, K>
 
   protected NextHandlers: HandlerConstructor<ContextDto, ContextDto>[] = []
 
-  public chain<P, Q>(Handler: HandlerConstructor<P, Q>): this {
+  public chain<P extends ContextDto, Q extends ContextDto>(Handler: HandlerConstructor<P, Q>): this {
     this.NextHandlers.push(Handler)
 
     return this
@@ -25,7 +25,7 @@ export abstract class Handler<T, K> implements HandlerInterface<T, K> {
     }
   }
 
-  public setContext<P, Q>(context: HttpContext<P, Q>): this {
+  public setContext<P extends ContextDto, Q extends ContextDto>(context: HttpContext<P, Q>): this {
     this.context = {
       ...context,
       request: context.request as ContextDto as T,

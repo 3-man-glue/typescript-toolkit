@@ -14,13 +14,13 @@ export class PubSubAdapter implements MessageQueueAdapter {
   }
 
   public async testPermissions(topicName: string, permissions: string[]): Promise<IamPermissionsMap> {
-    const [permission] = await this.pubsub.topic(topicName).iam.testPermissions(permissions)
+    const [ permission ] = await this.pubsub.topic(topicName).iam.testPermissions(permissions)
 
     return permission
   }
 
   public async createTopic(topicName: string): Promise<void> {
-    const [topics] = await this.pubsub.getTopics()
+    const [ topics ] = await this.pubsub.getTopics()
     let isCreated = false
 
     topics.forEach((retrievedTopic) => {
@@ -48,6 +48,7 @@ export class PubSubAdapter implements MessageQueueAdapter {
         if (rejected) {
           logger.error(`Unable to handle the message: ${subject}`, { exception: rejected.reason, data })
           message.nack()
+
           return
         }
 
