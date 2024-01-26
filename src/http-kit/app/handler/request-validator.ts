@@ -7,7 +7,7 @@ import { BadRequestException } from '@http-kit/exception/bad-request'
 import { PlainObject } from '@utils/common-types'
 import { Service } from 'typedi'
 
-export abstract class RequestValidator<T = ContextDto, K = ContextDto> extends Handler<T, K> {
+export abstract class RequestValidator<T extends ContextDto, K extends ContextDto> extends Handler<T, K> {
   protected readonly validator!: JoiValidator
 
   protected schema!: JoiSchemaValidator
@@ -31,7 +31,7 @@ export const buildRequestValidatorBySchema = (
   schemaValidator: JoiSchemaValidator,
 ): HandlerConstructor<ContextDto, ContextDto> => {
   @Service({ transient: true })
-  class RequestSchemaValidator extends RequestValidator {
+  class RequestSchemaValidator extends RequestValidator<ContextDto, ContextDto> {
     protected schema = schemaValidator
 
     protected readonly validator: JoiValidator

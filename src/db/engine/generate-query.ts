@@ -40,7 +40,7 @@ export const getInsertQueries = (data: PlainObject[], tableName: string): Return
 const getUpdateCounterQueryString = (condition: Record<string, unknown>): string => {
   const updateCounterQuery = 'UPDATE counter SET value = value + ?'
   const conditionQueryString = Object.keys(condition)
-    .map((key: string) => (`${key} = ?`))
+    .map((key: string) => `${key} = ?`)
     .join(' AND ')
 
   return `${updateCounterQuery} WHERE ${conditionQueryString}`
@@ -53,14 +53,15 @@ export const getUpdateCounterQuery = (condition: Record<string, unknown>, changi
   }
 }
 
-const getSelectQueryParams = <T>(condition: T): unknown[] => {
-  return Object.values(condition)
-    .reduce((acc: unknown[], value: PlainObject) => {
-      const operationKeys = Object.keys(value).filter(isNotOrderKey)
-      const params = operationKeys.map((key: string) => (value[ key ]))
+const getSelectQueryParams = <T extends PlainObject>(condition: T): unknown[] => {
+  const values = Object.values(condition) as PlainObject[]
 
-      return acc.concat(params)
-    }, [])
+  return values.reduce<unknown[]>((acc: unknown[], value: PlainObject) => {
+    const operationKeys = Object.keys(value).filter(isNotOrderKey)
+    const params = operationKeys.map((key: string) => value[key])
+
+    return acc.concat(params)
+  }, [] as unknown[])
 }
 
 export const getSelectQuery = <T>(
@@ -74,10 +75,15 @@ export const getSelectQuery = <T>(
   }
 }
 
-const getSelectQueryString = <T>(condition: T, tableName: string, options?: QueryOptions): string => {
+const getSelectQueryString = <T extends PlainObject>(
+  condition: T,
+  tableName: string,
+  options?: QueryOptions,
+): string => {
   const baseQuery = `SELECT ${options?.rawSelect ? options.rawSelect : '*'} FROM ${tableName}`
+  const entries = Object.entries(condition) as [string, PlainObject][]
 
-  const orderQuery = Object.entries(condition)
+  const orderQuery = entries
     .map(([ key, value ]) => {
       if (!value[CONSTANTS_KEY.ORDER]) {
         return ''
@@ -87,17 +93,16 @@ const getSelectQueryString = <T>(condition: T, tableName: string, options?: Quer
     })
     .filter(Boolean)
 
-  const conditionQuery = Object.entries(condition)
-    .reduce((acc: string[], [ key, value ]: [string, PlainObject]) => {
-      const operationKeys = Object.keys(value).filter(isNotOrderKey)
-      if (!operationKeys.length) {
-        return acc
-      }
+  const conditionQuery = entries.reduce((acc: string[], [ key, value ]: [string, PlainObject]) => {
+    const operationKeys = Object.keys(value).filter(isNotOrderKey)
+    if (!operationKeys.length) {
+      return acc
+    }
 
-      const queries = operationKeys.map((operationKey: string) => (`${key} ${operationKey as OperationStrings} ?`))
+    const queries = operationKeys.map((operationKey: string) => `${key} ${operationKey as OperationStrings} ?`)
 
-      return acc.concat(queries)
-    }, [])
+    return acc.concat(queries)
+  }, [])
 
   const conditionQueryString = conditionQuery.length ? ` WHERE ${conditionQuery.join(' AND ')}` : ''
   const conditionOrderString = orderQuery.length ? ` ORDER BY ${orderQuery}` : ''

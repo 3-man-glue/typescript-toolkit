@@ -49,7 +49,7 @@ class RouteBuilder implements RouteBuilderInterface {
 
   protected method!: ApiMethod
 
-  protected mapper!: ContextMapper
+  protected mapper?: ContextMapper
 
   #ExceptionInterceptor: HandlerConstructor<ContextDto, ExceptionResponse> = ExceptionInterceptor
 
