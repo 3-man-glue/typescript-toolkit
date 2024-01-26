@@ -8,8 +8,7 @@ jest.mock('@google-cloud/pubsub')
 jest.mock('@utils/logger')
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface MockMessageDto extends MessageDto {
-}
+interface MockMessageDto extends MessageDto { }
 
 describe('PubSub', () => {
   let clientPubSub: PubSubAdapter
@@ -20,7 +19,7 @@ describe('PubSub', () => {
     clientPubSub = new PubSubAdapter()
 
     fakeSubscription = new EventEmitter()
-    mockPubSubInstance = (PubSub as unknown as jest.Mock).mock.instances[0]
+    mockPubSubInstance = ((PubSub as unknown) as jest.Mock).mock.instances[0]
     mockPubSubInstance.subscription = jest.fn().mockReturnValue(fakeSubscription)
   })
 
@@ -31,15 +30,17 @@ describe('PubSub', () => {
 
   describe('getTopicMetaData', () => {
     it('should return metadata properly', async () => {
-      const expectedMetadata = [ {
-        labels: {},
-        name: 'projects/testing-pubsub/topics/topic-name',
-        messageStoragePolicy: null,
-        kmsKeyName: '',
-        schemaSettings: null,
-        satisfiesPzs: false,
-        messageRetentionDuration: null,
-      } ]
+      const expectedMetadata = [
+        {
+          labels: {},
+          name: 'projects/testing-pubsub/topics/topic-name',
+          messageStoragePolicy: null,
+          kmsKeyName: '',
+          schemaSettings: null,
+          satisfiesPzs: false,
+          messageRetentionDuration: null,
+        },
+      ]
       const mockGetMetadataFunction = jest.fn().mockResolvedValueOnce(expectedMetadata)
       mockPubSubInstance.topic = jest.fn().mockReturnValueOnce({
         getMetadata: mockGetMetadataFunction,
@@ -119,9 +120,9 @@ describe('PubSub', () => {
     })
 
     it('should not create a topic when the topic is already created', async () => {
-      mockPubSubInstance.getTopics = jest.fn().mockReturnValueOnce([ [
-        { name: 'projects/testing-pubsub/topics/existed-topic' }
-      ] ])
+      mockPubSubInstance.getTopics = jest
+        .fn()
+        .mockReturnValueOnce([ [ { name: 'projects/testing-pubsub/topics/existed-topic' } ] ])
       mockPubSubInstance.createTopic = jest.fn()
 
       await clientPubSub.createTopic('existed-topic')
@@ -138,15 +139,15 @@ describe('PubSub', () => {
       const messageString = JSON.stringify({ key: 'data-value' })
       const dataBuffer = Buffer.from(messageString)
 
-      fakeMessage = {
+      fakeMessage = ({
         data: dataBuffer,
         ack: jest.fn(),
         nack: jest.fn(),
-      } as unknown as PubSubMessage
+      } as unknown) as PubSubMessage
     })
 
-    it('should subscribe given subscriptionName and messageHandler', () => {
-      const fakeHandler = { handle: jest.fn() }
+    it('should subscribe given subscriptionName and messageHandler', async () => {
+      const fakeHandler = { handle: jest.fn().mockResolvedValue({}) }
 
       clientPubSub.subscribe<MockMessageDto>('subscription-name', [ fakeHandler ])
       fakeSubscription.emit('message', fakeMessage)
@@ -156,13 +157,13 @@ describe('PubSub', () => {
       expect(fakeHandler.handle).toHaveBeenCalledTimes(1)
       expect(fakeHandler.handle).toHaveBeenCalledWith(expectedData)
 
-      setTimeout(() => {
-        expect(fakeMessage.ack).toHaveBeenCalledTimes(1)
-        expect(fakeMessage.nack).not.toHaveBeenCalled()
-      }, 10)
+      await new Promise((resolve) => setTimeout(resolve, 200))
+
+      expect(fakeMessage.ack).toHaveBeenCalledTimes(1)
+      expect(fakeMessage.nack).not.toHaveBeenCalled()
     })
 
-    it('should nack and log the error message when handle throws the error', () => {
+    it('should nack and log the error message when handle throws the error', async () => {
       const expectedError = Error('unable-to-handle')
       const fakeHandler = {
         handle: jest.fn().mockRejectedValue(expectedError),
@@ -176,10 +177,10 @@ describe('PubSub', () => {
       expect(fakeHandler.handle).toHaveBeenCalledTimes(1)
       expect(fakeHandler.handle).toHaveBeenCalledWith(expectedData)
 
-      setTimeout(() => {
-        expect(fakeMessage.nack).toHaveBeenCalledTimes(1)
-        expect(fakeMessage.ack).not.toHaveBeenCalled()
-      }, 10)
+      await new Promise((resolve) => setTimeout(resolve, 200))
+
+      expect(fakeMessage.nack).toHaveBeenCalledTimes(1)
+      expect(fakeMessage.ack).not.toHaveBeenCalled()
     })
 
     it('should log the error when subscription is out of service', () => {
@@ -194,7 +195,6 @@ describe('PubSub', () => {
   })
 
   describe('publish', () => {
-
     it('should publish given topicName and data', async () => {
       const mockPublishFunction = jest.fn()
       mockPubSubInstance.topic = jest.fn().mockReturnValueOnce({

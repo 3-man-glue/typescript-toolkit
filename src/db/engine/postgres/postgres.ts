@@ -82,6 +82,7 @@ export class PostgresEngine implements EngineInterface {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public delete(_condition: PlainObject, _tableName: string): Promise<void> {
     throw new NotImplementedException('delete method not implemented for Postgres Adaptor')
   }

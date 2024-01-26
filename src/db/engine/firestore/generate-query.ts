@@ -8,24 +8,27 @@ export const FIREBASE_CONSTANTS_KEY = {
 }
 
 export const getSelectQueryConditions = <T>(condition: T): FirestoreConditionPattern[] => {
-  return Object.entries(condition)
-    .reduce((acc: PlainObject[], [ key, value ]: [string, PlainObject]) => {
-      const operation = Object.keys(value).filter(isNotOrderKey)
-      if (!operation.length) {
-        return acc
-      }
-      const queries = operation.map((operationKey: string) => ({
-        key,
-        operation: operationKey,
-        val: value[operationKey],
-      }))
+  const entries = Object.entries(condition as PlainObject) as [string, PlainObject][]
 
-      return acc.concat(queries)
-    }, []) as FirestoreConditionPattern[]
+  return entries.reduce((acc: PlainObject[], [ key, value ]: [string, PlainObject]) => {
+    const operation = Object.keys(value).filter(isNotOrderKey)
+    if (!operation.length) {
+      return acc
+    }
+    const queries = operation.map((operationKey: string) => ({
+      key,
+      operation: operationKey,
+      val: value[operationKey],
+    }))
+
+    return acc.concat(queries)
+  }, []) as FirestoreConditionPattern[]
 }
 
 export const getSelectQueryOrders = <T>(condition: T): OrderPattern[] => {
-  return Object.entries(condition)
+  const entries = Object.entries(condition as PlainObject) as [string, PlainObject][]
+
+  return entries
     .map(([ key, value ]) => {
       if (!value[CONSTANTS_KEY.ORDER]) {
         return ''
@@ -37,7 +40,9 @@ export const getSelectQueryOrders = <T>(condition: T): OrderPattern[] => {
 }
 
 export const getDocumentIds = <T>(condition: T): string[] => {
-  const documentIds = Object.entries(condition)
+  const entries = Object.entries(condition as PlainObject) as [string, PlainObject][]
+
+  const documentIds = entries
     .map(([ key, value ]) => {
       if (key === FIREBASE_CONSTANTS_KEY.DOCUMENT_ID) {
         return value[FirestoreOperation.EQ] ?? value[FirestoreOperation.IN]
@@ -51,5 +56,5 @@ export const getDocumentIds = <T>(condition: T): string[] => {
     throw new DBException('Document id not provide')
   }
 
-  return documentIds.flat()
+  return documentIds.flat() as string[]
 }

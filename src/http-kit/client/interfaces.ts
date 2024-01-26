@@ -1,4 +1,5 @@
 import { PlainObject } from '@utils/common-types'
+import { AxiosRequestConfig } from 'axios'
 
 export type ResponseHttp = {
   data: unknown
@@ -9,7 +10,8 @@ export type ResponseHttp = {
 export type HttpClientOption = {
   headers?: PlainObject
   params?: PlainObject
-}
+  signal?: AbortSignal
+} & AxiosRequestConfig
 
 export interface HttpClient {
   setHeaders(headers: PlainObject): this

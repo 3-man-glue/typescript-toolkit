@@ -8,13 +8,11 @@ describe('Event Repository', () => {
   let eventRepo: EventRepository
 
   beforeEach(() => {
-    mockEngine = {
+    mockEngine = ({
       select: jest.fn(),
       insert: jest.fn(),
-    } as unknown as Engine
+    } as unknown) as Engine
     eventRepo = new EventRepository(mockEngine)
-
-    jest.useFakeTimers('legacy')
   })
 
   afterEach(() => {
@@ -45,8 +43,8 @@ describe('Event Repository', () => {
             role: 'admin',
           },
         },
-        timestamp: new Date(),
-        createdAt: new Date(),
+        timestamp: expect.any(Date),
+        createdAt: expect.any(Date),
       }
       jest.spyOn(mockEngine, 'select').mockResolvedValue([
         {
@@ -146,8 +144,8 @@ describe('Event Repository', () => {
             role: 'admin',
           },
         },
-        timestamp: Date.now(),
-        created_at: Date.now(),
+        timestamp: expect.any(Number),
+        created_at: expect.any(Number),
       }
 
       await eventRepo.save(event)

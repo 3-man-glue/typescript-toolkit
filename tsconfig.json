@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "useUnknownInCatchVariables": false,
     "declaration": true,
     "target": "ESNext",
     "module": "commonjs",
@@ -56,4 +57,3 @@
   "include": ["src", "tests"],
   "files": ["src/index.ts"]
 }
-

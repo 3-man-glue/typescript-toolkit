@@ -24,6 +24,7 @@ describe('Route', () => {
   @Service({ transient: true })
   class DependentHandlerB extends Handler<ContextDto, ContextDto> {
     static type = 'controller'
+
     protected handle(): void {
       this.context.metadata['mutatingKey'] = 'Value from handler B'
       this.context.status = 200
@@ -43,7 +44,6 @@ describe('Route', () => {
       throw new Exception(999, 'Crashed with instance of Exception', 'MOCKED_ERROR')
     }
   }
-
 
   @Service()
   class InjectedExceptionInterceptor extends ExceptionInterceptor { }
@@ -80,7 +80,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [IndependentHandlerA],
+        Chain: [ IndependentHandlerA ],
         ExceptionInterceptor: jest.fn(),
       })
       const output = await route.handle('arg1', 'arg2')
@@ -120,7 +120,7 @@ describe('Route', () => {
           method: 'put',
           path: '/path/to/something',
           mapper: spyMapper,
-          Chain: [IndependentHandlerA, CrashWithErrorHandler],
+          Chain: [ IndependentHandlerA, CrashWithErrorHandler ],
           ExceptionInterceptor: (undefined as unknown) as HandlerConstructor<ContextDto, ExceptionResponse>,
         })
         await route.handle('arg1', 'arg2')
@@ -141,7 +141,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [DependentHandlerB],
+        Chain: [ DependentHandlerB ],
         ExceptionInterceptor: jest.fn(),
       })
       const output = await route.handle('arg1', 'arg2')
@@ -160,7 +160,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [IndependentHandlerA, DependentHandlerB],
+        Chain: [ IndependentHandlerA, DependentHandlerB ],
         ExceptionInterceptor: jest.fn(),
       })
       const output = await route.handle('arg1', 'arg2')
@@ -179,7 +179,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [DependentHandlerB, IndependentHandlerA],
+        Chain: [ DependentHandlerB, IndependentHandlerA ],
         ExceptionInterceptor: jest.fn(),
       })
       const output = await route.handle('arg1', 'arg2')
@@ -210,7 +210,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [IndependentHandlerA, CrashWithErrorHandler],
+        Chain: [ IndependentHandlerA, CrashWithErrorHandler ],
         ExceptionInterceptor: ExceptionInterceptor,
       })
 
@@ -239,7 +239,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [IndependentHandlerA, CrashWithExceptionHandler],
+        Chain: [ IndependentHandlerA, CrashWithExceptionHandler ],
         ExceptionInterceptor: ExceptionInterceptor,
       })
 
@@ -268,7 +268,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [IndependentHandlerA, CrashWithExceptionHandler],
+        Chain: [ IndependentHandlerA, CrashWithExceptionHandler ],
         ExceptionInterceptor: InjectedExceptionInterceptor,
       })
 
@@ -287,7 +287,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [IndependentHandlerA],
+        Chain: [ IndependentHandlerA ],
         ExceptionInterceptor: jest.fn(),
         loggingOptions: { enable: true },
       })
@@ -308,7 +308,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [IndependentHandlerA],
+        Chain: [ IndependentHandlerA ],
         ExceptionInterceptor: jest.fn(),
         loggingOptions: { enable: false },
       })
@@ -328,7 +328,7 @@ describe('Route', () => {
         method: 'put',
         path: '/path/to/something',
         mapper: spyMapper,
-        Chain: [IndependentHandlerA],
+        Chain: [ IndependentHandlerA ],
         ExceptionInterceptor: jest.fn(),
         loggingOptions: { enable: true, duration: 100 },
       })

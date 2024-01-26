@@ -6,12 +6,12 @@ import { LoggingOptions } from '@utils/logger'
 
 export type ApiMethod = 'get' | 'post' | 'put' | 'patch' | 'delete'
 
-export interface HandlerInterface<T, K> {
+export interface HandlerInterface<T extends ContextDto, K extends ContextDto> {
   context: HttpContext<T, K>
 
   invoke(): void | Promise<void>
-  chain<P, Q>(Handler: HandlerConstructor<P, Q>): this
-  setContext<P, Q>(context: HttpContext<P, Q>): this
+  chain<P extends ContextDto, Q extends ContextDto>(Handler: HandlerConstructor<P, Q>): this
+  setContext<P extends ContextDto, Q extends ContextDto>(context: HttpContext<P, Q>): this
   chainMultiple(Handlers: HandlerConstructor<ContextDto, ContextDto>[]): this
   reset(): this
 }
@@ -23,9 +23,12 @@ export interface Api {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type HandlerConstructor<T, K> = new (...args: any[]) => HandlerInterface<T, K>
+export type HandlerConstructor<T extends ContextDto, K extends ContextDto> = new (...args: any[]) => HandlerInterface<
+  T,
+  K
+>
 
-export interface ControllerConstructor<T, K> extends HandlerConstructor<T, K> {
+export interface ControllerConstructor<T extends ContextDto, K extends ContextDto> extends HandlerConstructor<T, K> {
   path: string
   method: ApiMethod
   api: Api
@@ -35,7 +38,7 @@ export interface ControllerConstructor<T, K> extends HandlerConstructor<T, K> {
 export type ContextMapper = (...args: any[]) => HttpContext<ContextDto, ContextDto>
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface Middleware extends ExpressHandler {}
+export interface Middleware extends ExpressHandler { }
 export interface RouteInterface {
   path: string
 

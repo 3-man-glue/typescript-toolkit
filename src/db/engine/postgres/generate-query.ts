@@ -5,7 +5,9 @@ import { QueryOptions, CONSTANTS_KEY, isNotOrderKey, OperationStrings, isEmptyOb
 import { DBException } from '@http-kit/exception/db'
 
 const getSelectQueryParams = <T>(condition: T): unknown[] => {
-  return Object.values(condition)
+  const values = Object.values(condition as PlainObject) as PlainObject[]
+
+  return values
     .reduce((acc: unknown[], value: PlainObject) => {
       const operationKeys = Object.keys(value).filter(isNotOrderKey)
       const params = operationKeys.map((key: string) => (value[ key ]))
@@ -16,8 +18,9 @@ const getSelectQueryParams = <T>(condition: T): unknown[] => {
 
 const getSelectQueryString = <T>(condition: T, tableName: string, options?: QueryOptions): string => {
   const baseQuery = `SELECT ${options?.rawSelect ? options.rawSelect : '*'} FROM ${tableName}`
+  const entries = Object.entries(condition as PlainObject) as [string, PlainObject][]
 
-  const orderQuery = Object.entries(condition)
+  const orderQuery = entries
     .map(([ key, value ]) => {
       if (!value[CONSTANTS_KEY.ORDER]) {
         return ''
@@ -27,7 +30,7 @@ const getSelectQueryString = <T>(condition: T, tableName: string, options?: Quer
     })
     .filter(Boolean)
 
-  const conditionQuery = Object.entries(condition)
+  const conditionQuery = entries
     .reduce((acc: string[], [ key, value ]: [string, PlainObject]) => {
       const operationKeys = Object.keys(value).filter(isNotOrderKey)
       if (!operationKeys.length) {
@@ -104,7 +107,9 @@ export const getInsertQueries = (data: PlainObject[], tableName: string): Return
 }
 
 const getUpdateQueryParams = <T>(data: T): unknown[] => {
-  return Object.values(data).filter(value => {
+  const values = Object.values(data as PlainObject) as PlainObject[]
+
+  return values.filter(value => {
     if(typeof(value) === 'object' ){
       throw new DBException('Data is invalid formatted')
     }
@@ -116,6 +121,7 @@ const getUpdateQueryParams = <T>(data: T): unknown[] => {
 
 const getUpdatetQueryString = <T>(data: PlainObject, condition: T, tableName: string): string => {
   const baseQuery = `UPDATE ${tableName} SET`
+  const entries = Object.entries(condition as PlainObject) as [string, PlainObject][]
 
   const setData = Object.keys(data)
     .map((key, index) => {
@@ -123,7 +129,7 @@ const getUpdatetQueryString = <T>(data: PlainObject, condition: T, tableName: st
       return ` ${key} = $${index+1}`
     })
 
-  const conditionQueryString = Object.entries(condition)
+  const conditionQueryString = entries
     .reduce((acc: string[], [ key, value ]: [string, PlainObject]) => {
 
       const operationKeys = Object.keys(value).filter(isNotOrderKey)
