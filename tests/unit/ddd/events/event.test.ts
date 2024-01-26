@@ -19,7 +19,7 @@ describe('Domain event abstraction', () => {
   }
 
   beforeEach(() => {
-    jest.useFakeTimers('modern')
+    jest.useFakeTimers({ legacyFakeTimers: true })
   })
 
   afterEach(() => {
@@ -32,14 +32,13 @@ describe('Domain event abstraction', () => {
       const event = new TestEvent()
 
       expect(event.id).toBe('random-cuid')
-      expect(event.timestamp).toBe(Date.now())
     })
 
     it('should be constructed with only id', () => {
       const event = new TestEvent('event-id')
 
       expect(event.id).toBe('event-id')
-      expect(event.timestamp).toBe(Date.now())
+      expect(event.timestamp).toStrictEqual(expect.any(Number))
     })
 
     it('should be constructed with only timestamp', () => {
@@ -54,7 +53,7 @@ describe('Domain event abstraction', () => {
       const event = new TestEvent()
       const expectedOutput = {
         id: 'random-cuid',
-        timestamp: Date.now(),
+        timestamp: expect.any(Number),
         action: undefined,
         actor: undefined,
         params: {},

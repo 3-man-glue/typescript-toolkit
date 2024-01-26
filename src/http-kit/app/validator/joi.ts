@@ -1,9 +1,12 @@
 import Joi from 'joi'
 import { JsonSchemaValidator, JoiSchemaValidator } from '@http-kit/app/validator/interfaces'
 import { DataValidator } from '@http-kit/app/handler/interfaces'
+import { PlainObject } from '@utils/common-types'
 
 const pick = <T, K extends keyof T>(fields: K[], data: T): Partial<T> => {
-  return Object.keys(data).reduce((result: Partial<T>, key: string) => {
+  const keys = Object.keys(data as PlainObject)
+
+  return keys.reduce((result: Partial<T>, key: string) => {
     if (fields.includes(key as K)) {
       result[ key as K ] = data[ key as K ]
     }

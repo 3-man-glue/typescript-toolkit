@@ -1,11 +1,11 @@
 import { HttpClient, HttpClientOption, ResponseHttp } from '@http-kit/client/interfaces'
 import { InternalServerException } from '@http-kit/exception/internal-server'
 import { PlainObject } from '@utils/common-types'
-import axios, { AxiosInstance } from 'axios'
+import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
 
 const ECONNREFUSED_CODE = 'ECONNREFUSED'
 const ECONNABORTED_CODE = 'ECONNABORTED'
-const INTERNAL_EXCEPTION_CODES = [ ECONNREFUSED_CODE, ECONNABORTED_CODE ]
+const INTERNAL_EXCEPTION_CODES = [ECONNREFUSED_CODE, ECONNABORTED_CODE]
 
 type HttpOptions = {
   httpAgent?: unknown
@@ -33,25 +33,25 @@ export class AxiosHttpClient implements HttpClient {
     return this
   }
 
-  private getConfig(): Partial<HttpClientOption> {
+  private getConfig(option?: HttpClientOption): Partial<HttpClientOption> {
     return {
-      headers: this.headers,
-    }
+      ...(option ? option : {}),
+      headers: {
+        ...this.headers,
+        ...option?.headers,
+      },
+    } as Partial<HttpClientOption>
   }
 
   async get(url: string, query?: PlainObject, option?: HttpClientOption): Promise<ResponseHttp> {
     try {
-      const config = this.getConfig()
-
-      if (option?.headers) {
-        config.headers = { ...config.headers, ...option.headers }
-      }
+      const config = this.getConfig(option)
 
       if (query) {
         config.params = { ...config.params, ...query }
       }
 
-      const { data, headers, status } = await this.client.get(url, config)
+      const { data, headers, status } = await this.client.get(url, config as AxiosRequestConfig)
 
       return { data, headers, status }
     } catch (error) {
@@ -63,13 +63,9 @@ export class AxiosHttpClient implements HttpClient {
 
   async post(url: string, data: PlainObject, option?: HttpClientOption): Promise<ResponseHttp> {
     try {
-      const config = this.getConfig()
+      const config = this.getConfig(option)
 
-      if (option?.headers) {
-        config.headers = { ...config.headers, ...option.headers }
-      }
-
-      const { data: dataResponse, headers, status } = await this.client.post(url, data, config)
+      const { data: dataResponse, headers, status } = await this.client.post(url, data, config as AxiosRequestConfig)
 
       return { data: dataResponse, headers, status }
     } catch (error) {
@@ -81,13 +77,9 @@ export class AxiosHttpClient implements HttpClient {
 
   async put(url: string, data: PlainObject, option?: HttpClientOption): Promise<ResponseHttp> {
     try {
-      const config = this.getConfig()
+      const config = this.getConfig(option)
 
-      if (option?.headers) {
-        config.headers = { ...config.headers, ...option.headers }
-      }
-
-      const { data: dataResponse, headers, status } = await this.client.put(url, data, config)
+      const { data: dataResponse, headers, status } = await this.client.put(url, data, config as AxiosRequestConfig)
 
       return { data: dataResponse, headers, status }
     } catch (error) {
@@ -99,13 +91,12 @@ export class AxiosHttpClient implements HttpClient {
 
   async delete(url: string, payload?: PlainObject, option?: HttpClientOption): Promise<ResponseHttp> {
     try {
-      const config = this.getConfig()
+      let config = this.getConfig(option)
 
-      if (option?.headers) {
-        config.headers = { ...config.headers, ...option.headers }
-      }
-
-      const { data, headers, status } = await this.client.delete(url, { ...config, data: payload })
+      const { data, headers, status } = await this.client.delete(url, {
+        ...(config as AxiosRequestConfig),
+        data: payload,
+      })
 
       return { data, headers, status }
     } catch (error) {
@@ -117,13 +108,9 @@ export class AxiosHttpClient implements HttpClient {
 
   async patch(url: string, data: PlainObject, option?: HttpClientOption): Promise<ResponseHttp> {
     try {
-      const config = this.getConfig()
+      const config = this.getConfig(option)
 
-      if (option?.headers) {
-        config.headers = { ...config.headers, ...option.headers }
-      }
-
-      const { data: dataResponse, headers, status } = await this.client.patch(url, data, config)
+      const { data: dataResponse, headers, status } = await this.client.patch(url, data, config as AxiosRequestConfig)
 
       return { data: dataResponse, headers, status }
     } catch (error) {
