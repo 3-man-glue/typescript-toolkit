@@ -19,6 +19,8 @@ export enum FirestoreOperation {
   LTE = '<=',
   NE = '!=',
   IN = 'in',
+  ARRAY_CONTAINS = 'array-contains',
+  ARRAY_CONTAINS_ANY = 'array-contains-any',
 }
 
 export type Condition<T> = {
