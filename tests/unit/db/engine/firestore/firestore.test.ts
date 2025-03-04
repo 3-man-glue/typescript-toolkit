@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { FirestoreEngine } from '@db/engine/firestore/firestore'
 import { Engine } from '@db/engine/interfaces'
-import { DBException } from '@http-kit/exception/db'
 import {
   CollectionReference,
   DocumentReference,
   DocumentSnapshot,
+  Firestore,
   QuerySnapshot,
   WriteBatch,
-  WriteResult,
-  Firestore
+  WriteResult
 } from '@google-cloud/firestore'
+import { DBException } from '@http-kit/exception/db'
 import { PlainObject } from '@utils/common-types'
 
 jest.mock('@google-cloud/firestore')
@@ -74,20 +74,14 @@ describe('FirestoreEngine', () => {
 
     it('should query and limit with specified criteria and return document data', async () => {
       const expectedResult = [ { _id: 'data_1', test: 'test' } ]
-      const snapshot = createMockedQuerySnapshot(
-        createMockedDocumentSnapshot('data_1', { test: 'test' }),
-      )
+      const snapshot = createMockedQuerySnapshot(createMockedDocumentSnapshot('data_1', { test: 'test' }))
       jest.spyOn(query, 'where').mockReturnThis()
       jest.spyOn(query, 'orderBy').mockReturnThis()
       jest.spyOn(query, 'limit').mockReturnThis()
       jest.spyOn(query, 'get').mockResolvedValue(snapshot)
       jest.spyOn(Firestore.prototype, 'collection').mockReturnValue(query)
 
-      const output = await firestoreEngine.select(
-        { status: { '==': 1, order: 'asc' } },
-        'users_test',
-        { limit: 1 }
-      )
+      const output = await firestoreEngine.select({ status: { '==': 1, order: 'asc' } }, 'users_test', { limit: 1 })
 
       expect(Firestore.prototype.collection).toHaveBeenCalledTimes(1)
       expect(Firestore.prototype.collection).toHaveBeenCalledWith('users_test')
@@ -109,11 +103,7 @@ describe('FirestoreEngine', () => {
       jest.spyOn(Firestore.prototype, 'collection').mockReturnValue(query)
 
       try {
-        await firestoreEngine.select(
-          { status: { '==': 1, order: 'asc' } },
-          'users_test',
-          { limit: 1 }
-        )
+        await firestoreEngine.select({ status: { '==': 1, order: 'asc' } }, 'users_test', { limit: 1 })
       } catch (error) {
         isThrown = true
         expect(error).toBeInstanceOf(DBException)
@@ -175,10 +165,7 @@ describe('FirestoreEngine', () => {
     it('should add data to referennce document id', async () => {
       jest.spyOn(batch, 'commit').mockResolvedValue([])
 
-      await firestoreEngine.insert(
-        [ { _id: 'doc-1', name: 'user-1' } ],
-        'users_test'
-      )
+      await firestoreEngine.insert([ { _id: 'doc-1', name: 'user-1' } ], 'users_test')
 
       expect(Firestore.prototype.batch).toHaveBeenCalledTimes(1)
       expect(Firestore.prototype.collection).toHaveBeenCalledTimes(1)
@@ -196,7 +183,7 @@ describe('FirestoreEngine', () => {
 
       await firestoreEngine.insert(
         [ { name: 'user-1' }, { _id: 'doc-2', name: 'user-2' }, { name: 'user-3' } ],
-        'users_test'
+        'users_test',
       )
 
       expect(Firestore.prototype.batch).toHaveBeenCalledTimes(1)
@@ -252,12 +239,11 @@ describe('FirestoreEngine', () => {
     })
 
     it('should return data by id', async () => {
-      jest.spyOn(docRef, 'get')
-        .mockResolvedValue(createMockedDocumentSnapshot('data_1', { test: 'test' }))
+      jest.spyOn(docRef, 'get').mockResolvedValue(createMockedDocumentSnapshot('data_1', { test: 'test' }))
 
       const response = await firestoreEngine.getById('1', 'users')
 
-      expect(response).toStrictEqual({ '_id': 'data_1', 'test': 'test' })
+      expect(response).toStrictEqual({ _id: 'data_1', test: 'test' })
       expect(Firestore.prototype.collection).toHaveBeenCalledTimes(1)
       expect(Firestore.prototype.collection).toHaveBeenCalledWith('users')
       expect(collection.doc).toHaveBeenCalledTimes(1)
@@ -266,8 +252,7 @@ describe('FirestoreEngine', () => {
     })
 
     it('should return undefined when not found', async () => {
-      jest.spyOn(docRef, 'get')
-        .mockResolvedValue(createMockedDocumentSnapshot('data_1'))
+      jest.spyOn(docRef, 'get').mockResolvedValue(createMockedDocumentSnapshot('data_1'))
 
       const response = await firestoreEngine.getById('not-found', 'users')
 
@@ -322,7 +307,7 @@ describe('FirestoreEngine', () => {
       await firestoreEngine.update(
         [ { name: 'user-1' }, { name: 'user-2' } ],
         [ { documentId: { '==': 'doc-1' } }, { documentId: { '==': 'doc-2' } } ],
-        'users_test'
+        'users_test',
       )
 
       expect(Firestore.prototype.collection).toHaveBeenCalledTimes(1)
@@ -331,9 +316,9 @@ describe('FirestoreEngine', () => {
       expect(collection.doc).toHaveBeenCalledTimes(2)
       expect(collection.doc).toHaveBeenNthCalledWith(1, 'doc-1')
       expect(collection.doc).toHaveBeenNthCalledWith(2, 'doc-2')
-      expect(batch.update).toHaveBeenCalledTimes(2)
-      expect(batch.update).toHaveBeenNthCalledWith(1, dummyDocRef, { name: 'user-1' })
-      expect(batch.update).toHaveBeenNthCalledWith(2, dummyDocRef, { name: 'user-2' })
+      expect(batch.set).toHaveBeenCalledTimes(2)
+      expect(batch.set).toHaveBeenNthCalledWith(1, dummyDocRef, { name: 'user-1' }, { merge: true })
+      expect(batch.set).toHaveBeenNthCalledWith(2, dummyDocRef, { name: 'user-2' }, { merge: true })
       expect(batch.commit).toHaveBeenCalledTimes(1)
     })
 
@@ -341,11 +326,8 @@ describe('FirestoreEngine', () => {
       const dummyDocRef = { id: 'dummy' } as unknown as DocumentReference
       jest.spyOn(collection, 'doc').mockReturnValue(dummyDocRef)
 
-      await firestoreEngine.update(
-        [ { name: 'user-1' } ],
-        [ { documentId: { 'in': [ 'doc-1', 'doc-2' ] } } ],
-        'users_test'
-      )
+      // eslint-disable-next-line max-len
+      await firestoreEngine.update([ { name: 'user-1' } ], [ { documentId: { in: [ 'doc-1', 'doc-2' ] } } ], 'users_test')
 
       expect(Firestore.prototype.batch).toHaveBeenCalledTimes(1)
       expect(Firestore.prototype.batch).toHaveBeenCalledWith()
@@ -354,9 +336,9 @@ describe('FirestoreEngine', () => {
       expect(collection.doc).toHaveBeenCalledTimes(2)
       expect(collection.doc).toHaveBeenCalledWith('doc-1')
       expect(collection.doc).toHaveBeenCalledWith('doc-2')
-      expect(batch.update).toHaveBeenCalledTimes(2)
-      expect(batch.update).toHaveBeenNthCalledWith(1, dummyDocRef, { name: 'user-1' })
-      expect(batch.update).toHaveBeenNthCalledWith(2, dummyDocRef, { name: 'user-1' })
+      expect(batch.set).toHaveBeenCalledTimes(2)
+      expect(batch.set).toHaveBeenNthCalledWith(1, dummyDocRef, { name: 'user-1' }, { merge: true })
+      expect(batch.set).toHaveBeenNthCalledWith(2, dummyDocRef, { name: 'user-1' }, { merge: true })
       expect(batch.commit).toHaveBeenCalledTimes(1)
     })
 
@@ -393,8 +375,8 @@ describe('FirestoreEngine', () => {
       expect(Firestore.prototype.batch).toHaveBeenCalledTimes(1)
       expect(collection.doc).toHaveBeenCalledTimes(1)
       expect(collection.doc).toHaveBeenNthCalledWith(1, 'doc-1')
-      expect(batch.update).toHaveBeenCalledTimes(1)
-      expect(batch.update).toHaveBeenNthCalledWith(1, dummyDocRef, { name: 'user-1' })
+      expect(batch.set).toHaveBeenCalledTimes(1)
+      expect(batch.set).toHaveBeenNthCalledWith(1, dummyDocRef, { name: 'user-1' }, { merge: true })
       expect(batch.commit).toHaveBeenCalledTimes(1)
     })
   })
@@ -471,10 +453,7 @@ describe('FirestoreEngine', () => {
     it('should delete on reference document', async () => {
       jest.spyOn(batch, 'commit').mockResolvedValue([])
 
-      await firestoreEngine.delete(
-        { documentId: { '==': 'doc-1' } },
-        'users_test'
-      )
+      await firestoreEngine.delete({ documentId: { '==': 'doc-1' } }, 'users_test')
 
       expect(Firestore.prototype.batch).toHaveBeenCalledTimes(1)
       expect(Firestore.prototype.collection).toHaveBeenCalledTimes(1)
@@ -489,10 +468,7 @@ describe('FirestoreEngine', () => {
     it('should delete multiple document', async () => {
       jest.spyOn(batch, 'commit').mockResolvedValue([])
 
-      await firestoreEngine.delete(
-        { documentId: { 'in': [ 'doc-1', 'doc-2' ] } },
-        'users_test'
-      )
+      await firestoreEngine.delete({ documentId: { in: [ 'doc-1', 'doc-2' ] } }, 'users_test')
 
       expect(Firestore.prototype.batch).toHaveBeenCalledTimes(1)
       expect(Firestore.prototype.collection).toHaveBeenCalledTimes(1)
