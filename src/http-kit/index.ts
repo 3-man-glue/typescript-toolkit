@@ -8,7 +8,6 @@ export * from '@http-kit/app/handler/route-builder'
 export * from '@http-kit/app/handler/pagination'
 export * from '@http-kit/app/handler/route'
 export * from '@http-kit/app/handler/exception'
-export * from '@http-kit/app/middleware/multipart-form'
 // client
 export * from '@http-kit/client/axios'
 export * from '@http-kit/client/interfaces'
