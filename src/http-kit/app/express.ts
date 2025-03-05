@@ -27,7 +27,7 @@ export class ExpressApp implements HttpApp {
 
   public registerRoute(builder: RouteBuilder): ExpressApp {
     const route = builder.setContextMapper(mapper).build()
-    this.engine[ route.method ](route.path, ...builder.middlewares, async (req: Request, res: Response) => {
+    this.engine[route.method](route.path, ...builder.middlewares, async (req: Request, res: Response) => {
       const { status, response } = await route.handle(req, res)
       res.status(status).json(response)
     })
@@ -44,7 +44,6 @@ export function mapper(req: Request): HttpContext<ContextDto, ContextDto> {
       reqParams: Object.freeze(req.params),
       reqQuery: Object.freeze(req.query),
       reqHeaders: Object.freeze(req.headers),
-      reqFiles: Object.freeze(req.files) ?? [ Object.freeze(req.file) ],
     },
   }
 }
