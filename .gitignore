@@ -6,6 +6,9 @@ coverage/
 data/
 .env
 liquibase/libs
+.yarn
+.pnp.cjs
+.pnp.loader.mjs
 
 /index.js
 /index.js.map

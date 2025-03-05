@@ -22,11 +22,9 @@ export declare class HttpServer {
   stop(): Promise<void>
 }
 
-export declare class PaginationPipe extends Handler<ContextDto, PaginationResponse | ParsedPaginationResponse> {
-}
+export declare class PaginationPipe extends Handler<ContextDto, PaginationResponse | ParsedPaginationResponse> {}
 
-export declare class ExceptionInterceptor extends Handler<ContextDto, ExceptionResponse> {
-}
+export declare class ExceptionInterceptor extends Handler<ContextDto, ExceptionResponse> {}
 
 export interface HttpServerConfig {
   port: number
@@ -301,10 +299,10 @@ export declare function Put(api: Api): RouteBuilder
 export declare function Delete(api: Api): RouteBuilder
 
 export declare type ConstructorInput = {
-  method: ApiMethod,
-  path: string,
-  mapper: ContextMapper,
-  Chain: HandlerConstructor<ContextDto, ContextDto>[],
+  method: ApiMethod
+  path: string
+  mapper: ContextMapper
+  Chain: HandlerConstructor<ContextDto, ContextDto>[]
   ExceptionInterceptor: HandlerConstructor<ContextDto, ExceptionResponse>
 }
 
@@ -328,12 +326,7 @@ export declare class Anonymous extends Actor {
   constructor()
 }
 
-interface MultipartFormOptions {
-  limitSize?: number
-  acceptedExts?: string[]
-}
 export type FilterFileFunc = (req: Request, file: Express.Multer.File, cb: CallableFunction) => void
-export const multipartFormInterceptor: (options: MultipartFormOptions) => Middleware
 export declare class JoiValidator implements JsonSchemaValidator {
   validate(data: DataValidator, schema: JoiSchemaValidator): boolean
 }
