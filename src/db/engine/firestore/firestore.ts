@@ -97,7 +97,7 @@ export class FirestoreEngine implements FirestoreEngineInterface {
     tableName: string,
   ): Promise<void> {
     try {
-      await this.firestore.collection(tableName).doc(documentId).update(data)
+      await this.firestore.collection(tableName).doc(documentId).set(data, { merge: true })
     } catch (error) {
       throw new DBException(error.message).withCause(error).withInput({ data, documentId, tableName })
     }
