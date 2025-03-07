@@ -405,13 +405,13 @@ describe('FirestoreEngine', () => {
       expect(Firestore.prototype.collection).toHaveBeenCalledWith('users_test')
       expect(collection.doc).toHaveBeenCalledTimes(1)
       expect(collection.doc).toHaveBeenCalledWith('doc-1')
-      expect(docRef.update).toHaveBeenCalledTimes(1)
-      expect(docRef.update).toHaveBeenCalledWith({ name: 'user-1' })
+      expect(docRef.set).toHaveBeenCalledTimes(1)
+      expect(docRef.set).toHaveBeenCalledWith({ name: 'user-1' }, { merge: true })
     })
 
     it('should throw error when got error', async () => {
       let isThrown = false
-      jest.spyOn(docRef, 'update').mockRejectedValue(new Error())
+      jest.spyOn(docRef, 'set').mockRejectedValue(new Error())
 
       try {
         await firestoreEngine.updateById({ name: 'user-1' }, 'doc-1', 'users_test')
@@ -425,8 +425,8 @@ describe('FirestoreEngine', () => {
       expect(Firestore.prototype.collection).toHaveBeenCalledWith('users_test')
       expect(collection.doc).toHaveBeenCalledTimes(1)
       expect(collection.doc).toHaveBeenCalledWith('doc-1')
-      expect(docRef.update).toHaveBeenCalledTimes(1)
-      expect(docRef.update).toHaveBeenCalledWith({ name: 'user-1' })
+      expect(docRef.set).toHaveBeenCalledTimes(1)
+      expect(docRef.set).toHaveBeenCalledWith({ name: 'user-1' }, { merge: true })
     })
   })
 
